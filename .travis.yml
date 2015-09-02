@@ -1,4 +1,7 @@
 language: java
+branches:
+  only:
+    - develop
 deploy:
   provider: heroku
   app: battlechat-dev
