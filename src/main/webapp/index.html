@@ -27,8 +27,8 @@
 }				
 html {
 	background: black;
-	background-image:url(Background.gif);
-	background-size: 100% 500%;
+	background-image:url(Background2.gif);
+	background-size: 110% 450%;
 	background-repeat: no-repeat;
 }
 body p {
@@ -36,6 +36,11 @@ body p {
 	vertical-align: middle;
 	font-family: slkscr;
 	font-weight: bold;
+	}
+titlepanel{
+    color: white;
+    border-radius: 2em;
+	        left: 50%;
 	}
 battleship{
 	font-size:50px;
@@ -62,24 +67,25 @@ section {
 </head>
 
 <body>
-<battleship>
-<p>BATTLESHIP</p>
-</battleship>
-<p>The year is 20XX</p>
-<p>Everyone is playing battleship</p>
-
-<section>
-<p>Login</p>
-<p>       
-  <input name="Login" id="Login" />
-</p>
-<p>Password</p>
-<p>
-  <input name="Password" type="password" id="Password" />
-</p>
-<p>
-<button name="Valid" id="Valid" style="font-family:slkscr;" onclick="doSomething()">Connect</button>
-</p>
-</section>
+	<titlepanel>
+		<battleship>
+			<p>BATTLESHIP</p>
+		</battleship>
+		<p>The year is 20XX</p>
+		<p>Everyone is playing battleship</p>
+	</titlepanel>
+	<section>
+		<p>Login</p>
+		<p>       
+  			<input name="Login" id="Login" />
+		</p>
+		<p>Password</p>
+		<p>
+          <input name="Password" type="password" id="Password" />
+        </p>
+        <p>
+        <button name="Valid" id="Valid" style="font-family:slkscr;" onclick="doSomething()">Connect</button>
+        </p>
+	</section>
 </body>
 </html>
