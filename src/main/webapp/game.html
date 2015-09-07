@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Battleship</title>
+</head>
+<style>
+@font-face {
+  font-family: slkscr;
+  font-weight: bold;
+  src: url('Fonts/slkscrb.ttf');
+}
+@font-face {
+  font-family: slkscr;
+  src: url('Fonts/slkscr.ttf');
+}
+@font-face {
+  font-family: slksce;
+  font-weight: bold;
+  src: url('Fonts/slkscreb.ttf');
+}
+@font-face {
+  font-family: slkscre;
+  src: url('Fonts/slkscre.ttf');
+}	
+body{
+	background-image: url("SeaTile.png");
+	background-size: 30px 30px; 
+}
+th, td, tr {
+    margin: 0;
+    padding: 0;
+    border: 0;
+	vertical-align: baseline;
+	border-spacing:0; /* Removes the cell spacing via CSS */
+ 	border-collapse: collapse;  /* Optional - if you don't want to have double border where cells touch */
+}
+td {
+	height:30px;
+	width:30px;
+	text-align:center;
+	font-family:slkscr;
+	font-size:10px;
+	border: 1px solid black;
+	}
+table {
+	display: inline-table;
+	border: 1px solid black;
+}
+
+.container {
+	text-align: center;
+	width: 50%;
+	height: 50%;
+  	float: left;
+}
+</style>
+<script>
+var gridx = 16, gridy = 16;
+var Ships = [["Minesweeper",2,4],["Frigate",3,4],[ "Cruiser",4,2],[ "Battleship",5,1]];
+
+var player1Grid = [[]];
+var player2Grid = [[]];
+var player1Ships = [];
+
+// player 1 table
+document.write("<div class=\"container\"><table>")
+for (i=0; i<gridx; i++)
+{
+	//rows
+	document.write("<tr>");
+	player1Grid[i]=[];
+	for (j=0; j<gridy; j++)
+	{
+		// cells
+		document.write("<td>");
+		player1Grid[i][j]=j;
+		document.write("</td>");
+	}
+	document.write("</tr>");
+}
+document.write("</table></div>")
+
+
+// player 2 table
+document.write("<div class=\"container\"><table>")
+for (i=0; i<gridx; i++)
+{
+	//rows
+	document.write("<tr>");
+	player2Grid[i]=[];
+	for (j=0; j<gridy; j++)
+	{
+		// cells
+		document.write("<td>");
+		player2Grid[i][j]=j;
+		document.write("</td>");
+	}
+	document.write("</tr>");
+}
+
+document.write("</table></div>")
+
+function onCellClick(){
+	
+}
+
+</script>
+<body>
+
+
+<p> Drag and drop your ships </p>
+</body>
+</html>
