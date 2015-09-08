@@ -1,10 +1,5 @@
 package edu.dirtybit.battlechat.model;
 
-import java.util.List;
-
-/**
- * Created by philip on 08-09-15.
- */
 public class Ship {
     private int x = 0;
     private int y = 0;

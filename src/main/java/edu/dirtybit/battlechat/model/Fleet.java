@@ -2,9 +2,6 @@ package edu.dirtybit.battlechat.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by philip on 08-09-15.
- */
 public class Fleet {
     private static final int CRUISERS = 1;
     private static final int SUBMARINES = 1;

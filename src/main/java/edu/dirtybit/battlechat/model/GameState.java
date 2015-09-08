@@ -2,9 +2,6 @@ package edu.dirtybit.battlechat.model;
 
 import java.util.ArrayList;
 
-/**
- * Created by philip on 08-09-15.
- */
 public class GameState {
     private static final int DEFAULTSIZE = 8;
 

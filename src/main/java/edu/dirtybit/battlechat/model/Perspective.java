@@ -1,8 +1,5 @@
 package edu.dirtybit.battlechat.model;
 
-/**
- * Created by philip on 08-09-15.
- */
 public class Perspective {
     private int[][] cells1;
     private int[][] cells2;
