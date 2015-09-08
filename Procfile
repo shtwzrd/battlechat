@@ -1,1 +1,1 @@
-web: java -jar ./target/battlechat-1.0-jar-with-dependencies.jar
+web: java -cp ./target/battlechat-1.0-jar-with-dependencies.jar edu.dirtybit.battlechat.Main
