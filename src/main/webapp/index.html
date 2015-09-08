@@ -63,12 +63,15 @@ section {
 </style>
 </head>
 <script language="javascript">
-	function login(form){
+	function login(){
 		var username = document.getElementById("Username").value;
 		// verify there's no 2 player with the same name on the server
 		// add player on matchmaking
 		alert ("Welcome " + username +" :)");
 		// Wait for server response
+		window.location.replace("file:///D:/Code/Java/Battlechat/src/main/webapp/index.html");
+		alert("Page path is " + window.location.pathname); 
+		
 	}
 </script>
 <body>
