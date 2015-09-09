@@ -1,10 +1,15 @@
 package edu.dirtybit.battlechat.model;
 
 public class Ship {
-    private int x = 0;
-    private int y = 0;
-    private Rotation rotation = Rotation.Horizontal;
-    private ShipType shiptype = null;
+    private int x;
+    private int y;
+    private Rotation rotation;
+    private ShipType shiptype;
+
+    public Ship(ShipType shiptype)
+    {
+        this(0, 0, Rotation.Horizontal, shiptype);
+    }
 
     public Ship(int x, int y, Rotation rotation, ShipType shiptype)
     {

@@ -1,12 +1,16 @@
 package edu.dirtybit.battlechat.model;
 
-public class Board {
-    private int[][] cells1;
-    private int[][] cells2;
+import java.util.ArrayList;
+
+public class Board extends BaseBoard {
 
     public Board(int width, int height)
     {
-        this.cells1 = new int[width][height];
-        this.cells2 = new int[width][height];
+        super(width, height);
+    }
+
+    public void setCell(int x, int y, CellType celltype)
+    {
+        this.cells[x][y] = celltype;
     }
 }

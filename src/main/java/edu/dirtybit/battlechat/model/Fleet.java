@@ -9,19 +9,16 @@ public class Fleet {
     private static final int BATTLESHIPS = 1;
     private static final int CARRIERS = 1;
 
-    private ArrayList<Ship> ships = new ArrayList<Ship>();
+    private ArrayList<Ship> ships;
 
     public Fleet()
     {
-        this.initializeShips(CRUISERS, SUBMARINES, DESTROYERS, BATTLESHIPS, CARRIERS);
+        this(CRUISERS, SUBMARINES, DESTROYERS, BATTLESHIPS, CARRIERS);
     }
 
     public Fleet(int cruisers, int submarines, int destroyers, int battleships, int carriers) {
-        this.initializeShips(cruisers, submarines, destroyers, battleships, carriers);
-    }
+        this.ships = new ArrayList<Ship>();
 
-    private void initializeShips(int cruisers, int submarines, int destroyers, int battleships, int carriers)
-    {
         int i = 0;
         for (i = 0; i < cruisers; i++) {
             this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CRUISER));
