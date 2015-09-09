@@ -2,61 +2,25 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" type="text/css" href="style/fontStyle.css">
+<link rel="stylesheet" type="text/css" href="style/gameStyle.css">
+<link rel="shortcut icon" href="img/icon.png">
 <title>Battleship</title>
 </head>
-<style>
-@font-face {
-  font-family: slkscr;
-  font-weight: bold;
-  src: url('Fonts/slkscrb.ttf');
-}
-@font-face {
-  font-family: slkscr;
-  src: url('Fonts/slkscr.ttf');
-}
-@font-face {
-  font-family: slksce;
-  font-weight: bold;
-  src: url('Fonts/slkscreb.ttf');
-}
-@font-face {
-  font-family: slkscre;
-  src: url('Fonts/slkscre.ttf');
-}	
-body{
-	background-image: url("SeaTile.png");
-	background-size: 30px 30px; 
-}
-th, td, tr {
-    margin: 0;
-    padding: 0;
-    border: 0;
-	vertical-align: baseline;
-	border-spacing:0; /* Removes the cell spacing via CSS */
- 	border-collapse: collapse;  /* Optional - if you don't want to have double border where cells touch */
-}
-td {
-	height:30px;
-	width:30px;
-	text-align:center;
-	font-family:slkscr;
-	font-size:10px;
-	border: 1px solid black;
-	}
-table {
-	display: inline-table;
-	border: 1px solid black;
-}
-
-.container {
-	text-align: center;
-	width: 50%;
-	height: 50%;
-  	float: left;
-}
-</style>
+<script type="text/javascript" src="Plugin/jquery-1.11.3.js"></script>
 <script>
-var gridx = 16, gridy = 16;
+
+    $(function(){
+        var x = 0;
+		var y = 0;
+        setInterval(function(){
+            x+=0.25;
+			y+=0.125;
+            $('body').css('background-position', x + 'px '+ y + 'px');
+        }, 10);
+    })
+	
+var gridx = 8, gridy = 8;
 var Ships = [["Minesweeper",2,4],["Frigate",3,4],[ "Cruiser",4,2],[ "Battleship",5,1]];
 
 var player1Grid = [[]];
@@ -64,7 +28,8 @@ var player2Grid = [[]];
 var player1Ships = [];
 
 // player 1 table
-document.write("<div class=\"container\"><table>")
+document.write("<div class=\"container\">");
+document.write("<div class=\"left\"><table>");
 for (i=0; i<gridx; i++)
 {
 	//rows
@@ -79,13 +44,12 @@ for (i=0; i<gridx; i++)
 	}
 	document.write("</tr>");
 }
-document.write("</table></div>")
-
+document.write("</table></div>");
 
 // player 2 table
-document.write("<div class=\"container\"><table>")
+document.write("<div class=\"right\"><table>");
 for (i=0; i<gridx; i++)
-{
+{	
 	//rows
 	document.write("<tr>");
 	player2Grid[i]=[];
@@ -100,15 +64,20 @@ for (i=0; i<gridx; i++)
 }
 
 document.write("</table></div>")
+document.write("</div>");
 
-function onCellClick(){
-	
-}
 
+
+
+document.write("<form action=\"http://www.html.am/html-codes/forms/html-form-tag-action.cfm\" target=\"chattextarea\" method=\"get\" id=\"chat\">");
+document.write("<div class=\"chat\">");
+document.write("<input class=\"chatinput\" name=\"chatinput\" type=\"text\" value=\"\" form=\"chat\">");
+document.write("<input type=\"submit\" class=\"chatbutton\" value=\"Send\">");
+document.write("</form>");
+document.write("<div class=\"chattextarea\" name=\"chattextarea\"></div>");
+document.write("</div>");
 </script>
 <body>
-
-
-<p> Drag and drop your ships </p>
+<p class="phase" > place your ships! </p>
 </body>
 </html>

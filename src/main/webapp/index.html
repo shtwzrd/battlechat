@@ -1,33 +1,16 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="shortcut icon" href="icon.png">
+<link rel="shortcut icon" href="img/icon.png">
+<link rel="stylesheet" type="text/css" href="style/fontStyle.css">
 <title>Battleship</title>
 <style type="text/css">
 
 {margin:0;padding:0;}
-@font-face {
-  font-family: slkscr;
-  font-weight: bold;
-  src: url('Fonts/slkscrb.ttf');
-}
-@font-face {
-  font-family: slkscr;
-  src: url('Fonts/slkscr.ttf');
-}
-@font-face {
-  font-family: slksce;
-  font-weight: bold;
-  src: url('Fonts/slkscreb.ttf');
-}
-@font-face {
-  font-family: slkscre;
-  src: url('Fonts/slkscre.ttf');
-}				
 html {
 	background: black;
-	background-image:url(Background2.gif);
+	background-image:url(img/Background2.gif);
 	background-size: 100% 500%;
 	background-repeat: no-repeat;
 }
@@ -69,7 +52,7 @@ section {
 		// add player on matchmaking
 		alert ("Welcome " + username +" :)");
 		// Wait for server response
-		window.location.replace("file:///D:/Code/Java/Battlechat/src/main/webapp/index.html");
+		// Redirect
 		alert("Page path is " + window.location.pathname); 
 		
 	}
