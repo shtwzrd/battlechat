@@ -1,1 +1,1 @@
-web: java -cp target/classes:target/dependency/* edu.dirtybit.battlechat.heroku.Main
+web: java -cp ./target/battlechat-1.0-jar-with-dependencies.jar edu.dirtybit.battlechat.Main
