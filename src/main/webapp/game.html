@@ -15,16 +15,16 @@ $(document).ready(function() {
 	{
 		jQuery('#left').animate({
 				width:0,
-				'left': '=0px',
 				opacity:0
 			},
-			"fast"
+			200
 		);
 		jQuery('#right').animate({
 				width:'100%',
-				opacity:100
+				'left': '=0%',
+				opacity:1.0
 			},
-			"fast"	
+			400	
 		);
 		jQuery('#right').toggleClass('active',true);
 		jQuery('#left').toggleClass('active',false);
@@ -37,16 +37,16 @@ $(document).ready(function() {
 
 		jQuery('#right').animate({
 				width:0,
-				'right': '=0%',
 				opacity:0
 			},
-			400
+			200
 		);
 		jQuery('#left').animate({
 				width:'100%',
-				opacity:100
+				'right': '=0%',
+				opacity:1.0
 			},
-			"fast"	
+			400	
 		);
 		jQuery('#left').toggleClass('active',true);
 		jQuery('#right').toggleClass('active',false);
