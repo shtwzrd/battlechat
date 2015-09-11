@@ -8,7 +8,6 @@ public class GameState {
 
     private ArrayList<Player> players;
     private ArrayList<Board> boards;
-    private ArrayList<Perspective> perspectives;
 
     public GameState()
     {
@@ -24,7 +23,6 @@ public class GameState {
     {
         this.players = new ArrayList<Player>();
         this.boards = new ArrayList<Board>();
-        this.perspectives = new ArrayList<Perspective>();
 
         this.initializeBoards(DEFAULTPLAYERS, width, height);
     }
@@ -35,7 +33,6 @@ public class GameState {
         {
             this.players.add(new Player());
             this.boards.add(new Board(width, height));
-            this.perspectives.add(new Perspective(width, height));
         }
     }
 
@@ -48,7 +45,6 @@ public class GameState {
     {
         int index = this.getPlayerIndex(player);
 
-        boards.get(index).setCell(x, y, celltype);
         boards.get(index).setCell(x, y, celltype);
     }
 
@@ -66,13 +62,5 @@ public class GameState {
 
     public void setBoards(ArrayList<Board> boards) {
         this.boards = boards;
-    }
-
-    public ArrayList<Perspective> getPerspectives() {
-        return perspectives;
-    }
-
-    public void setPerspectives(ArrayList<Perspective> perspectives) {
-        this.perspectives = perspectives;
     }
 }
