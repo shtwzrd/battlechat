@@ -3,7 +3,8 @@ package edu.dirtybit.battlechat;
 import edu.dirtybit.battlechat.controller.Controller;
 import edu.dirtybit.battlechat.controller.SessionController;
 
-import static spark.Spark.*;
+import static spark.Spark.port;
+import static spark.Spark.staticFileLocation;
 
 public class Main {
 
