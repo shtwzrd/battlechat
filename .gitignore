@@ -113,6 +113,7 @@ tramp
 
 # IntelliJ
 /out/
+workbench.xmi
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
@@ -206,3 +207,4 @@ pom.xml.asc
 .lein-plugins/
 .lein-failures
 .nrepl-port
+
