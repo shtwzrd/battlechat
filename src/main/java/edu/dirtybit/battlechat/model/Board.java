@@ -2,7 +2,8 @@ package edu.dirtybit.battlechat.model;
 
 import java.util.ArrayList;
 
-public class Board extends BaseBoard {
+public class Board extends BaseBoard
+{
     private Perspective perspective;
 
     public Board(int width, int height)
