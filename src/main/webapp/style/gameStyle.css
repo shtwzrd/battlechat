@@ -1,9 +1,55 @@
 @charset "utf-8";
 body{
-	background-image: url("../img/SeaTile.png");
+	/*background-image: url("../img/SeaTile.png");*/
 	background-size: 30px 30px; 
 	background-repeat: repeat;
 	overflow:hidden;
+}
+#animated-background{
+    position: fixed;
+    display: inline-block;
+    text-align: center;
+    top: -50%;
+    left: -50%;
+    height: 151%;
+    width: 151%;
+    background-image: url("../img/SeaTile.png");
+    background-origin: container; /* put in the class or id of a tag you want to align the background with */
+	background-size: 32px 32px;
+    z-index: -10;
+
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    -webkit-animation-iteration-count: infinite;
+    animation-iteration-count: infinite;
+    -webkit-animation-duration: 10s;
+    animation-duration: 10s;
+    -webkit-animation-name: wave;
+    animation-name: wave;
+    -webkit-transform-origin: center center;
+    transform-origin: center center;
+}
+@-webkit-keyframes wave{
+	from {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(0deg) translate3d(0,0,0); transform: rotate(0deg) translate3d(0,0,0); }
+	50% {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(1deg) translate3d(32px,16x,0); transform: rotate(1deg) translate3d(32px,16px,0); }
+	to {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(0deg) translate3d(96px,32px,0); transform: rotate(0deg) translate3d(96px,32px,0); }
+}
+@keyframes wave{
+	from {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(0deg) translate3d(0,0,0); transform: rotate(0deg) translate3d(0,0,0); }
+	50% {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(1deg) translate3d(32px,16px,0); transform: rotate(1deg) translate3d(32px,16px,0); }
+	to {
+	   -webkit-transition: all 0s linear; transition: all 0s linear;
+	   -webkit-transform: rotate(0deg) translate3d(96px,32px,0); transform: rotate(0deg) translate3d(96px,32px,0); }
 }
 th, td, tr {
 	border-spacing:0; /* Removes the cell spacing via CSS */
