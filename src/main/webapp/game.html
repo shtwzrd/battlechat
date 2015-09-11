@@ -9,43 +9,83 @@
 </head>
 <script type="text/javascript" src="Plugin/jquery-1.11.3.js"></script>
 <script>
+	
+$(document).ready(function() {
+	function swipeRight() 
+	{
+		jQuery('#left').animate({
+				width:0,
+				opacity:0
+			},
+			200
+		);
+		jQuery('#right').animate({
+				width:'100%',
+				'left': '=0%',
+				opacity:1.0
+			},
+			400	
+		);
+		jQuery('#right').toggleClass('active',true);
+		jQuery('#left').toggleClass('active',false);
+		jQuery('#rightarrow').hide();
+		jQuery('#leftarrow').show();
+		
+	};
+	function swipeLeft()
+	{
 
-//Scrolling bg
+		jQuery('#right').animate({
+				width:0,
+				opacity:0
+			},
+			200
+		);
+		jQuery('#left').animate({
+				width:'100%',
+				'right': '=0%',
+				opacity:1.0
+			},
+			400	
+		);
+		jQuery('#left').toggleClass('active',true);
+		jQuery('#right').toggleClass('active',false);
+		jQuery('#leftarrow').hide();
+		jQuery('#rightarrow').show();
+		
+	};
+	
+	//Arrow management
+	$('#rightarrow').on('click', function(e){
+		swipeRight();
+	});
+	$('#leftarrow').on('click', function(e){
+		swipeLeft();
+	});
+	//Keyboard navigation
+	$("body").keydown(function( event ) {
+  		if ( event.keyCode == 39 && $('#left').hasClass('active') ){
+			swipeRight();		
+  		}
+		else if ( event.keyCode == 37 && $('#right').hasClass('active') ) {
+			swipeLeft();		
+  		}
+	});
+});
+
+	/*//Scrolling bg -- Temporary ???
     $(function(){
         var x = 0;
 		var y = 0;
         setInterval(function(){
-            x+=0.25;
+           	x+=0.25;
 			y+=0.125;
             $('body').css('background-position', x + 'px '+ y + 'px');
         }, 10);
-    })
-	
-	$('body').keypress(function(event) 
-	{
-		if (event.keyCode == 39)
-			{
-			event.preventDefault();
-			
-			var sectionId = $(this).attr("data-section"),
-			$toSlide= $("#hello section#"+sectionId),
-			$fromSlide= $('.active');
-				
-			if (!($toSlide.hasClass("active")))
-			{
-				
-				$fromSlide.animate({"left":"-100%"},500,'linear')
-				$toSlide.animate({"left":"0%"},500,'linear',function()
-				{    
-				  $fromSlide.css("left","100%");
-				  $fromSlide.removeClass("active");  
-				  $toSlide.addClass("active");     
-				});
-			}
-    	}
-	});
-	
-document.write("<p class=\"phase\" > place your ships! </p>");
+    })*/
+
+document.write("<div id=\"animated-background\" ></div>");
+document.write("<p id=\"phase\" > place your ships! </p>");
 // HTML GENERATION
 var gridx = 8, gridy = 8;
 var Ships = [["Minesweeper",2,4],["Frigate",3,4],[ "Cruiser",4,2],[ "Battleship",5,1]];
@@ -55,8 +95,7 @@ var player2Grid = [[]];
 var player1Ships = [];
 
 // player 1 table
-document.write("<div class=\"container\">");
-document.write("<div class=\"left\"><table>");
+document.write("<div id='left' class='active'><table>");
 for (i=0; i<gridx; i++)
 {
 	//rows
@@ -74,7 +113,7 @@ for (i=0; i<gridx; i++)
 document.write("</table></div>");
 
 // player 2 table
-document.write("<div class=\"right\"><table>");
+document.write("<div id=\"right\"><table>");
 for (i=0; i<gridx; i++)
 {	
 	//rows
@@ -83,25 +122,25 @@ for (i=0; i<gridx; i++)
 	for (j=0; j<gridy; j++)
 	{
 		// cells
-		document.write("<td>");
+		document.write("<td>X");
 		player2Grid[i][j]=j;
 		document.write("</td>");
 	}
 	document.write("</tr>");
 }
 
-document.write("</table></div>")
-document.write("</div>");
+document.write("</table></div>");
 
-
+document.write("<div id=\"rightarrow\">-></div>");
+document.write("<div id=\"leftarrow\"><-</div>");
 
 
 document.write("<form action=\"http://www.html.am/html-codes/forms/html-form-tag-action.cfm\" target=\"chattextarea\" method=\"get\" id=\"chat\">");
-document.write("<div class=\"chat\">");
-document.write("<input class=\"chatinput\" name=\"chatinput\" type=\"text\" value=\"\" form=\"chat\">");
-document.write("<input type=\"submit\" class=\"chatbutton\" value=\"Send\">");
+document.write("<div id=\"chatdiv\">");
+document.write("<input id=\"chatinput\" name=\"chatinput\" type=\"text\" value=\"\" form=\"chat\">");
+document.write("<input type=\"submit\" id=\"chatbutton\" value=\"Send\">");
 document.write("</form>");
-document.write("<div class=\"chattextarea\" name=\"chattextarea\">hay<br>hay<br>hay<br>hay<br>hay<br>hay<br>hay<br>hay<br>hay<br>hay<br>hay</div>");
+document.write("<div id=\"chattextarea\" name=\"chattextarea\"></div>");
 document.write("</div>");
 </script>
 <body>
