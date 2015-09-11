@@ -4,46 +4,8 @@
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <link rel="shortcut icon" href="img/icon.png">
 <link rel="stylesheet" type="text/css" href="style/fontStyle.css">
+<link rel="stylesheet" type="text/css" href="style/indexStyle.css">
 <title>Battleship</title>
-<style type="text/css">
-
-{margin:0;padding:0;}
-html {
-	background: black;
-	background-image:url(img/Background2.gif);
-	background-size: 100% 500%;
-	background-repeat: no-repeat;
-}
-body p {
-	text-align: center;
-	vertical-align: middle;
-	font-family: slkscr;
-	font-weight: bold;
-	}
-titlepanel{
-    color: white;
-	}
-battleship{
-	font-size:50px;
-	alignment-adjust:middle;
-	font-family: slkscre;
-	font-weight: bold;
-	}
-section {	
-		font-family: slkscr;
-		font-weight: bold;
-        background: #000;
-		background-clip:border-box;
-        color: white;
-        border-radius: 2em;
-        padding: 1em;
-        position: fixed;
-        top: 55%;
-        left: 50%;
-        margin-right: -50%;
-        transform: translate(-50%, -50%)
-	}
-</style>
 </head>
 <script language="javascript">
 	function login(){
@@ -59,12 +21,15 @@ section {
 </script>
 <body>
 	<titlepanel>
-		<battleship>
+		<btitle>
 			<p>BATTLESHIP</p>
-		</battleship>
-		<p>The year is 20XX</p>
-		<p>Everyone is playing battleship</p>
-	</titlepanel>
+		</title>
+        <subtitle>
+        	<p><br></p>
+			<p>The year is 20XX</p>
+			<p>Everyone is playing battleship</p>
+		</subtitle>
+    </titlepanel>
     <form id="loginform" method="post" name="myform">
 	<section>
 		<p>Username</p>
