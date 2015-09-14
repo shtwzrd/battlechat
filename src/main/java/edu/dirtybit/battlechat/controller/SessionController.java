@@ -13,7 +13,7 @@ public class SessionController implements Controller {
 
     public void buildRoutes() {
         get("/hello", (req, res) -> renderTemplate());
-        get("/poop", (req, res) -> {
+        put("/", (req, res) -> {
             String session = manager.enterQueue().toString();
             res.redirect("/session/" + session);
             return new String();
