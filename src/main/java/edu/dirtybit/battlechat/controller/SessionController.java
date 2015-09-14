@@ -3,15 +3,19 @@ package edu.dirtybit.battlechat.controller;
 import java.util.HashMap;
 import java.util.Map;
 import static spark.Spark.*;
+
+import edu.dirtybit.battlechat.SessionManager;
 import spark.ModelAndView;
 import spark.template.mustache.MustacheTemplateEngine;
 
 public class SessionController implements Controller {
+    private SessionManager manager = new SessionManager();
 
     public void buildRoutes() {
         get("/hello", (req, res) -> renderTemplate());
-        post("/", (req, res) -> {
-            res.redirect("/session/:id");
+        get("/poop", (req, res) -> {
+            String session = manager.enterQueue().toString();
+            res.redirect("/session/" + session);
             return new String();
         });
     }

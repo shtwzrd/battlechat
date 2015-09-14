@@ -11,18 +11,16 @@ public enum SessionFactory {
     }
 
     public Session createSession(GameConfiguration config) {
-      try
-      {
+      try {
           return createSessionInternal(config);
       } catch (Exception e) {
           e.printStackTrace();
-      } finally {
-          return null;
       }
+      return null;
     }
 
     private Session createSessionInternal(GameConfiguration config) throws Exception {
-        if (ConfigurationProvider.SessionType instanceof GameState) {
+        if (ConfigurationProvider.SessionType.getName().equals((GameState.class.getName()))) {
             return new GameState(config);
         } else {
             throw new Exception("Bad Configuration: unknown Session Type");

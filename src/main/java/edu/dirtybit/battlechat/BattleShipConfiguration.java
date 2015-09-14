@@ -14,7 +14,7 @@ public class BattleShipConfiguration implements GameConfiguration {
     }
 
     public String getProperty(String key) {
-        return settings.containsKey(key) ? "" : settings.get(key);
+        return settings.containsKey(key) ? settings.get(key) : "";
     }
 
     public enum ConfigKeys {

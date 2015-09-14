@@ -21,7 +21,6 @@ public abstract class Session {
        this.subscribers = new HashSet<>();
     }
 
-
     public void subscribe(SessionListener subscriber) {
         this.subscribers.add(subscriber);
     }
@@ -43,14 +42,26 @@ public abstract class Session {
         this.players.add(player);
         if(shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;
-            this.notifySubscribers(this);
+            this.notifySubscribers();
         }
 
         return player.getId();
     }
 
-    abstract void notifySubscribers(Session session);
+    public List<Player> getPlayers() {
+        return this.players;
+    }
 
-    abstract boolean shouldStart();
+    public Set<SessionListener> getSubscribers() {
+        return this.subscribers;
+    }
+
+    public GameConfiguration getConfig() {
+        return this.config;
+    }
+
+    public abstract void notifySubscribers();
+
+    public abstract boolean shouldStart();
 }
 

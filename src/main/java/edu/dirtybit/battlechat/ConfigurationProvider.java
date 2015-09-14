@@ -3,5 +3,5 @@ package edu.dirtybit.battlechat;
 import edu.dirtybit.battlechat.model.GameState;
 
 public class ConfigurationProvider {
-    public static final Object SessionType = GameState.class;
+    public static final Class SessionType = GameState.class;
 }
