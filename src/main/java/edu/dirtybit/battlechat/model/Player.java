@@ -12,7 +12,7 @@ public class Player {
         fleet = new Fleet();
     }
 
-    public UUID getUuid() {
+    public UUID getId() {
         return uuid;
     }
 

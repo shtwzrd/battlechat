@@ -10,7 +10,10 @@ public class SessionController implements Controller {
 
     public void buildRoutes() {
         get("/hello", (req, res) -> renderTemplate());
-        post("/", (req, res) -> renderTemplate());
+        post("/", (req, res) -> {
+            res.redirect("/session/:id");
+            return new String();
+        });
     }
 
     private String renderTemplate() {

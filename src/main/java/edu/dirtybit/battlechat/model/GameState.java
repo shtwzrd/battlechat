@@ -1,30 +1,30 @@
 package edu.dirtybit.battlechat.model;
 
-import java.util.ArrayList;
+import edu.dirtybit.battlechat.GameConfiguration;
+import edu.dirtybit.battlechat.Session;
+import edu.dirtybit.battlechat.SessionListener;
+import edu.dirtybit.battlechat.SessionStatus;
 
-public class GameState {
-    private static final int DEFAULTPLAYERS = 2;
-    private static final int DEFAULTSIZE = 8;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.UUID;
+
+public class GameState extends Session {
 
     private ArrayList<Player> players;
     private ArrayList<Board> boards;
+    private HashSet<SessionListener> subscribers;
+    private SessionStatus status;
 
-    public GameState()
+    public GameState(GameConfiguration config)
     {
-        this(DEFAULTSIZE, DEFAULTSIZE);
-    }
+        super(config);
+        this.boards = new ArrayList<>();
+        this.status = SessionStatus.ENQUEUED;
 
-    public GameState(int square)
-    {
-        this(square, square);
-    }
-
-    public GameState(int width, int height)
-    {
-        this.players = new ArrayList<Player>();
-        this.boards = new ArrayList<Board>();
-
-        this.initializeBoards(DEFAULTPLAYERS, width, height);
+        this.initializeBoards(Integer.parseInt(config.getProperty("PLAYER_COUNT")),
+               Integer.parseInt(config.getProperty("GRID_WIDTH")),
+               Integer.parseInt(config.getProperty("GRID_HEIGHT")));
     }
 
     private void initializeBoards(int players, int width, int height)
@@ -63,4 +63,12 @@ public class GameState {
     public void setBoards(ArrayList<Board> boards) {
         this.boards = boards;
     }
+
+    public UUID queuePlayer() {
+        Player player = new Player();
+        this.players.add(player);
+        return player.getId();
+    }
+
+
 }
