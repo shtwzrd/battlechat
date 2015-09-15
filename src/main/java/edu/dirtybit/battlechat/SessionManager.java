@@ -1,5 +1,7 @@
 package edu.dirtybit.battlechat;
 
+import edu.dirtybit.battlechat.model.Player;
+
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -17,11 +19,19 @@ public class SessionManager implements SessionListener {
         this.queue = new ConcurrentLinkedQueue<>();
     }
 
-    public UUID enterQueue() {
+    public Session getSessionContainingPlayer(UUID player) {
+        return this.sessions.get(this.playerToSession.get(player));
+    }
+
+    public Session getSession(UUID session) {
+        return this.sessions.get(session);
+    }
+
+    public UUID enterQueue(Player player) {
         if(!this.queue.isEmpty()) {
-            return addToExisting(this.queue.peek());
+            return addToExisting(this.queue.peek(), player);
         } else {
-            return addToNewGame();
+            return addToNewGame(player);
         }
     }
 
@@ -37,8 +47,8 @@ public class SessionManager implements SessionListener {
         }
     }
 
-    private UUID addToNewGame() {
-       Session newGame = SessionFactory.INSTANCE.createSession(defaultConfig);
+    private UUID addToNewGame(Player player) {
+       Session newGame = SessionFactory.INSTANCE.createSession(defaultConfig, player);
        newGame.subscribe(this);
        this.sessions.put(newGame.getId(), newGame);
        this.playerToSession.put(newGame.getInitiator(), newGame.getId());
@@ -46,7 +56,7 @@ public class SessionManager implements SessionListener {
        return newGame.getInitiator();
     }
 
-    private UUID addToExisting(Session session) {
-       return session.enqueuePlayer();
+    private UUID addToExisting(Session session, Player player) {
+       return session.enqueuePlayer(player);
     }
 }

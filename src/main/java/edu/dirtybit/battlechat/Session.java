@@ -11,13 +11,12 @@ public abstract class Session {
     private Set<SessionListener> subscribers;
     private SessionStatus status;
 
-    public Session(GameConfiguration config)
+    public Session(GameConfiguration config, Player player)
     {
        this.config = config;
        this.id = UUID.randomUUID();
-       Player one = new Player();
        this.players = new ArrayList<>();
-       this.players.add(one);
+       this.players.add(player);
        this.subscribers = new HashSet<>();
     }
 
@@ -37,8 +36,7 @@ public abstract class Session {
         return this.players.get(0).getId();
     }
 
-    public UUID enqueuePlayer() {
-        Player player = new Player();
+    public UUID enqueuePlayer(Player player) {
         this.players.add(player);
         if(shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;

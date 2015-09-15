@@ -5,20 +5,18 @@ import java.util.UUID;
 public class Player {
     private UUID uuid;
     private Fleet fleet;
+    private String givenName;
 
-    public Player()
+    public Player(String givenName)
     {
         uuid = UUID.randomUUID();
         fleet = new Fleet();
+        this.givenName = givenName;
     }
 
     public UUID getId() {
         return uuid;
     }
-
-    /*public void setUuid(UUID uuid) {
-        this.uuid = uuid;
-    }*/
 
     public Fleet getFleet() {
         return fleet;
@@ -26,5 +24,9 @@ public class Player {
 
     public void setFleet(Fleet fleet) {
         this.fleet = fleet;
+    }
+
+    public String getGivenName() {
+        return this.givenName;
     }
 }
