@@ -7,21 +7,9 @@
 <link rel="stylesheet" type="text/css" href="style/indexStyle.css">
 <title>Battleship</title>
 </head>
-<script language="javascript">
-	function login(){
-		var username = document.getElementById("Username").value;
-		// verify there's no 2 player with the same name on the server
-		// add player on matchmaking
-		alert ("Welcome " + username +" :)");
-		// Wait for server response
-		// Redirect
-		alert("Page path is " + window.location.pathname); 
-		
-	}
-</script>
 <body>
 	<titlepanel>
-		<btitle>
+		<title>
 			<p>BATTLESHIP</p>
 		</title>
         <subtitle>
@@ -30,16 +18,16 @@
 			<p>Everyone is playing battleship</p>
 		</subtitle>
     </titlepanel>
-    <form id="loginform" method="post" name="myform">
+    <form id="loginform" method="post" name="myform" action="/">
 	<section>
 		<p>Username</p>
 		<p>       
-  			<input name="username" id="Username" />
+  			<input type="text" name="username" id="username" />
 		</p>
         <p>
-        <button name="valid" id="Valid" style="font-family:slkscr;" onclick="login()">Connect</button>
+            <input type="submit" form="loginform" style="font-family:slkscr;" value="Connect"/>
         </p>
-        </form>
 	</section>
+	</form>
 </body>
 </html>

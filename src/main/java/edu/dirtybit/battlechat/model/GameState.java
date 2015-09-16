@@ -12,9 +12,9 @@ public class GameState extends Session {
     private ArrayList<Board> boards;
     private int currentPlayerIndex;
 
-    public GameState(GameConfiguration config)
+    public GameState(GameConfiguration config, Player player)
     {
-        super(config);
+        super(config, player);
         this.boards = new ArrayList<>();
 
         this.initializeBoards(
