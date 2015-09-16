@@ -18,9 +18,9 @@ public class GameState extends Session {
         this.boards = new ArrayList<>();
 
         this.initializeBoards(
-               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString())),
-               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())),
-               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
+                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString())),
+                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())),
+                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
     }
 
     @Override
@@ -84,54 +84,70 @@ public class GameState extends Session {
     public boolean validateFleet(Fleet fleet, Board board) {
         boolean isvalid = true;
 
-        int i = 0;
-        while (i < fleet.getShips().size())
-        {
-            Ship ship = fleet.getShips().get(i);
+        if (board.isClear() == true) {
+            int i = 0;
+            while (i < fleet.getShips().size()) {
+                Ship ship = fleet.getShips().get(i);
 
-            // Check if the start coordinates are on the board
-            if (ship.getX() < 0 || ship.getX() > board.getWidth() ||
-                ship.getY() < 0 || ship.getY() > board.getHeight()) { isvalid = false; }
-            else {
-                // Check if end coordinates are on the board
-                switch (ship.getRotation()) {
-                    case Horizontal:
-                        int endx = ship.getX()+ship.getShiptype().getLength()-1;
-                        if (endx < 0 || endx > board.getWidth()) { isvalid = false; }
-                        else {
-                            for (int x = ship.getX(); x >= endx; x++) {
-                                if (board.getCells()[x][ship.getY()] == CellType.Empty) {
-                                    board.getCells()[x][ship.getY()] = CellType.Ship;
-                                } else {
-                                    isvalid = false;
+                // Check if the start coordinates are on the board
+                if (ship.getX() < 0 || ship.getX() > board.getWidth() ||
+                        ship.getY() < 0 || ship.getY() > board.getHeight()) {
+                    isvalid = false;
+                } else {
+                    // Check if end coordinates are on the board
+                    switch (ship.getRotation()) {
+                        case Horizontal:
+                            int endx = ship.getX() + ship.getShiptype().getLength() - 1;
+                            if (endx < 0 || endx > board.getWidth()) {
+                                isvalid = false;
+                            } else {
+                                for (int x = ship.getX(); x >= endx; x++) {
+                                    if (board.getCells()[x][ship.getY()] == CellType.Empty) {
+                                        board.getCells()[x][ship.getY()] = CellType.Ship;
+                                    } else {
+                                        isvalid = false;
+                                    }
                                 }
                             }
-                        }
-                        break;
-                    case Vertical:
-                        int endy = ship.getY()+ship.getShiptype().getLength()-1;
-                        if (endy < 0 || endy > board.getWidth()) { isvalid = false; }
-                        else {
-                            for (int y = ship.getY(); y >= endy; y++) {
-                                if (board.getCells()[ship.getX()][y] == CellType.Empty) {
-                                    board.getCells()[ship.getX()][y] = CellType.Ship;
-                                } else {
-                                    isvalid = false;
+                            break;
+                        case Vertical:
+                            int endy = ship.getY() + ship.getShiptype().getLength() - 1;
+                            if (endy < 0 || endy > board.getWidth()) {
+                                isvalid = false;
+                            } else {
+                                for (int y = ship.getY(); y >= endy; y++) {
+                                    if (board.getCells()[ship.getX()][y] == CellType.Empty) {
+                                        board.getCells()[ship.getX()][y] = CellType.Ship;
+                                    } else {
+                                        isvalid = false;
+                                    }
                                 }
                             }
-                        }
-                        break;
+                            break;
+                    }
                 }
 
                 if (!isvalid) {
-                    board.clear();
                     i = fleet.getShips().size();
+                } else {
+                    i++;
                 }
             }
 
-            i++;
+            if (!isvalid) {
+                board.clear();
+            }
         }
+        else { isvalid = false; }
 
         return isvalid;
+    }
+
+    public void fire(Player player, Board board, int x, int y)
+    {
+        // Check if not players own board?
+
+        if (board.getCells()[x][y] == CellType.Ship) { board.getCells()[x][y] = CellType.Hit; }
+        else { board.getCells()[x][y] = CellType.Miss; }
     }
 }

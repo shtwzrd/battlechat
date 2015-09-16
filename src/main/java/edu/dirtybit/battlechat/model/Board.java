@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Board extends BaseBoard {
     private Perspective perspective;
-    protected boolean cleared;
+    private boolean cleared;
 
     public Board(int width, int height)
     {
@@ -33,5 +33,9 @@ public class Board extends BaseBoard {
         super.clear();
         this.perspective.clear();
         this.cleared = true;
+    }
+
+    public boolean isClear() {
+        return this.cleared;
     }
 }
