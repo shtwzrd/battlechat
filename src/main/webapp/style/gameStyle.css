@@ -1,6 +1,5 @@
 @charset "utf-8";
 body{
-	/*background-image: url("../img/SeaTile.png");*/
 	background-size: 30px 30px; 
 	background-repeat: repeat;
 	overflow:hidden;
@@ -58,7 +57,7 @@ th, td, tr {
 td {
 	width: 6vh;
 	height: 6vh;
-	text-align:wcenter;
+	text-align:center;
 	font-family:slkscr;
 	font-size:10px;
 	border: 1px solid white;
@@ -70,6 +69,7 @@ table {
     margin-right: auto;
 	border-collapse: collapse;
 	border-spacing:0;
+	z-index:-5;
 }
 #phase{
 	width:80%;
@@ -89,13 +89,15 @@ table {
 	margin-right:auto;
 	position:absolute;
 	top:17vh;
-	width:100%;
+	width:0%;
 	height: 60%;
 	min-width:30%;
 	min-height:30%;
 	opacity:0;
 }
 #left{
+	overflow:hidden;
+	opacity:1;
 	margin-left:auto;
 	margin-right:auto;
 	position:absolute;
@@ -104,6 +106,50 @@ table {
 	height: 60%;
 	min-width:30%;
 	min-height:30%;
+}
+/*3 holes : width = 3*cellwidth*/
+.cruiser{
+	height:6vh;
+	width:18vh;
+	top:0%;
+	background-image:url(../img/cruiser.png);
+}
+.carrier{
+	height:6vh;
+	width:30vh;
+	top:20%;
+	background-image:url(../img/carrier.png);
+}
+.battleship{
+	height:6vh;
+	width:24vh;
+	top:40%;
+	background-image:url(../img/battleship.png);
+}
+.submarine{
+	height:6vh;
+	width:18vh;
+	top:60%;
+	background-image:url(../img/submarine.png);
+}
+.destroyer{
+	height:6vh;
+	width:12vh;
+	top:80%;
+	background-image:url(../img/destroyer.png);
+}
+.ship{
+	position:absolute;
+	left:0;
+	border:2px;
+	background-size:cover;
+	background-repeat:no-repeat;
+}
+#shipdiv{
+	left:11%;
+	position:absolute;
+	height:80%;
+	width:15%;
 }
 #chat{
 	width:80%;	
