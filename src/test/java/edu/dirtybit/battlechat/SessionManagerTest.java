@@ -9,7 +9,7 @@ import java.util.UUID;
 public class SessionManagerTest {
 
     @Test
-    public void SessionManager_ShouldReturnUUIDMatchingPlayerId_OnEnterQueue() {
+    public void SessionManager_ShouldReturnUUIDMatchingPlayerId_OnEnterQueue() throws Exception {
         SessionManager manager = new SessionManager();
         Player player = new Player("test");
         UUID playerId = manager.enterQueue(player);
@@ -18,7 +18,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void SessionManager_ShouldReturnSessionContainingPlayer_OnEnterQueue() {
+    public void SessionManager_ShouldReturnSessionContainingPlayer_OnEnterQueue() throws Exception  {
         SessionManager manager = new SessionManager();
         Player player = new Player("test");
         UUID playerId = manager.enterQueue(player);
@@ -28,7 +28,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void SessionManager_ShouldReturnNonNullSession_OnEnterQueue() {
+    public void SessionManager_ShouldReturnNonNullSession_OnEnterQueue() throws Exception  {
         SessionManager manager = new SessionManager();
         Player player = new Player("test");
         UUID playerId = manager.enterQueue(player);
@@ -38,7 +38,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void SessionManager_ShouldGiveCorrectSessionOnReverseLookup_ViaGetSessionContainingPlayer() {
+    public void SessionManager_ShouldGiveCorrectSessionOnReverseLookup_ViaGetSessionContainingPlayer() throws Exception  {
         SessionManager manager = new SessionManager();
         Player player = new Player("test");
         UUID playerId = manager.enterQueue(player);
@@ -51,7 +51,7 @@ public class SessionManagerTest {
     }
 
     @Test
-    public void SessionManager_ShouldRemoveSessions_OnNotifySubscriber_WhenSessionIsCompleted() {
+    public void SessionManager_ShouldRemoveSessions_OnNotifySubscriber_WhenSessionIsCompleted() throws Exception  {
         SessionManager manager = new SessionManager();
         Player player = new Player("test");
         UUID playerId = manager.enterQueue(player);

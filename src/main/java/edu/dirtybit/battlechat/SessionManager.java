@@ -32,7 +32,7 @@ public class SessionManager implements SessionListener {
         return this.sessions.get(session);
     }
 
-    public UUID enterQueue(Player player) {
+    public UUID enterQueue(Player player) throws Exception {
         if(!this.queue.isEmpty()) {
             return addToExisting(this.queue.peek(), player);
         } else {
@@ -52,7 +52,7 @@ public class SessionManager implements SessionListener {
         }
     }
 
-    private UUID addToNewGame(Player player) {
+    private UUID addToNewGame(Player player) throws Exception {
        Session newGame = SessionFactory.INSTANCE.createSession(defaultConfig, player);
        newGame.subscribe(this);
        this.sessions.put(newGame.getId(), newGame);
