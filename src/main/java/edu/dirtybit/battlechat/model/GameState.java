@@ -1,44 +1,43 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.GameConfiguration;
+import edu.dirtybit.battlechat.Session;
+
 import java.util.ArrayList;
 
-public class GameState {
-    private static final int DEFAULTPLAYERS = 2;
-    private static final int DEFAULTSIZE = 8;
+public class GameState extends Session {
 
-    private ArrayList<Player> players;
     private ArrayList<Board> boards;
 
-    public GameState()
+    public GameState(GameConfiguration config, Player player)
     {
-        this(DEFAULTSIZE, DEFAULTSIZE);
+        super(config, player);
+        this.boards = new ArrayList<>();
+
+        this.initializeBoards(
+               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString())),
+               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())),
+               Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
     }
 
-    public GameState(int square)
-    {
-        this(square, square);
-    }
-
-    public GameState(int width, int height)
-    {
-        this.players = new ArrayList<Player>();
-        this.boards = new ArrayList<Board>();
-
-        this.initializeBoards(DEFAULTPLAYERS, width, height);
+    @Override
+    public boolean shouldStart() {
+        return this.getPlayers().size() == Integer.parseInt(this.getConfig()
+                .getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
     }
 
     private void initializeBoards(int players, int width, int height)
     {
         for (int i = 0; i < players; i++)
         {
-            this.players.add(new Player());
             this.boards.add(new Board(width, height));
         }
     }
 
     private int getPlayerIndex(Player player)
     {
-        return this.players.indexOf(player);
+        return getPlayers().indexOf(player);
     }
 
     public void setCell(Player player, int x, int y, CellType celltype)
@@ -48,14 +47,6 @@ public class GameState {
         boards.get(index).setCell(x, y, celltype);
     }
 
-    public ArrayList<Player> getPlayers() {
-        return players;
-    }
-
-    public void setPlayers(ArrayList<Player> players) {
-        this.players = players;
-    }
-
     public ArrayList<Board> getBoards() {
         return boards;
     }
@@ -63,4 +54,5 @@ public class GameState {
     public void setBoards(ArrayList<Board> boards) {
         this.boards = boards;
     }
+
 }
