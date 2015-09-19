@@ -23,7 +23,7 @@ public class GameState extends Session {
 
     @Override
     public boolean shouldStart() {
-        return this.getSubscribers().size() == Integer.parseInt(this.getConfig()
+        return this.getPlayers().size() == Integer.parseInt(this.getConfig()
                 .getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
     }
 
