@@ -22,11 +22,6 @@ public class GameState extends Session {
     }
 
     @Override
-    public void notifySubscribers() {
-        this.getSubscribers().forEach(x -> x.notifySubscriber(this));
-    }
-
-    @Override
     public boolean shouldStart() {
         return this.getSubscribers().size() == Integer.parseInt(this.getConfig()
                 .getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));

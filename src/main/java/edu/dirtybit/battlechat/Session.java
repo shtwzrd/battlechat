@@ -18,6 +18,7 @@ public abstract class Session {
        this.players = new ArrayList<>();
        this.players.add(player);
        this.subscribers = new HashSet<>();
+       this.status = SessionStatus.ENQUEUED;
     }
 
     public void subscribe(SessionListener subscriber) {
@@ -58,7 +59,9 @@ public abstract class Session {
         return this.config;
     }
 
-    public abstract void notifySubscribers();
+    public void notifySubscribers() {
+       this.subscribers.forEach(x -> x.notifySubscriber(this));
+    }
 
     public abstract boolean shouldStart();
 }

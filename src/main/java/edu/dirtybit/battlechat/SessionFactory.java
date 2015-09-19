@@ -5,19 +5,14 @@ import edu.dirtybit.battlechat.model.Player;
 
 public enum SessionFactory {
     INSTANCE;
-    private SessionFactory instance;
-
-    public static SessionFactory getInstance() {
-        return INSTANCE.instance;
-    }
 
     public Session createSession(GameConfiguration config, Player player) {
       try {
           return createSessionInternal(config, player);
       } catch (Exception e) {
           e.printStackTrace();
+          return null;
       }
-      return null;
     }
 
     private Session createSessionInternal(GameConfiguration config, Player player) throws Exception {
