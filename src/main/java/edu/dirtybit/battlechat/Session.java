@@ -9,7 +9,7 @@ public abstract class Session {
     private UUID id;
     private List<Player> players;
     private Set<SessionListener> subscribers;
-    private SessionStatus status;
+    protected SessionStatus status;
 
     public Session(GameConfiguration config, Player player)
     {

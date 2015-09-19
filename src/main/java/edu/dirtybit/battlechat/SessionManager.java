@@ -20,7 +20,12 @@ public class SessionManager implements SessionListener {
     }
 
     public Session getSessionContainingPlayer(UUID player) {
-        return this.sessions.get(this.playerToSession.get(player));
+        UUID lookup = this.playerToSession.get(player);
+        if(lookup == null) {
+            return null;
+        } else {
+            return this.sessions.get(lookup);
+        }
     }
 
     public Session getSession(UUID session) {
