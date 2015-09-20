@@ -3,6 +3,7 @@ package edu.dirtybit.battlechat.model;
 import java.util.ArrayList;
 
 public class Fleet {
+    private static final int CANOE = 0;
     private static final int CRUISERS = 1;
     private static final int SUBMARINES = 1;
     private static final int DESTROYERS = 1;
@@ -13,13 +14,16 @@ public class Fleet {
 
     public Fleet()
     {
-        this(CRUISERS, SUBMARINES, DESTROYERS, BATTLESHIPS, CARRIERS);
+        this(CANOE, CRUISERS, SUBMARINES, DESTROYERS, BATTLESHIPS, CARRIERS);
     }
 
-    public Fleet(int cruisers, int submarines, int destroyers, int battleships, int carriers) {
+    public Fleet(int canoes, int cruisers, int submarines, int destroyers, int battleships, int carriers) {
         this.ships = new ArrayList<Ship>();
 
         int i = 0;
+        for (i = 0; i < canoes; i++) {
+            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CANOE));
+        }
         for (i = 0; i < cruisers; i++) {
             this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CRUISER));
         }
@@ -35,5 +39,9 @@ public class Fleet {
         for (i = 0; i < carriers; i++) {
             this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CARRIER));
         }
+    }
+
+    public ArrayList<Ship> getShips() {
+        return ships;
     }
 }

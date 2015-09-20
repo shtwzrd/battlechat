@@ -9,9 +9,10 @@ public class Perspective extends BaseBoard {
         super(width, height);
     }
 
+    @Override
     public void setCell(int x, int y, CellType celltype)
     {
         if (celltype == CellType.Ship) { celltype = CellType.Empty; }
-        this.cells[x][y] = celltype;
+        super.setCell(x, y, celltype);
     }
 }
