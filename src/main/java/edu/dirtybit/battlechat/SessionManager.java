@@ -1,5 +1,7 @@
 package edu.dirtybit.battlechat;
 
+import edu.dirtybit.battlechat.controller.BattleChatSessionSocket;
+import edu.dirtybit.battlechat.model.GameMessage;
 import edu.dirtybit.battlechat.model.Player;
 
 import java.util.UUID;
@@ -7,16 +9,19 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
 
-public class SessionManager implements SessionListener {
+public class SessionManager implements SessionListener, LobbyListener {
     private ConcurrentMap<UUID, UUID> playerToSession;
     private ConcurrentMap<UUID, Session> sessions;
+    private ConcurrentMap<UUID, BattleChatSessionSocket> sockets;
     private ConcurrentLinkedQueue<Session> queue;
     private BattleShipConfiguration defaultConfig = new BattleShipConfiguration();
 
     public SessionManager() {
         this.sessions = new ConcurrentHashMap<>();
+        this.sockets = new ConcurrentHashMap<>();
         this.playerToSession = new ConcurrentHashMap<>();
         this.queue = new ConcurrentLinkedQueue<>();
+        Lobby.INSTANCE.subscribe(this);
     }
 
     public Session getSessionContainingPlayer(UUID player) {
@@ -52,6 +57,11 @@ public class SessionManager implements SessionListener {
         }
     }
 
+    @Override
+    public void recieveMessage(GameMessage message) {
+        //TODO
+    }
+
     private UUID addToNewGame(Player player) throws Exception {
        Session newGame = SessionFactory.INSTANCE.createSession(defaultConfig, player);
        newGame.subscribe(this);
@@ -64,4 +74,6 @@ public class SessionManager implements SessionListener {
     private UUID addToExisting(Session session, Player player) {
        return session.enqueuePlayer(player);
     }
+
+
 }
