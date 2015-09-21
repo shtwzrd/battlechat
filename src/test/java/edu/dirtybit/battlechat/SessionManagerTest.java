@@ -64,4 +64,21 @@ public class SessionManagerTest {
         assertNull(manager.getSession(session.getId()));
         assertNull(manager.getSessionContainingPlayer(playerId));
     }
+
+    @Test
+    public void SessionManager_ShouldMatchMakePlayers_WhenTwoQueue() throws Exception {
+        SessionManager manager = new SessionManager();
+
+        Player player = new Player("one");
+        UUID playerOneId = manager.enterQueue(player);
+        Session session1 = manager.getSessionContainingPlayer(playerOneId);
+        assertNotNull(session1);
+
+        Player player2 = new Player("two");
+        UUID playerTwoId = manager.enterQueue(player2);
+        Session session2 = manager.getSessionContainingPlayer(playerTwoId);
+        assertNotNull(session2);
+
+        assertEquals(session1.getId(), session2.getId());
+    }
 }

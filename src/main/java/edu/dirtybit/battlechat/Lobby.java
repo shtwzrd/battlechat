@@ -33,7 +33,7 @@ public enum Lobby {
     }
 
     public void notifyMessage(GameMessage message) {
-        this.listeners.forEach(l -> l.recieveMessage(message));
+        this.listeners.forEach(l -> l.receiveMessage(message));
     }
 
     public void subscribe(LobbyListener listener) {
