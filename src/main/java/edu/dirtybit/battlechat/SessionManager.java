@@ -62,12 +62,14 @@ public class SessionManager implements SessionListener, LobbyListener {
     public void receiveMessage(GameMessage message) {
         if(message.getMessageType() == GameMessageType.CHAT) {
             Session s = this.getSessionContainingPlayer(message.getId());
-            String sender = s.getPlayerById(message.getId()).getGivenName();
-            s.getPlayers().forEach(p -> {
-                Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
-                        p.getId(), String.format("%s: %s \n", sender, message.getBody())));
+            if (s != null) {
+                String sender = s.getPlayerById(message.getId()).getGivenName();
+                s.getPlayers().forEach(p -> {
+                    Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
+                            p.getId(), String.format("%s: %s \n", sender, message.getBody())));
                 });
             }
+        }
     }
 
     private UUID addToNewGame(Player player) throws Exception {
