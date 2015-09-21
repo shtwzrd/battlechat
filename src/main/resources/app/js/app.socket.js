@@ -3,6 +3,7 @@
 
     var webSocket;
     var domain = $(this.document).attr("baseURI").split('/')[2];
+    var protocol = domain.startsWith('localhost') ? "ws://" : "wss://";
 
     // Public property
 
@@ -17,7 +18,7 @@
             return;
         }
         // Create a new instance of the websocket
-        webSocket = new WebSocket("ws://" + domain + "/session", ["v1", appSocket.id]);
+        webSocket = new WebSocket(protocol + domain + "/session", ["v1", appSocket.id]);
 
         // Binds functions to the listeners for the websocket.
         webSocket.onopen = function(event){
