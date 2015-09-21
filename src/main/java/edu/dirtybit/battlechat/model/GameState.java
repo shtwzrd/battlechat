@@ -79,7 +79,7 @@ public class GameState extends Session {
     public boolean validateFleet(Fleet fleet, Board board) {
         boolean isvalid = true;
 
-        // TODO: check
+        // TODO: check fleetsize?
 
         if (board.isClear() == true) {
             int i = 0;
@@ -98,7 +98,7 @@ public class GameState extends Session {
                             if (endx < 0 || endx > board.getWidth()) {
                                 isvalid = false;
                             } else {
-                                for (int x = ship.getX(); x >= endx; x++) {
+                                for (int x = ship.getX(); x <= endx; x++) {
                                     if (board.getCells()[x][ship.getY()] == CellType.Empty) {
                                         board.getCells()[x][ship.getY()] = CellType.Ship;
                                     } else {
@@ -112,7 +112,7 @@ public class GameState extends Session {
                             if (endy < 0 || endy > board.getWidth()) {
                                 isvalid = false;
                             } else {
-                                for (int y = ship.getY(); y >= endy; y++) {
+                                for (int y = ship.getY(); y <= endy; y++) {
                                     if (board.getCells()[ship.getX()][y] == CellType.Empty) {
                                         board.getCells()[ship.getX()][y] = CellType.Ship;
                                     } else {

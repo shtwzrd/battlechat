@@ -56,7 +56,7 @@ public class GameStateTest {
         GameStateTest.SetupBaseFleet(fleet);
         fleet.getShips().get(0).setLocation(-1, board.getHeight()+1);
 
-        assertTrue(game.validateFleet(fleet, board));
+        assertFalse(game.validateFleet(fleet, board));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class GameStateTest {
         ship1.setLocation(ship2.getX()+1, ship2.getY()-1);
         ship1.setRotation(Rotation.Vertical);
 
-        assertTrue(game.validateFleet(fleet, board));
+        assertFalse(game.validateFleet(fleet, board));
     }
 
     private static Fleet SetupBaseFleet(Fleet fleet) {
