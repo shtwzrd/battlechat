@@ -38,9 +38,8 @@
     };
 
     // Sends the value of the text input to the server
-    appSocket.send = function (){
-        var text = document.getElementById("messageinput").value;
-        webSocket.send(text);
+    appSocket.send = function (msg){
+        webSocket.send(JSON.stringify(msg));
     };
 
     appSocket.closeSocket = function (){

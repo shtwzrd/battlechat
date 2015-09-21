@@ -5,5 +5,13 @@
 <div id="messages"></div>
 <button onclick="appSocket.openSocket()">Come at me</button>
 
+<form data-bind="submit: sendMessage">
+    <input data-bind='value: messageToAdd, valueUpdate: "afterkeydown"' />
+    <button type="submit" data-bind="enable: messageToAdd().length > 0">Send</button>
+    <textarea width="50" data-bind="value: messages"> </textarea>
+</form>
+
 <script src="../lib/jquery-1.11.3.js"></script>
+<script src="../lib/knockout-3.3.0.js"></script>
 <script src="../js/app.socket.js"></script>
+<script src="../js/app.chat.viewmodel.js"></script>
