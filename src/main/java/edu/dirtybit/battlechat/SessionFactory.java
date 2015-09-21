@@ -14,7 +14,7 @@ public enum SessionFactory {
         if (type.getName().equals((GameState.class.getName()))) {
             return new GameState(config, player);
         } else {
-            throw new Exception("Bad Configuration: unknown Session Type");
+            throw new Exception(String.format("Bad Configuration: unknown Session Type: %s", type.toString()));
         }
     }
 }

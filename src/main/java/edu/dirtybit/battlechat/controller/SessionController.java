@@ -15,11 +15,16 @@ import spark.template.mustache.MustacheTemplateEngine;
 public class SessionController implements Controller {
     private SessionManager manager = new SessionManager();
 
+    @Override
+    public void registerWebSockets() {
+        webSocket("/session", BattleChatSessionSocket.class);
+    }
+
     public void buildRoutes() {
         get("/session/:id", (req, res) -> {
             UUID id = UUID.fromString(req.params(":id"));
             Session session = manager.getSessionContainingPlayer(id);
-            Map map = new HashMap<String,String>();
+            Map map = new HashMap<String, String>();
             map.put("name", session.getPlayers().get(0).getGivenName());
             return renderTemplate(map);
         });

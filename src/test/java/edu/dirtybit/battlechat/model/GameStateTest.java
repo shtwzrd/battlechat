@@ -1,11 +1,8 @@
-package edu.dirtybit.battlechat.edu.dirtybit.battlechat.model;
+package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.MockConfiguration;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import edu.dirtybit.battlechat.model.GameState;
-import edu.dirtybit.battlechat.model.CellType;
-import edu.dirtybit.battlechat.model.Player;
 
 public class GameStateTest {
 

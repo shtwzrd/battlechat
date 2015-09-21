@@ -1,6 +1,5 @@
-package edu.dirtybit.battlechat.edu.dirtybit.battlechat.model;
+package edu.dirtybit.battlechat.model;
 
-import edu.dirtybit.battlechat.model.Player;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
