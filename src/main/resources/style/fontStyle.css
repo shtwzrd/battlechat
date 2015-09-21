@@ -2,18 +2,18 @@
 @font-face {
   font-family: slkscr;
   font-weight: bold;
-  src: url('../Fonts/slkscrb.ttf');
+  src: url('../fonts/slkscrb.ttf');
 }
 @font-face {
   font-family: slkscr;
-  src: url('../Fonts/slkscr.ttf');
+  src: url('../fonts/slkscr.ttf');
 }
 @font-face {
   font-family: slkscre;
   font-weight: bold;
-  src: url('../Fonts/slkscreb.ttf');
+  src: url('../fonts/slkscreb.ttf');
 }
 @font-face {
   font-family: slkscre;
-  src: url('../Fonts/slkscre.ttf');
+  src: url('../fonts/slkscre.ttf');
 }
