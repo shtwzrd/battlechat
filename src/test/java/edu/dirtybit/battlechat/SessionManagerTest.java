@@ -1,5 +1,7 @@
 package edu.dirtybit.battlechat;
 
+import edu.dirtybit.battlechat.model.GameMessage;
+import edu.dirtybit.battlechat.model.GameMessageType;
 import org.junit.Test;
 import static org.junit.Assert.*;
 import edu.dirtybit.battlechat.model.Player;
@@ -59,7 +61,7 @@ public class SessionManagerTest {
 
         Session session = manager.getSessionContainingPlayer(playerId);
         session.status = SessionStatus.COMPLETED;
-        manager.notifySubscriber(session);
+        manager.notifySubscriber(session, new GameMessage(GameMessageType.CHAT, player.getId(), ""));
 
         assertNull(manager.getSession(session.getId()));
         assertNull(manager.getSessionContainingPlayer(playerId));

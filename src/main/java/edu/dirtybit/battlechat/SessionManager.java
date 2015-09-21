@@ -46,7 +46,9 @@ public class SessionManager implements SessionListener, LobbyListener {
         }
     }
 
-    public void notifySubscriber(Session obj) {
+    public void notifySubscriber(Session obj, GameMessage message) {
+        Lobby.INSTANCE.message(message);
+
         switch (obj.getStatus()) {
             case COMPLETED:
                 while(this.playerToSession.values().remove(obj.getId()));

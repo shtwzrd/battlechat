@@ -4,6 +4,11 @@ public class BattleChatStatus {
     private int secondsToPhaseChange;
     private Phase gamePhase;
 
+    public BattleChatStatus(Phase phase, int time) {
+        this.gamePhase = phase;
+        this.secondsToPhaseChange = time;
+    }
+
     public int getSecondsToPhaseChange() {
         return secondsToPhaseChange;
     }

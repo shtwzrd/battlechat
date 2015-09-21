@@ -2,6 +2,7 @@ package edu.dirtybit.battlechat.util;
 
 import com.google.gson.Gson;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.model.BattleChatStatus;
 import edu.dirtybit.battlechat.model.*;
 import org.junit.Test;
 
@@ -57,7 +58,7 @@ public class SerializationHelperTest {
     @Test
     public void SerializationHelper_DeserializeStatus_BodyShouldBeBattleChatStatus() {
         Gson gson = new Gson();
-        BattleChatStatus s = new BattleChatStatus();
+        BattleChatStatus s = new BattleChatStatus(BattleChatStatus.Phase.YOU_WIN, 1);
         s.setGamePhase(BattleChatStatus.Phase.WAITING_FOR_OPPONENT);
         s.setSecondsToPhaseChange(30);
         GameMessage<BattleChatStatus> msg = new GameMessage<>(GameMessageType.STATUS, UUID.randomUUID(), s);

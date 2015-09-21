@@ -1,16 +1,17 @@
 package edu.dirtybit.battlechat.model;
 
-import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
 import edu.dirtybit.battlechat.Session;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
-public class GameState extends Session {
+public class GameState extends Session implements Runnable {
 
     private ArrayList<Board> boards;
     private int currentPlayerIndex;
+    private BattleChatStatus.Phase phase;
+    private int secondsToNextPhase;
 
     public GameState(GameConfiguration config, Player player)
     {
@@ -18,15 +19,41 @@ public class GameState extends Session {
         this.boards = new ArrayList<>();
 
         this.initializeBoards(
-                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString())),
-                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())),
-                Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
+                config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString()),
+                config.getPropertyAsInt(ConfigKeys.GRID_WIDTH.toString()),
+                config.getPropertyAsInt(ConfigKeys.GRID_HEIGHT.toString()));
+
+        this.phase = BattleChatStatus.Phase.WAITING_FOR_OPPONENT;
+        this.secondsToNextPhase = config.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT.toString());
     }
 
     @Override
     public boolean shouldStart() {
-        return this.getPlayers().size() == Integer.parseInt(this.getConfig()
-                .getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
+        if(this.getPlayers().size() == this.getConfig().getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString())) {
+            this.phase = BattleChatStatus.Phase.PLACEMENT_PHASE;
+            this.secondsToNextPhase = this.getConfig().getPropertyAsInt(ConfigKeys.PLACEMENT_TIMEOUT.toString());
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void run() {
+        do {
+            tick();
+        } while (this.phase != BattleChatStatus.Phase.YOU_WIN || this.phase != BattleChatStatus.Phase.YOU_LOSE);
+    }
+
+    private void tick() {
+            this.secondsToNextPhase--;
+            this.getPlayers().forEach(p -> {
+                this.notifySubscribers(new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(this.phase, this.secondsToNextPhase)));
+            });
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ie) {
+                System.err.println("Sleep interrupted: " + ie.getMessage());
+            }
     }
 
     private void initializeBoards(int players, int width, int height)

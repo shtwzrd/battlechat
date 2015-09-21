@@ -12,4 +12,9 @@ public class MockSession extends Session {
     public boolean shouldStart() {
         return true;
     }
+
+    @Override
+    public void run() {
+        // TODO
+    }
 }

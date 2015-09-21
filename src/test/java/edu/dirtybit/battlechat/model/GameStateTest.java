@@ -1,6 +1,8 @@
 package edu.dirtybit.battlechat.model;
 
-import edu.dirtybit.battlechat.MockConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
+import edu.dirtybit.battlechat.GameConfiguration;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -8,10 +10,10 @@ public class GameStateTest {
 
     @Test
     public void GameState_ShouldStart_WhenPlayersEqualsPlayerCount() {
-        MockConfiguration config = new MockConfiguration();
+        GameConfiguration config = new BattleShipConfiguration();
         GameState game = new GameState(config, new Player("first"));
 
-        int playersToHave = Integer.parseInt(config.getProperty(MockConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
+        int playersToHave = Integer.parseInt(config.getProperty(ConfigKeys.PLAYER_COUNT.toString()));
         while(game.getPlayers().size() < playersToHave) {
             game.enqueuePlayer(new Player("next"));
         }
@@ -21,7 +23,7 @@ public class GameStateTest {
 
     @Test
     public void GameState_ShouldInitializeBoardsToAllEmpty_OnConstruction() {
-        MockConfiguration config = new MockConfiguration();
+        GameConfiguration config = new BattleShipConfiguration();
         GameState game = new GameState(config, new Player("test"));
 
         game.getBoards().forEach(b -> {

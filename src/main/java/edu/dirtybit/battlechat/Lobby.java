@@ -21,10 +21,13 @@ public enum Lobby {
     }
 
     public void message(GameMessage message) {
-        try {
-            this.players.get(message.getId()).sendMessage(message);
-        } catch (IOException e) {
-           e.printStackTrace();
+        SessionSocket s = this.players.get(message.getId());
+        if(s != null) {
+            try {
+                s.sendMessage(message);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 

@@ -25,12 +25,10 @@
             console.log("Connected.")
             if(event.data === undefined)
                 return;
-
-            console.log(event.data);
         };
 
         webSocket.onmessage = function(event){
-            writeResponse(JSON.parse(event.data).body);
+            routeMessage(JSON.parse(event.data));
         };
 
         webSocket.onclose = function(event){
@@ -49,8 +47,24 @@
 
     // Private function
 
-    function writeResponse(text){
+    function routeMessage(msg) {
+        switch(msg.messageType) {
+        case "CHAT":
+            writeChatMessage(msg.body);
+            break;
+        case "UPDATE":
+            writePhaseData(msg.body);
+            break;
+        }
+    };
+
+    function writeChatMessage(text) {
         appChatViewModel.messages.push(text);
+    };
+
+    function writePhaseData(msg) {
+        appGameStateViewModel.phase(msg.gamePhase);
+        appGameStateViewModel.timeToPhaseChange(msg.secondsToPhaseChange);
     };
 
 }( window.appSocket = window.appSocket || {}, jQuery ));
