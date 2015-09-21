@@ -7,7 +7,7 @@ public class MockLobbyListener implements LobbyListener {
     public int callCount = 0;
 
     @Override
-    public void recieveMessage(GameMessage message) {
+    public void receiveMessage(GameMessage message) {
         this.callCount++;
     }
 }

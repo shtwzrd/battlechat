@@ -2,7 +2,6 @@
     // Private property
 
     var webSocket;
-    var messages = document.getElementById("messages");
     var domain = $(this.document).attr("baseURI").split('/')[2];
 
     // Public property
@@ -14,7 +13,7 @@
     appSocket.openSocket = function () {
         // Ensures only one connection is open at a time
         if(webSocket !== undefined && webSocket.readyState !== WebSocket.CLOSED){
-            writeResponse("WebSocket is already opened.");
+            console.log("WebSocket is already opened.");
             return;
         }
         // Create a new instance of the websocket
@@ -22,18 +21,19 @@
 
         // Binds functions to the listeners for the websocket.
         webSocket.onopen = function(event){
+            console.log("Connected.")
             if(event.data === undefined)
                 return;
 
-            writeResponse(event.data);
+            console.log(event.data);
         };
 
         webSocket.onmessage = function(event){
-            writeResponse(event.data);
+            writeResponse(JSON.parse(event.data).body);
         };
 
         webSocket.onclose = function(event){
-            writeResponse("Connection closed");
+            console.log("Connection closed");
         };
     };
 
@@ -49,7 +49,7 @@
     // Private function
 
     function writeResponse(text){
-        messages.innerHTML += "<br/>" + text;
+        appChatViewModel.messages.push(text);
     };
 
 }( window.appSocket = window.appSocket || {}, jQuery ));

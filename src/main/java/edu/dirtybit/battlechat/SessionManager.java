@@ -59,12 +59,13 @@ public class SessionManager implements SessionListener, LobbyListener {
     }
 
     @Override
-    public void recieveMessage(GameMessage message) {
+    public void receiveMessage(GameMessage message) {
         if(message.getMessageType() == GameMessageType.CHAT) {
             Session s = this.getSessionContainingPlayer(message.getId());
+            String sender = s.getPlayerById(message.getId()).getGivenName();
             s.getPlayers().forEach(p -> {
                 Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
-                        p.getId(), String.format("%s: %s \n", p.getGivenName(), message.getBody())));
+                        p.getId(), String.format("%s: %s \n", sender, message.getBody())));
                 });
             }
     }
@@ -79,6 +80,7 @@ public class SessionManager implements SessionListener, LobbyListener {
     }
 
     private UUID addToExisting(Session session, Player player) {
+       this.playerToSession.put(player.getId(), session.getId());
        return session.enqueuePlayer(player);
     }
 
