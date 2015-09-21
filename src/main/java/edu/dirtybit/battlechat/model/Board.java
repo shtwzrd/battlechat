@@ -13,6 +13,7 @@ public class Board extends BaseBoard
         this.perspective = new Perspective(width, height);
         this.width = width;
         this.height = height;
+        this.clear();
         this.cleared = true;
     }
 

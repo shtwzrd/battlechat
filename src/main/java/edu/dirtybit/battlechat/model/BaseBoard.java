@@ -1,7 +1,5 @@
 package edu.dirtybit.battlechat.model;
 
-import java.util.ArrayList;
-
 public abstract class BaseBoard {
     protected CellType[][] cells;
     protected int width;
@@ -9,9 +7,9 @@ public abstract class BaseBoard {
 
     public BaseBoard(int width, int height)
     {
+        this.width = width;
+        this.height = height;
         this.cells = new CellType[width][height];
-        // Clear cells to initialize them
-        this.clear();
     }
 
     public CellType[][] getCells() {
