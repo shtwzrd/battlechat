@@ -5,25 +5,30 @@ import java.util.UUID;
 import java.util.Map;
 import java.util.HashMap;
 
-import edu.dirtybit.battlechat.BattleShipConfiguration;
 import edu.dirtybit.battlechat.Lobby;
 import edu.dirtybit.battlechat.model.GameMessage;
-import edu.dirtybit.battlechat.model.Perspective;
+import edu.dirtybit.battlechat.util.SerializationHelper;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 @WebSocket
 public class BattleChatSessionSocket implements SessionSocket {
     private Map<UUID, Session> sessions = new HashMap<>();
+    private static final String PROTOCOLv1 = "v1";
 
     @OnWebSocketConnect
     public void onConnect(Session session) {
-        UUID id = UUID.fromString(session.getUpgradeRequest().getSubProtocols().get(0));
+        String protocol = session.getUpgradeRequest().getSubProtocols().get(0);
+        UUID id = UUID.randomUUID();
+
+        if(protocol.equals(PROTOCOLv1)) {
+           id = UUID.fromString(session.getUpgradeRequest().getSubProtocols().get(1));
+        }
+
         this.sessions.put(id, session);
         Lobby.INSTANCE.registerConnection(id, this);
     }
@@ -41,41 +46,12 @@ public class BattleChatSessionSocket implements SessionSocket {
 
     @OnWebSocketMessage
     public void onMessage(String message) throws IOException {
-        Lobby.INSTANCE.notifyMessage(deserializeMessage(message));
+        Lobby.INSTANCE.notifyMessage(SerializationHelper.deserializeMessage(message));
     }
 
     public void sendMessage(GameMessage message) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(message);
         this.sessions.get(message.getId()).getRemote().sendString(json);
-    }
-
-    private GameMessage deserializeMessage(String message) {
-        Gson gson = new Gson();
-        GameMessage obj = gson.fromJson(message, GameMessage.class);
-
-        TypeToken type = new TypeToken<GameMessage<String>>() {};
-        switch(obj.getMessageType()) {
-            case CHAT:
-                type = new TypeToken<GameMessage<String>>() {};
-                break;
-            case CONFIGURATION:
-                type = new TypeToken<GameMessage<BattleShipConfiguration>>() {};
-                break;
-            case PLACEMENT:
-                // do something
-                break;
-            case STATUS:
-                // do something
-                break;
-            case FIRE:
-                // do something
-                break;
-            case UPDATE:
-                type = new TypeToken<GameMessage<Perspective>>() {};
-                break;
-        }
-
-        return gson.fromJson(message, type.getType());
     }
 }
