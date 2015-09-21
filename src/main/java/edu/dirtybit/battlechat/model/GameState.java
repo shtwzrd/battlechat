@@ -79,6 +79,8 @@ public class GameState extends Session {
     public boolean validateFleet(Fleet fleet, Board board) {
         boolean isvalid = true;
 
+        // TODO: check
+
         if (board.isClear() == true) {
             int i = 0;
             while (i < fleet.getShips().size()) {
