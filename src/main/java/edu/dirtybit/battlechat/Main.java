@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class Main {
 
     public static void main(String[] args) {
-        staticFileLocation("/");
+        staticFileLocation("/app");
         port(getHerokuAssignedPort());
         activateControllers(collectControllers());
     }
