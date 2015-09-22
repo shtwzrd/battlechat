@@ -6,12 +6,6 @@ import static org.junit.Assert.*;
 public class PlayerTest {
 
     @Test
-    public void Player_ShouldInitializeFleet_PostCreation() {
-       Player player = new Player("test");
-       assertNotNull(player.getFleet());
-    }
-
-    @Test
     public void Player_ShouldBeAssignedAnId_PostCreation() {
        Player player = new Player("test");
        assertNotNull(player.getId());
