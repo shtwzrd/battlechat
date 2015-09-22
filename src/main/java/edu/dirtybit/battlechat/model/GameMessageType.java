@@ -7,5 +7,6 @@ public enum GameMessageType {
     FIRE,
     FIRE_LOCATIONS,
     PLACEMENT,
-    CHAT
+    CHAT,
+    ERROR
 }

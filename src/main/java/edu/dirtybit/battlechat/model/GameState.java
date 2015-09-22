@@ -77,16 +77,12 @@ public class GameState extends Session implements Runnable {
         return currentPlayerIndex;
     }
 
-    public boolean validateFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
-        boolean isvalid = true;
-
+    public void placeFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
         // check that the fleet contains the right ships
-        int canoes,cruisers,submarines,destroyers,battleships,carriers;
+        int canoes, cruisers, submarines, destroyers, battleships, carriers;
         canoes = cruisers = submarines = destroyers = battleships = carriers = 0;
-        for (Ship ship : fleet.getShips())
-        {
-            switch (ship.getShiptype())
-            {
+        for (Ship ship : fleet.getShips()) {
+            switch (ship.getShiptype()) {
                 case CANOE:
                     canoes++;
                     break;
@@ -107,14 +103,13 @@ public class GameState extends Session implements Runnable {
                     break;
             }
         }
-        if (    canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
+        if (canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
                 destroyers != this.cfg.getPropertyAsInt(ConfigKeys.DESTROYER_COUNT) ||
                 cruisers != this.cfg.getPropertyAsInt(ConfigKeys.CRUISER_COUNT) ||
                 submarines != this.cfg.getPropertyAsInt(ConfigKeys.SUBMARINE_COUNT) ||
                 battleships != this.cfg.getPropertyAsInt(ConfigKeys.BATTLESHIP_COUNT) ||
-                carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT) )
-        {
-            throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.getConfig(),canoes,cruisers,submarines,destroyers,battleships,carriers));
+                carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT)) {
+            throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.getConfig(), canoes, cruisers, submarines, destroyers, battleships, carriers));
         }
 
         if (board.isClear() == true) {
@@ -127,21 +122,21 @@ public class GameState extends Session implements Runnable {
                 // Check if the start coordinates are on the board
                 if (ship.getX() < 0 || ship.getX() > board.getWidth() ||
                         ship.getY() < 0 || ship.getY() > board.getHeight()) {
-                    isvalid = false;
+                    board.clear();
                     throw new ShipOutOfBoundsException(ship, endx, endy);
                 } else {
                     // Check if end coordinates are on the board
                     switch (ship.getRotation()) {
                         case Horizontal:
                             if (endx < 0 || endx > board.getWidth()) {
-                                isvalid = false;
+                                board.clear();
                                 throw new ShipOutOfBoundsException(ship, endx, endy);
                             } else {
                                 for (int x = ship.getX(); x <= endx; x++) {
                                     if (board.getCells()[x][ship.getY()] == CellType.Empty) {
                                         board.getCells()[x][ship.getY()] = CellType.Ship;
                                     } else {
-                                        isvalid = false;
+                                        board.clear();
                                         throw new ShipsOverlapException(x, ship.getY());
                                     }
                                 }
@@ -149,14 +144,13 @@ public class GameState extends Session implements Runnable {
                             break;
                         case Vertical:
                             if (endy < 0 || endy > board.getWidth()) {
-                                isvalid = false;
                                 throw new ShipOutOfBoundsException(ship, endx, endy);
                             } else {
                                 for (int y = ship.getY(); y <= endy; y++) {
                                     if (board.getCells()[ship.getX()][y] == CellType.Empty) {
                                         board.getCells()[ship.getX()][y] = CellType.Ship;
                                     } else {
-                                        isvalid = false;
+                                        board.clear();
                                         throw new ShipsOverlapException(ship.getX(), y);
                                     }
                                 }
@@ -164,22 +158,9 @@ public class GameState extends Session implements Runnable {
                             break;
                     }
                 }
-
-                if (!isvalid) {
-                    i = fleet.getShips().size();
-                } else {
-                    i++;
-                }
+                i++;
             }
-
-            if (!isvalid) {
-                board.clear();
-            }
-        } else {
-            isvalid = false;
         }
-
-        return isvalid;
     }
 
     private void initializeBoards(GameConfiguration config) {
@@ -251,16 +232,15 @@ public class GameState extends Session implements Runnable {
         Player p = this.getPlayerById(placement.getId());
         int pi = this.getPlayerIndex(p);
         try {
-            if (validateFleet(placement.getBody(), this.boards.get(pi))) {
-                this.boards.get(pi).setFleet(placement.getBody());
-                this.hasPlaced.set(pi, true);
-            }
+            placeFleet(placement.getBody(), this.boards.get(pi));
+            this.boards.get(pi).setFleet(placement.getBody());
+            this.hasPlaced.set(pi, true);
         } catch (ShipOutOfBoundsException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         } catch (ShipsOverlapException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         } catch (InvalidFleetsizeException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         }
 
         boolean start = true;
