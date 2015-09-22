@@ -7,27 +7,45 @@
 <link rel="shortcut icon" href="img/icon.png">
 <title>Battleship</title>
 </head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.5/interact.min.js"></script>
 <script type="text/javascript" src="Plugin/jquery-1.11.3.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script>
-	
+
+//some function
+function originalWidth(clientwidth){
+	var windowwidth = window.innerWidth;
+	var width = (clientwidth*100)/windowwidth;
+	return width; 
+}
+
+function originalHeight(clientheight){
+	var windowheight = window.innerHeight;
+	var width = (clientheight*100)/windowheight;
+	return height; 
+}
+
+//swipe + arrowkeys	
 $(document).ready(function() {
 	
 	function swipeRight() 
 	{
 		jQuery('#left').animate({
 				width:0,
+				'left': '-30%',
 				opacity:0
 			},
-			200
-		);
+			300
+		).css('right','');
 		jQuery('#right').animate({
 				width:'100%',
-				'left': '=0%',
+				'left': '0%',
 				opacity:1.0
 			},
 			400	
-		);
+		).css('right','');
 		jQuery('#right').toggleClass('active',true);
 		jQuery('#left').toggleClass('active',false);
 		jQuery('#rightarrow').hide();
@@ -39,17 +57,18 @@ $(document).ready(function() {
 
 		jQuery('#right').animate({
 				width:0,
+				'right': '-30%',
 				opacity:0
 			},
-			200
-		);
+			400
+		).css('left','');
 		jQuery('#left').animate({
 				width:'100%',
-				'right': '=0%',
+				'right': '0%',
 				opacity:1.0
 			},
-			400	
-		);
+			300	
+		).css('left','');
 		jQuery('#left').toggleClass('active',true);
 		jQuery('#right').toggleClass('active',false);
 		jQuery('#leftarrow').hide();
@@ -75,31 +94,155 @@ $(document).ready(function() {
 	});
 });
 
-function allowDrop(ev) {
-	var table = document.getElementById('tableleft');
-	var tableZone = table.getBoundingClientRect();
-    if ((ev.clientX > tableZone.left && ev.clientX < tableZone.right) && (ev.clientY < tableZone.bottom&& ev.clientY > tableZone.top)){ev.preventDefault();}
-	else return false;
-}
 
-function drag(ev) {
-	var style = window.getComputedStyle(ev.target, null);
-    ev.dataTransfer.setData("text/plain",
-	(ev.target.id) + ',' + 
-	(parseInt(style.getPropertyValue("left"),10) - ev.clientX) + ',' + 
-	(parseInt(style.getPropertyValue("top"),10) - ev.clientY));
-		//ev.target = div
-}
+//Drag and drop stuff
+function dragMoveListener (event) {
+    var target = event.target,
+        // keep the dragged position in the data-x/data-y attributes
+        x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+        y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
-function drop(ev) {
-    var offset = ev.dataTransfer.getData("text/plain").split(',');
-    var dm = document.getElementById(offset[0]);
-    dm.style.left = (ev.clientX + parseInt(offset[1],10)) + 'px';
-    dm.style.top = (ev.clientY + parseInt(offset[2],10)) + 'px';
-    ev.preventDefault();
-    return false;
-}
+    // translate the element
+    target.style.webkitTransform =
+    target.style.transform =
+      'translate(' + x + 'px, ' + y + 'px) ';
+		
+		if(target.classList.contains('horizontal')){
+			target.style.transform += 'rotate(-0deg)';
+		} else 	if(target.classList.contains('vertical')){
+			target.style.transform += 'rotate(-90deg)';
+		}
 
+    // update the posiion attributes
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+
+}  
+interact('.draggable').draggable({
+    // enable inertial throwing
+  		inertia: true,
+    // keep the element within the area of it's parent
+  		restrict: {
+      		restriction: ('#tableleft'),
+      		endOnly: true,
+	        elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
+    	},
+		// call this function on every dragmove event
+		onmove: dragMoveListener,
+		//onstart: dragMoveListener,
+		// call this function on every dragend event
+		onend: function (event) {
+		  console.log(event);
+		}
+	})
+	.snap({
+		  mode: 'anchor',
+		  anchors: [],
+		  range: Infinity,
+		  elementOrigin: { x: 0.5, y: 0.5 },
+		  endOnly: true
+	})
+	//Doubleclick change direction
+	.on('doubletap', function (event) {
+		if(event.currentTarget.classList.contains('horizontal')){
+			event.currentTarget.classList.add('vertical');
+			event.currentTarget.classList.remove('horizontal');
+			event.currentTarget.style.transform += 'rotate(-90deg)';
+		} else 	if(event.currentTarget.classList.contains('vertical')){
+			event.currentTarget.classList.add('horizontal');
+			event.currentTarget.classList.remove('vertical');
+			event.currentTarget.style.transform += 'rotate(0deg)';
+		}
+		ondragenter(event);
+	});
+	
+interact('.square').dropzone({
+			accept : ".draggable",
+			overlap: 'center',
+			
+			  // listen for drop related events:
+
+			  ondropactivate: function (event) {
+				// add active dropzone feedback
+				event.target.classList.add('drop-active');
+			  },
+			  ondragenter: function (event) {
+				var draggableElement = event.relatedTarget,
+					dropzoneElement = event.target;
+			
+				// feedback the possibility of a drop
+				dropzoneElement.classList.add('drop-target');
+				draggableElement.classList.add('can-drop');
+				
+				var dropRect = interact.getElementRect(dropzoneElement);
+				var dropLeft =0;
+					if ($('#'+draggableElement.id).hasClass('odd')){
+						dropLeft = {
+						  x: dropRect.left + dropRect.width/2,
+						  y: dropRect.top + dropRect.height/2
+						};
+					} else 	if ($('#'+draggableElement.id).hasClass('even')){
+						if($('#'+draggableElement.id).hasClass('horizontal')){
+							dropLeft = {
+							  x: dropRect.left + dropRect.width,
+							  y: dropRect.top + dropRect.height/2
+							};
+						} else if($('#'+draggableElement.id).hasClass('vertical')){
+							dropLeft = {
+							  x: dropRect.left + dropRect.width/2,
+							  y: dropRect.top + dropRect.height
+							};
+						}
+					}
+					console.log(dropLeft);
+			
+				event.draggable.snap({
+				  anchors: [ dropLeft ]
+				});
+			  },
+			  ondragleave: function (event) {
+				// remove the drop feedback style
+				
+				event.target.classList.remove('occupied');
+				event.target.classList.remove('drop-target');
+				event.relatedTarget.classList.remove('can-drop');
+				event.draggable.snap(false);
+			  },
+			  ondrop: function (event) {
+				  //relatedtarget = ship
+				  //target = dropzone/square
+				$('#'+event.relatedTarget.id).css('left',0).appendTo($('#'+event.target.id));
+				
+				// notify user with occupied cells
+				if ($('#'+event.relatedTarget.id).hasClass('horizontal')){
+					var length = Math.round(document.getElementById(event.relatedTarget.id).offsetWidth/document.getElementById(event.target.id).offsetWidth);
+					var row= event.target.id.charAt(event.target.id.length-2);
+					
+					if ($('#'+event.relatedTarget.id).hasClass('odd')){
+						var middledivnum = parseInt(event.target.id.slice(-1));
+						var divoneachsidenum = (length-1)/2;
+						console.log(divoneachsidenum + ' : divs on each side');
+						
+						var startingdivnum = middledivnum - divoneachsidenum;
+						console.log(startingdivnum + ' : starting div num')
+						
+						var endingdivnum = middledivnum + divoneachsidenum;
+						console.log(endingdivnum + 'ending div num')
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+row+i);
+							d.classList.add('occupied');
+							console.log('lsquare'+row+i);
+						}
+					}
+				}
+				
+			  },
+			  ondropdeactivate: function (event) {
+				// remove active dropzone feedback
+				event.target.classList.remove('drop-active');
+				event.target.classList.remove('drop-target');
+			  }
+	});
 
 // HTML GENERATION
 var gridx = 8, gridy = 8;
@@ -113,49 +256,43 @@ document.write("<div id=\"animated-background\" ></div>");
 document.write("<p id=\"phase\" > place your ships! </p>");
 
 // player 1 table
-document.write("<div id='left' class='active' ondrop='drop(event)' ondragover='allowDrop(event)'>");
-document.write("<div id='shipdiv' ondrop='drop(event)' ondragover='allowDrop(event)'>");
-document.write("<div class ='ship cruiser' id='ship1' draggable='true' ondragstart='drag(event)'/></div>");
-document.write("<div class ='ship carrier' id='ship2' draggable='true' ondragstart='drag(event)'/></div>");
-document.write("<div class ='ship battleship' id='ship3' draggable='true' ondragstart='drag(event)'/></div>");
-document.write("<div class ='ship destroyer' id='ship4' draggable='true' ondragstart='drag(event)'></div>");
-document.write("<div class ='ship submarine'id='ship5' draggable='true' ondragstart='drag(event)'></div>");
+document.write("<div id='left' class='active'>");
+document.write("<div id='shipdiv'>");
+document.write("<div class ='odd horizontal ship cruiser draggable' id='ship1'></div>");
+document.write("<div class ='odd rotation-trans horizontal ship carrier draggable' id='ship2'></div>");
+document.write("<div class ='even rotation-trans horizontal ship battleship draggable' id='ship3'></div>");
+document.write("<div class ='even rotation-trans horizontal ship destroyer draggable' id='ship4'></div>");
+document.write("<div class ='odd rotation-trans horizontal ship submarine draggable'id='ship5'></div>");
 document.write("</div>");
-document.write("<table id='tableleft'>");
-for (i=0; i<gridx; i++)
+
+//player 1 table
+document.write("<div id='tableleft' class='table'>");
+for (i=0; i<(gridx); i++)
 {
-	//rows
-	document.write("<tr id='column" + i + "'>");
-	player1Grid[i]=[];
-	for (j=0; j<gridy; j++)
-	{
-		// cells
-		document.write("<td id='row" + j + "'>");
-		player1Grid[i][j]=j;
-		document.write("</td>");
-	}
-	document.write("</tr>");
+	document.write("<div id='lrow" + i + "' class='row'>");
+		for (j=0; j<gridy; j++)
+		{
+		document.write("<div id='lsquare" + i+''+j + "' class='square'>");
+		document.write("</div>");
+		}
+	document.write("</div>");
 }
-document.write("</table></div>");
+document.write("</div></div>");
 
+document.write("<div id='right' style='right:-30%;'>");
 // player 2 table
-document.write("<div id='right'><table id='tableright'>");
-for (i=0; i<gridx; i++)
-{	
-	//rows
-	document.write("<tr>");
-	player2Grid[i]=[];
-	for (j=0; j<gridy; j++)
-	{
-		// cells
-		document.write("<td>X");
-		player2Grid[i][j]=j;
-		document.write("</td>");
-	}
-	document.write("</tr>");
+document.write("<div id='tableright' class='table'>");
+for (i=0; i<(gridx); i++)
+{
+	document.write("<div id='rrow" + i + "' class='row'>");
+		for (j=0; j<gridy; j++)
+		{
+		document.write("<div id='rsquare" + i +''+ j + "' class='square'>");
+		document.write("</div>");
+		}
+	document.write("</div>");
 }
-
-document.write("</table></div>");
+document.write("</div></div>");
 
 document.write("<div id=\"rightarrow\">-></div>");
 document.write("<div id=\"leftarrow\"><-</div>");

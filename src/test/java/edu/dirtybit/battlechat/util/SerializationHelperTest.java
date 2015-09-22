@@ -37,7 +37,7 @@ public class SerializationHelperTest {
     @Test
     public void SerializationHelper_DeserializePlacement_BodyShouldBeFleet() {
         Gson gson = new Gson();
-        Fleet f = new Fleet();
+        Fleet f = Fleet.fromConfig(new BattleShipConfiguration());
         GameMessage<Fleet> msg = new GameMessage<>(GameMessageType.PLACEMENT, UUID.randomUUID(), f);
         String json = gson.toJson(msg, GameMessage.class);
 

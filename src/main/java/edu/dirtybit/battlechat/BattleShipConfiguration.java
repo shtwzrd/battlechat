@@ -14,6 +14,12 @@ public class BattleShipConfiguration implements GameConfiguration {
         settings.put(ConfigKeys.MATCHMAKING_TIMEOUT.toString(), "120");
         settings.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "60");
         settings.put(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
+        settings.put(ConfigKeys.CANOE_COUNT.toString(), "0");
+        settings.put(ConfigKeys.CRUISER_COUNT.toString(), "1");
+        settings.put(ConfigKeys.SUBMARINE_COUNT.toString(), "1");
+        settings.put(ConfigKeys.DESTROYER_COUNT.toString(), "1");
+        settings.put(ConfigKeys.BATTLESHIP_COUNT.toString(), "1");
+        settings.put(ConfigKeys.CARRIER_COUNT.toString(), "1");
     }
 
     public String getProperty(String key) {
@@ -39,6 +45,12 @@ public class BattleShipConfiguration implements GameConfiguration {
         MATCHMAKING_TIMEOUT,
         PLACEMENT_TIMEOUT,
         FIRING_TIMEOUT,
-        SHOTS_PER_ROUND
+        SHOTS_PER_ROUND,
+        CANOE_COUNT,
+        CRUISER_COUNT,
+        SUBMARINE_COUNT,
+        DESTROYER_COUNT,
+        BATTLESHIP_COUNT,
+        CARRIER_COUNT
     }
 }
