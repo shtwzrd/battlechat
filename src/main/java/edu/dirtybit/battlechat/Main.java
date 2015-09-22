@@ -6,13 +6,26 @@ import edu.dirtybit.battlechat.controller.SessionController;
 import static spark.Spark.port;
 import static spark.Spark.staticFileLocation;
 
+import java.util.List;
+import java.util.ArrayList;
+
 public class Main {
 
     public static void main(String[] args) {
-        staticFileLocation("/public");
+        staticFileLocation("/app");
         port(getHerokuAssignedPort());
-        Controller session = new SessionController();
-        session.buildRoutes();
+        activateControllers(collectControllers());
+    }
+
+    private static void activateControllers(List<Controller> controllers) {
+        controllers.forEach(c -> c.registerWebSockets());
+        controllers.forEach(c -> c.buildRoutes());
+    }
+
+    private static List<Controller> collectControllers() {
+        List<Controller> controllers = new ArrayList<>();
+        controllers.add(new SessionController());
+        return controllers;
     }
 
     private static int getHerokuAssignedPort() {
@@ -22,5 +35,4 @@ public class Main {
         }
         return 8080;
     }
-
 }
