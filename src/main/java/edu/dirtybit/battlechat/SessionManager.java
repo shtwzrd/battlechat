@@ -2,6 +2,7 @@ package edu.dirtybit.battlechat;
 
 import edu.dirtybit.battlechat.controller.BattleChatSessionSocket;
 import edu.dirtybit.battlechat.model.GameMessage;
+import edu.dirtybit.battlechat.model.GameMessageType;
 import edu.dirtybit.battlechat.model.Player;
 
 import java.util.UUID;
@@ -58,8 +59,17 @@ public class SessionManager implements SessionListener, LobbyListener {
     }
 
     @Override
-    public void recieveMessage(GameMessage message) {
-        //TODO
+    public void receiveMessage(GameMessage message) {
+        if(message.getMessageType() == GameMessageType.CHAT) {
+            Session s = this.getSessionContainingPlayer(message.getId());
+            if (s != null) {
+                String sender = s.getPlayerById(message.getId()).getGivenName();
+                s.getPlayers().forEach(p -> {
+                    Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
+                            p.getId(), String.format("%s: %s \n", sender, message.getBody())));
+                });
+            }
+        }
     }
 
     private UUID addToNewGame(Player player) throws Exception {
@@ -72,6 +82,7 @@ public class SessionManager implements SessionListener, LobbyListener {
     }
 
     private UUID addToExisting(Session session, Player player) {
+       this.playerToSession.put(player.getId(), session.getId());
        return session.enqueuePlayer(player);
     }
 

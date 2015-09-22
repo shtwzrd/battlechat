@@ -51,6 +51,24 @@ public abstract class Session {
         return this.players;
     }
 
+    public Player getPlayerByName(String name) {
+       for(Player p : this.players) {
+           if(p.getGivenName().equals(name)) {
+               return p;
+           }
+        }
+        return null;
+    }
+
+    public Player getPlayerById(UUID id) {
+       for(Player p : this.players) {
+           if(p.getId().equals(id)) {
+               return p;
+           }
+        }
+        return null;
+    }
+
     public Set<SessionListener> getSubscribers() {
         return this.subscribers;
     }
