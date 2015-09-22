@@ -1,21 +1,12 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.GameConfiguration;
+
 import java.util.ArrayList;
 
 public class Fleet {
-    private static final int CANOE = 0;
-    private static final int CRUISERS = 1;
-    private static final int SUBMARINES = 1;
-    private static final int DESTROYERS = 1;
-    private static final int BATTLESHIPS = 1;
-    private static final int CARRIERS = 1;
-
     private ArrayList<Ship> ships;
-
-    public Fleet()
-    {
-        this(CANOE, CRUISERS, SUBMARINES, DESTROYERS, BATTLESHIPS, CARRIERS);
-    }
 
     public Fleet(int canoes, int cruisers, int submarines, int destroyers, int battleships, int carriers) {
         this.ships = new ArrayList<Ship>();
@@ -39,6 +30,18 @@ public class Fleet {
         for (i = 0; i < carriers; i++) {
             this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CARRIER));
         }
+    }
+
+    public static Fleet fromConfig(GameConfiguration config)
+    {
+        int canoes = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CANOE_COUNT.toString()));
+        int cruisers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CRUISER_COUNT.toString()));
+        int submarines = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.SUBMARINE_COUNT.toString()));
+        int destroyers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.DESTROUYER_COUNT.toString()));
+        int battleships = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.BATTLESHIP_COUNT.toString()));
+        int carriers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CARRIER_COUNT.toString()));
+
+        return new Fleet(canoes, cruisers, submarines, destroyers, battleships, carriers);
     }
 
     public ArrayList<Ship> getShips() {
