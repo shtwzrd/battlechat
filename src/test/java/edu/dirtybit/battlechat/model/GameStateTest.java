@@ -257,6 +257,38 @@ public class GameStateTest {
         game.fire(coords, player);
     }
 
+    @Test
+    public void GameState_ShouldReturnTrue_WhenFireMethodHasAHit() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        Player player2 = new Player("two");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        game.enqueuePlayer(player2);
+
+        Board board = game.getBoards().get(1);
+        board.setCell(0, 0, CellType.Ship);
+
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(1, 0, 0));
+
+        assertTrue(game.fire(coords, player));
+    }
+
+    @Test
+    public void GameState_ShouldReturnFalse_WhenFireMethodHasAMiss() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        Player player2 = new Player("two");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        game.enqueuePlayer(player2);
+
+        Board board = game.getBoards().get(1);
+        board.setCell(0, 0, CellType.Ship);
+
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(1, 9, 9));
+
+        assertFalse(game.fire(coords, player));
+    }
+
     private static Fleet SetupBaseFleet(Fleet fleet) {
         for (int i = 0; i < fleet.getShips().size(); i++) {
             fleet.getShips().get(i).setLocation(0, i);
