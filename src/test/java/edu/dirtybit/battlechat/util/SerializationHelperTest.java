@@ -72,7 +72,7 @@ public class SerializationHelperTest {
     public void SerializationHelper_DeserializeFire_BodyShouldBeCoordinateArray() {
         Gson gson = new Gson();
         ArrayList<Coordinate> c = new ArrayList<>();
-        c.add(new Coordinate(1, 1));
+        c.add(new Coordinate(0, 1, 1));
         GameMessage<ArrayList<Coordinate>> msg = new GameMessage<>(GameMessageType.FIRE, UUID.randomUUID(), c);
         String json = gson.toJson(msg, GameMessage.class);
 
@@ -85,7 +85,7 @@ public class SerializationHelperTest {
     public void SerializationHelper_DeserializeFireLocations_BodyShouldBeCoordinateArray() {
         Gson gson = new Gson();
         ArrayList<Coordinate> c = new ArrayList<>();
-        c.add(new Coordinate(1, 1));
+        c.add(new Coordinate(0, 1, 1));
         GameMessage<ArrayList<Coordinate>> msg = new GameMessage<>(GameMessageType.FIRE_LOCATIONS, UUID.randomUUID(), c);
         String json = gson.toJson(msg, GameMessage.class);
 

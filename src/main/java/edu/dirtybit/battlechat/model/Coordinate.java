@@ -1,10 +1,12 @@
 package edu.dirtybit.battlechat.model;
 
 public class Coordinate {
+    private int boardIndex;
     private int X;
     private int Y;
 
-    public Coordinate(int x, int y) {
+    public Coordinate(int b, int x, int y) {
+        this.boardIndex = b;
         this.X = x;
         this.Y = y;
     }
@@ -24,4 +26,13 @@ public class Coordinate {
     public void setY(int y) {
         Y = y;
     }
+
+    public int getBoardIndex() {
+        return boardIndex;
+    }
+
+    public void setBoardIndex(int index) {
+        boardIndex = index;
+    }
+
 }

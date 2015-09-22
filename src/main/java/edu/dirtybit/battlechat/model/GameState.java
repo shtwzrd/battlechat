@@ -1,13 +1,11 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.exceptions.*;
 import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
 import edu.dirtybit.battlechat.Session;
-import edu.dirtybit.battlechat.exceptions.InvalidFleetsizeException;
-import edu.dirtybit.battlechat.exceptions.ShipOutOfBoundsException;
-import edu.dirtybit.battlechat.exceptions.ShipsOverlapException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,16 +75,41 @@ public class GameState extends Session implements Runnable {
         return currentPlayerIndex;
     }
 
-    public boolean validateFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
-        boolean isvalid = true;
+    // Returns true on a hit and false on a miss
+    protected boolean fire(List<Coordinate> shots, Player player) throws FiringTooManyShotsException, FiringOutOfTurnException, FiringAtOwnBoardException {
+        int shotsAllowed = cfg.getPropertyAsInt(ConfigKeys.SHOTS_PER_ROUND);
 
+        if(shots.size() > shotsAllowed) {
+            throw new FiringTooManyShotsException(shots.size(), shotsAllowed);
+        }
+
+        if(this.getPlayerIndex(player) != this.currentPlayerIndex) {
+            throw new FiringOutOfTurnException();
+        }
+
+        boolean hit = false;
+        for (int i = 0; i < shotsAllowed; i++) {
+            Coordinate c = shots.get(i);
+            if(c.getBoardIndex() == this.getPlayerIndex(player)) {
+                throw new FiringAtOwnBoardException(c.getBoardIndex());
+            }
+            Board board = this.boards.get(c.getBoardIndex());
+            if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
+                board.getCells()[c.getX()][c.getY()] = CellType.Hit;
+                hit = true;
+            } else {
+                board.getCells()[c.getX()][c.getY()] = CellType.Miss;
+            }
+        }
+        return hit;
+    }
+
+    protected void placeFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
         // check that the fleet contains the right ships
-        int canoes,cruisers,submarines,destroyers,battleships,carriers;
+        int canoes, cruisers, submarines, destroyers, battleships, carriers;
         canoes = cruisers = submarines = destroyers = battleships = carriers = 0;
-        for (Ship ship : fleet.getShips())
-        {
-            switch (ship.getShiptype())
-            {
+        for (Ship ship : fleet.getShips()) {
+            switch (ship.getShiptype()) {
                 case CANOE:
                     canoes++;
                     break;
@@ -107,14 +130,13 @@ public class GameState extends Session implements Runnable {
                     break;
             }
         }
-        if (    canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
+        if (canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
                 destroyers != this.cfg.getPropertyAsInt(ConfigKeys.DESTROYER_COUNT) ||
                 cruisers != this.cfg.getPropertyAsInt(ConfigKeys.CRUISER_COUNT) ||
                 submarines != this.cfg.getPropertyAsInt(ConfigKeys.SUBMARINE_COUNT) ||
                 battleships != this.cfg.getPropertyAsInt(ConfigKeys.BATTLESHIP_COUNT) ||
-                carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT) )
-        {
-            throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.getConfig(),canoes,cruisers,submarines,destroyers,battleships,carriers));
+                carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT)) {
+            throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.cfg, canoes, cruisers, submarines, destroyers, battleships, carriers));
         }
 
         if (board.isClear() == true) {
@@ -127,21 +149,21 @@ public class GameState extends Session implements Runnable {
                 // Check if the start coordinates are on the board
                 if (ship.getX() < 0 || ship.getX() > board.getWidth() ||
                         ship.getY() < 0 || ship.getY() > board.getHeight()) {
-                    isvalid = false;
+                    board.clear();
                     throw new ShipOutOfBoundsException(ship, endx, endy);
                 } else {
                     // Check if end coordinates are on the board
                     switch (ship.getRotation()) {
                         case Horizontal:
                             if (endx < 0 || endx > board.getWidth()) {
-                                isvalid = false;
+                                board.clear();
                                 throw new ShipOutOfBoundsException(ship, endx, endy);
                             } else {
                                 for (int x = ship.getX(); x <= endx; x++) {
                                     if (board.getCells()[x][ship.getY()] == CellType.Empty) {
                                         board.getCells()[x][ship.getY()] = CellType.Ship;
                                     } else {
-                                        isvalid = false;
+                                        board.clear();
                                         throw new ShipsOverlapException(x, ship.getY());
                                     }
                                 }
@@ -149,14 +171,13 @@ public class GameState extends Session implements Runnable {
                             break;
                         case Vertical:
                             if (endy < 0 || endy > board.getWidth()) {
-                                isvalid = false;
                                 throw new ShipOutOfBoundsException(ship, endx, endy);
                             } else {
                                 for (int y = ship.getY(); y <= endy; y++) {
                                     if (board.getCells()[ship.getX()][y] == CellType.Empty) {
                                         board.getCells()[ship.getX()][y] = CellType.Ship;
                                     } else {
-                                        isvalid = false;
+                                        board.clear();
                                         throw new ShipsOverlapException(ship.getX(), y);
                                     }
                                 }
@@ -164,22 +185,9 @@ public class GameState extends Session implements Runnable {
                             break;
                     }
                 }
-
-                if (!isvalid) {
-                    i = fleet.getShips().size();
-                } else {
-                    i++;
-                }
+                i++;
             }
-
-            if (!isvalid) {
-                board.clear();
-            }
-        } else {
-            isvalid = false;
         }
-
-        return isvalid;
     }
 
     private void initializeBoards(GameConfiguration config) {
@@ -190,20 +198,7 @@ public class GameState extends Session implements Runnable {
         }
     }
 
-    private void handleFire(GameMessage<List<Coordinate>> shot) {
-        Player player = this.getPlayerById(shot.getId());
-        Board board = this.getBoards().get((this.getPlayerIndex(player)));
 
-        // Check if not players own board?
-        for (int i = 0; i < Math.min(shot.getBody().size(), cfg.getPropertyAsInt(ConfigKeys.SHOTS_PER_ROUND)); i++) {
-            Coordinate c = shot.getBody().get(i);
-            if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
-                board.getCells()[c.getX()][c.getY()] = CellType.Hit;
-            } else {
-                board.getCells()[c.getX()][c.getY()] = CellType.Miss;
-            }
-        }
-    }
 
     private Player nextPlayer() {
         // Increment player index
@@ -247,20 +242,31 @@ public class GameState extends Session implements Runnable {
         return getPlayers().indexOf(player);
     }
 
+    private void handleFire(GameMessage<List<Coordinate>> shot) {
+        try {
+            this.fire(shot.getBody(), this.getPlayerById(shot.getId()));
+        } catch (FiringOutOfTurnException e) {
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
+        } catch (FiringAtOwnBoardException e) {
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
+        } catch (FiringTooManyShotsException e) {
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
+        }
+    }
+
     private void handlePlacement(GameMessage<Fleet> placement) {
         Player p = this.getPlayerById(placement.getId());
         int pi = this.getPlayerIndex(p);
         try {
-            if (validateFleet(placement.getBody(), this.boards.get(pi))) {
-                this.boards.get(pi).setFleet(placement.getBody());
-                this.hasPlaced.set(pi, true);
-            }
+            placeFleet(placement.getBody(), this.boards.get(pi));
+            this.boards.get(pi).setFleet(placement.getBody());
+            this.hasPlaced.set(pi, true);
         } catch (ShipOutOfBoundsException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         } catch (ShipsOverlapException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         } catch (InvalidFleetsizeException e) {
-            e.printStackTrace();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         }
 
         boolean start = true;

@@ -1,17 +1,18 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.MockSessionListener;
+import edu.dirtybit.battlechat.exceptions.*;
 import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
-import edu.dirtybit.battlechat.exceptions.InvalidFleetsizeException;
-import edu.dirtybit.battlechat.exceptions.ShipOutOfBoundsException;
-import edu.dirtybit.battlechat.exceptions.ShipsOverlapException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameStateTest {
 
@@ -112,7 +113,7 @@ public class GameStateTest {
 
         GameStateTest.SetupBaseFleet(fleet);
 
-        game.validateFleet(fleet, board);
+        game.placeFleet(fleet, board);
     }
 
     @Test(expected = InvalidFleetsizeException.class)
@@ -122,9 +123,9 @@ public class GameStateTest {
         Fleet fleet = board.getFleet();
 
         GameStateTest.SetupBaseFleet(fleet);
-        fleet.getShips().add(new Ship(board.getWidth()/2, board.getHeight()/2, Rotation.Horizontal, ShipType.CANOE));
+        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.Horizontal, ShipType.CANOE));
 
-        game.validateFleet(fleet, board);
+        game.placeFleet(fleet, board);
     }
 
     @Test(expected = ShipOutOfBoundsException.class)
@@ -136,7 +137,7 @@ public class GameStateTest {
         GameStateTest.SetupBaseFleet(fleet);
         fleet.getShips().get(0).setLocation(-1, board.getHeight() + 1);
 
-        game.validateFleet(fleet, board);
+        game.placeFleet(fleet, board);
     }
 
     @Test(expected = ShipsOverlapException.class)
@@ -151,7 +152,141 @@ public class GameStateTest {
         ship1.setLocation(ship2.getX() + 1, ship2.getY() - 1);
         ship1.setRotation(Rotation.Vertical);
 
-        game.validateFleet(fleet, board);
+        game.placeFleet(fleet, board);
+    }
+
+    @Test
+    public void GameState_ShouldSendInvalidFleetSizeError_WhenFleetHasTooManyShips() {
+        Player player1 = new Player("testone");
+        Player player2 = new Player("testtwo");
+        GameState game = new GameState(new BattleShipConfiguration(), player1);
+        game.enqueuePlayer(player2);
+        Board board = game.getBoards().get(0);
+        Fleet fleet = board.getFleet();
+
+        MockSessionListener listener = new MockSessionListener();
+        game.subscribe(listener);
+
+        GameStateTest.SetupBaseFleet(fleet);
+        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.Horizontal, ShipType.CANOE));
+
+        GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
+        game.handleMessage(message);
+
+        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
+        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+    }
+
+    @Test
+    public void GameState_ShouldSendShipOutOfBoundsError_WhenShipOutOfBounds() {
+        Player player1 = new Player("testone");
+        Player player2 = new Player("testtwo");
+        GameState game = new GameState(new BattleShipConfiguration(), player1);
+        game.enqueuePlayer(player2);
+        Board board = game.getBoards().get(0);
+        Fleet fleet = board.getFleet();
+
+        MockSessionListener listener = new MockSessionListener();
+        game.subscribe(listener);
+
+        GameStateTest.SetupBaseFleet(fleet);
+        fleet.getShips().get(0).setLocation(-1, board.getHeight() + 1);
+
+        GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
+        game.handleMessage(message);
+
+        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
+        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+    }
+
+    @Test
+    public void GameState_ShouldSendShipsOverlapError_WhenShipsOverlap() {
+        Player player1 = new Player("testone");
+        Player player2 = new Player("testtwo");
+        GameState game = new GameState(new BattleShipConfiguration(), player1);
+        game.enqueuePlayer(player2);
+        Board board = game.getBoards().get(0);
+        Fleet fleet = board.getFleet();
+
+        MockSessionListener listener = new MockSessionListener();
+        game.subscribe(listener);
+
+        GameStateTest.SetupBaseFleet(fleet);
+        Ship ship1 = fleet.getShips().get(0);
+        Ship ship2 = fleet.getShips().get(1);
+        ship1.setLocation(ship2.getX() + 1, ship2.getY() - 1);
+        ship1.setRotation(Rotation.Vertical);
+
+        GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
+        game.handleMessage(message);
+
+        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
+        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+    }
+
+    @Test(expected = FiringAtOwnBoardException.class)
+    public void GameState_ShouldNotAllowFiring_WhenAtOwnPlayersBoard() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("suicidal");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player);
+    }
+
+    @Test(expected = FiringOutOfTurnException.class)
+    public void GameState_ShouldNotAllowFiring_WhenItsNotThePlayersTurn() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player1 = new Player("one");
+        Player player2 = new Player("impatient");
+        GameState game = new GameState(new BattleShipConfiguration(), player1);
+        game.enqueuePlayer(player2);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player2);
+    }
+
+    @Test(expected = FiringTooManyShotsException.class)
+    public void GameState_ShouldNotAllowFiring_MoreShotsThanConfigured() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player);
+    }
+
+    @Test
+    public void GameState_ShouldReturnTrue_WhenFireMethodHasAHit() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        Player player2 = new Player("two");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        game.enqueuePlayer(player2);
+
+        Board board = game.getBoards().get(1);
+        board.setCell(0, 0, CellType.Ship);
+
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(1, 0, 0));
+
+        assertTrue(game.fire(coords, player));
+    }
+
+    @Test
+    public void GameState_ShouldReturnFalse_WhenFireMethodHasAMiss() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        Player player2 = new Player("two");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        game.enqueuePlayer(player2);
+
+        Board board = game.getBoards().get(1);
+        board.setCell(0, 0, CellType.Ship);
+
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(1, 9, 9));
+
+        assertFalse(game.fire(coords, player));
     }
 
     private static Fleet SetupBaseFleet(Fleet fleet) {
