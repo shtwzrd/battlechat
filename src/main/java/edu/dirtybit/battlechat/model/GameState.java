@@ -132,14 +132,13 @@ public class GameState extends Session implements Runnable {
                     break;
             }
         }
-        if (    canoes != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.CANOE_COUNT.toString())) ||
-                destroyers != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.DESTROYER_COUNT.toString())) ||
-                cruisers != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.CRUISER_COUNT.toString())) ||
-                submarines != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.SUBMARINE_COUNT.toString())) ||
-                battleships != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.BATTLESHIP_COUNT.toString())) ||
-                carriers != Integer.parseInt(this.getConfig().getProperty(BattleShipConfiguration.ConfigKeys.CARRIER_COUNT.toString())) )
+        if (    canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
+                destroyers != this.cfg.getPropertyAsInt(ConfigKeys.DESTROYER_COUNT) ||
+                cruisers != this.cfg.getPropertyAsInt(ConfigKeys.CRUISER_COUNT) ||
+                submarines != this.cfg.getPropertyAsInt(ConfigKeys.SUBMARINE_COUNT) ||
+                battleships != this.cfg.getPropertyAsInt(ConfigKeys.BATTLESHIP_COUNT) ||
+                carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT) )
         {
-            isvalid = false;
             throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.getConfig(),canoes,cruisers,submarines,destroyers,battleships,carriers));
         }
 
