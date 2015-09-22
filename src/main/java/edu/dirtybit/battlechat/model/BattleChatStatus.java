@@ -29,8 +29,10 @@ public class BattleChatStatus {
     public enum Phase {
         WAITING_FOR_OPPONENT,
         PLACEMENT_PHASE,
+        COMBAT,
         YOU_FIRING,
         OPPONENT_FIRING,
+        COMPLETED,
         YOU_WIN,
         YOU_LOSE
     }

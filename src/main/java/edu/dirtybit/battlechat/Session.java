@@ -56,6 +56,15 @@ public abstract class Session implements Runnable {
         return this.players;
     }
 
+    public int getIndexOfPlayerById(UUID id) {
+        for(int i = 0; i < this.players.size(); i++) {
+            if (this.players.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
     public Player getPlayerByName(String name) {
        for(Player p : this.players) {
            if(p.getGivenName().equals(name)) {
@@ -85,6 +94,8 @@ public abstract class Session implements Runnable {
     public void notifySubscribers(GameMessage msg) {
        this.subscribers.forEach(x -> x.notifySubscriber(this, msg));
     }
+
+    public abstract void handleMessage(GameMessage msg);
 
     public abstract boolean shouldStart();
 }

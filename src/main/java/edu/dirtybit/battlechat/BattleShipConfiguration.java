@@ -13,6 +13,7 @@ public class BattleShipConfiguration implements GameConfiguration {
         settings.put(ConfigKeys.PLAYER_COUNT.toString(), "2");
         settings.put(ConfigKeys.MATCHMAKING_TIMEOUT.toString(), "120");
         settings.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "60");
+        settings.put(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
     }
 
     public String getProperty(String key) {
@@ -23,11 +24,21 @@ public class BattleShipConfiguration implements GameConfiguration {
         return Integer.parseInt(getProperty(key));
     }
 
+     public String getProperty(ConfigKeys key) {
+        return settings.containsKey(key.toString()) ? settings.get(key) : "";
+    }
+
+    public int getPropertyAsInt(ConfigKeys key) {
+        return Integer.parseInt(getProperty(key.toString()));
+    }
+
     public enum ConfigKeys {
         GRID_WIDTH,
         GRID_HEIGHT,
         PLAYER_COUNT,
         MATCHMAKING_TIMEOUT,
-        PLACEMENT_TIMEOUT
+        PLACEMENT_TIMEOUT,
+        FIRING_TIMEOUT,
+        SHOTS_PER_ROUND
     }
 }

@@ -1,76 +1,69 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
 import edu.dirtybit.battlechat.Session;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameState extends Session implements Runnable {
 
     private ArrayList<Board> boards;
+    private ArrayList<Boolean> hasPlaced;
     private int currentPlayerIndex;
-    private BattleChatStatus.Phase phase;
+    private Phase phase;
     private int secondsToNextPhase;
+    private int firingTimeout;
+    private BattleShipConfiguration cfg;
 
-    public GameState(GameConfiguration config, Player player)
-    {
+    public GameState(GameConfiguration config, Player player) {
         super(config, player);
+        this.cfg = (BattleShipConfiguration) config;
         this.boards = new ArrayList<>();
+        this.hasPlaced = new ArrayList<>();
 
         this.initializeBoards(
-                config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString()),
-                config.getPropertyAsInt(ConfigKeys.GRID_WIDTH.toString()),
-                config.getPropertyAsInt(ConfigKeys.GRID_HEIGHT.toString()));
+                cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT),
+                cfg.getPropertyAsInt(ConfigKeys.GRID_WIDTH),
+                cfg.getPropertyAsInt(ConfigKeys.GRID_HEIGHT));
 
-        this.phase = BattleChatStatus.Phase.WAITING_FOR_OPPONENT;
-        this.secondsToNextPhase = config.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT.toString());
+        this.phase = Phase.WAITING_FOR_OPPONENT;
+        this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT);
+        this.firingTimeout = cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
+        this.currentPlayerIndex = 0;
     }
 
-    @Override
+    public void handleMessage(GameMessage msg) {
+        switch (msg.getMessageType()) {
+            case PLACEMENT:
+                this.handlePlacement(msg);
+                break;
+            case FIRE:
+                this.handleFire(msg);
+                break;
+        }
+    }
+
     public boolean shouldStart() {
-        if(this.getPlayers().size() == this.getConfig().getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString())) {
-            this.phase = BattleChatStatus.Phase.PLACEMENT_PHASE;
-            this.secondsToNextPhase = this.getConfig().getPropertyAsInt(ConfigKeys.PLACEMENT_TIMEOUT.toString());
+        if (this.getPlayers().size() == this.cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT)) {
+            this.phase = Phase.PLACEMENT_PHASE;
+            this.secondsToNextPhase = this.cfg.getPropertyAsInt(ConfigKeys.PLACEMENT_TIMEOUT);
             return true;
         }
         return false;
     }
 
-    @Override
     public void run() {
         do {
             tick();
-        } while (this.phase != BattleChatStatus.Phase.YOU_WIN || this.phase != BattleChatStatus.Phase.YOU_LOSE);
+        } while (this.phase != Phase.COMPLETED);
     }
 
-    private void tick() {
-            this.secondsToNextPhase--;
-            this.getPlayers().forEach(p -> {
-                this.notifySubscribers(new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(this.phase, this.secondsToNextPhase)));
-            });
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException ie) {
-                System.err.println("Sleep interrupted: " + ie.getMessage());
-            }
-    }
 
-    private void initializeBoards(int players, int width, int height)
-    {
-        for (int i = 0; i < players; i++)
-        {
-            this.boards.add(new Board(width, height));
-        }
-    }
-
-    private int getPlayerIndex(Player player)
-    {
-        return getPlayers().indexOf(player);
-    }
-
-    public void setCell(Player player, int x, int y, CellType celltype)
-    {
+    public void setCell(Player player, int x, int y, CellType celltype) {
         int index = this.getPlayerIndex(player);
 
         boards.get(index).setCell(x, y, celltype);
@@ -159,17 +152,91 @@ public class GameState extends Session implements Runnable {
             if (!isvalid) {
                 board.clear();
             }
+        } else {
+            isvalid = false;
         }
-        else { isvalid = false; }
 
         return isvalid;
     }
 
-    public void fire(Player player, Board board, int x, int y)
-    {
-        // Check if not players own board?
+    private void handleFire(GameMessage<List<Coordinate>> shot) {
+        Player player = this.getPlayerById(shot.getId());
+        Board board = this.getBoards().get((this.getPlayerIndex(player)));
 
-        if (board.getCells()[x][y] == CellType.Ship) { board.getCells()[x][y] = CellType.Hit; }
-        else { board.getCells()[x][y] = CellType.Miss; }
+        // Check if not players own board?
+        for (int i = 0; i < Math.min(shot.getBody().size(), cfg.getPropertyAsInt(ConfigKeys.SHOTS_PER_ROUND)); i++) {
+            Coordinate c = shot.getBody().get(i);
+            if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
+                board.getCells()[c.getX()][c.getY()] = CellType.Hit;
+            } else {
+                board.getCells()[c.getX()][c.getY()] = CellType.Miss;
+            }
+        }
+
+    }
+
+    public GameMessage status(Player p) {
+        Phase ph = this.phase;
+        if (ph == Phase.COMBAT) {
+            ph = this.getPlayers().get(this.currentPlayerIndex).getId().equals(p.getId()) ? Phase.YOU_FIRING : Phase.OPPONENT_FIRING;
+        }
+        return new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(ph, this.secondsToNextPhase));
+    }
+
+    private void tick() {
+        this.secondsToNextPhase--;
+        if (this.secondsToNextPhase == 0) {
+            phaseChange();
+        }
+        this.getPlayers().forEach(p -> this.notifySubscribers(this.status(p)));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException ie) {
+            System.err.println("Sleep interrupted: " + ie.getMessage());
+        }
+    }
+
+    private void phaseChange() {
+        switch (this.phase) {
+            case PLACEMENT_PHASE:
+                this.phase = Phase.COMBAT;
+                this.secondsToNextPhase = this.firingTimeout;
+                break;
+            case COMBAT:
+                this.currentPlayerIndex++;
+                this.nextPlayer();
+                this.secondsToNextPhase = this.firingTimeout;
+                break;
+        }
+    }
+
+    private void initializeBoards(int players, int width, int height) {
+        for (int i = 0; i < players; i++) {
+            this.boards.add(new Board(width, height));
+        }
+    }
+
+    private int getPlayerIndex(Player player) {
+        return getPlayers().indexOf(player);
+    }
+
+    private void handlePlacement(GameMessage<Fleet> placement) {
+        Player p = this.getPlayerById(placement.getId());
+        int pi = this.getPlayerIndex(p);
+        if (validateFleet(placement.getBody(), this.boards.get(pi))) {
+            p.setFleet(placement.getBody());
+            this.hasPlaced.set(pi, true);
+        }
+
+        boolean start = true;
+        for (boolean b : this.hasPlaced) {
+            if (!b) {
+                start = false;
+            }
+        }
+
+        if (start) {
+            this.phase = Phase.COMBAT;
+        }
     }
 }
