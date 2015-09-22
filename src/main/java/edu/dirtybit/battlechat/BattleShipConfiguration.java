@@ -8,18 +8,28 @@ public class BattleShipConfiguration implements GameConfiguration {
 
     public BattleShipConfiguration() {
         settings = new HashMap<>();
-        settings.put(ConfigKeys.GRID_WIDTH.toString(), "10");
-        settings.put(ConfigKeys.GRID_HEIGHT.toString(), "10");
-        settings.put(ConfigKeys.PLAYER_COUNT.toString(), "2");
-        settings.put(ConfigKeys.MATCHMAKING_TIMEOUT.toString(), "120");
-        settings.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "60");
-        settings.put(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
-        settings.put(ConfigKeys.CANOE_COUNT.toString(), "0");
-        settings.put(ConfigKeys.CRUISER_COUNT.toString(), "1");
-        settings.put(ConfigKeys.SUBMARINE_COUNT.toString(), "1");
-        settings.put(ConfigKeys.DESTROYER_COUNT.toString(), "1");
-        settings.put(ConfigKeys.BATTLESHIP_COUNT.toString(), "1");
-        settings.put(ConfigKeys.CARRIER_COUNT.toString(), "1");
+        putDefaultsIfAbsent();
+    }
+
+    public BattleShipConfiguration(Map<String, String> settings) {
+        this.settings = new HashMap<>();
+        this.settings.putAll(settings);
+        putDefaultsIfAbsent();
+    }
+
+    private void putDefaultsIfAbsent() {
+        settings.putIfAbsent(ConfigKeys.GRID_WIDTH.toString(), "10");
+        settings.putIfAbsent(ConfigKeys.GRID_HEIGHT.toString(), "10");
+        settings.putIfAbsent(ConfigKeys.PLAYER_COUNT.toString(), "2");
+        settings.putIfAbsent(ConfigKeys.MATCHMAKING_TIMEOUT.toString(), "120");
+        settings.putIfAbsent(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "60");
+        settings.putIfAbsent(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
+        settings.putIfAbsent(ConfigKeys.CANOE_COUNT.toString(), "0");
+        settings.putIfAbsent(ConfigKeys.CRUISER_COUNT.toString(), "1");
+        settings.putIfAbsent(ConfigKeys.SUBMARINE_COUNT.toString(), "1");
+        settings.putIfAbsent(ConfigKeys.DESTROYER_COUNT.toString(), "1");
+        settings.putIfAbsent(ConfigKeys.BATTLESHIP_COUNT.toString(), "1");
+        settings.putIfAbsent(ConfigKeys.CARRIER_COUNT.toString(), "1");
     }
 
     public String getProperty(String key) {

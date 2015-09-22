@@ -103,4 +103,28 @@ public class SessionTest {
         session.enqueuePlayer(new Player("two"));
         assertEquals(listener.notificationCount, 1);
     }
+
+    @Test
+    public void Session_ShouldReturnCorrectPlayer_ByGivenName() {
+        Player given = new Player("test");
+
+        Session session = new MockSession(new BattleShipConfiguration(), given);
+
+        Player retrieved = session.getPlayerByName("test");
+
+        assertEquals(given.getId(), retrieved.getId());
+        assertEquals(given.getGivenName(), retrieved.getGivenName());
+    }
+
+    @Test
+    public void Session_ShouldReturnCorrectPlayer_ById() {
+        Player given = new Player("test");
+
+        Session session = new MockSession(new BattleShipConfiguration(), given);
+
+        Player retrieved = session.getPlayerById(given.getId());
+
+        assertEquals(given.getId(), retrieved.getId());
+        assertEquals(given.getGivenName(), retrieved.getGivenName());
+    }
 }

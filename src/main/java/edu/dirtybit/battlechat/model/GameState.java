@@ -54,13 +54,14 @@ public class GameState extends Session implements Runnable {
         }
         return false;
     }
-        private void initializeBoards(GameConfiguration config) {
-            int players = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
 
-            for (int i = 0; i < players; i++) {
-                this.boards.add(new Board(config));
-            }
+    public GameMessage<BattleChatStatus> status(Player p) {
+        Phase ph = this.phase;
+        if (ph == Phase.COMBAT) {
+            ph = this.getPlayers().get(this.currentPlayerIndex).getId().equals(p.getId()) ? Phase.YOU_FIRING : Phase.OPPONENT_FIRING;
         }
+        return new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(ph, this.secondsToNextPhase));
+    }
 
     public void run() {
         do {
@@ -68,38 +69,12 @@ public class GameState extends Session implements Runnable {
         } while (this.phase != Phase.COMPLETED);
     }
 
-
-    public void setCell(Player player, int x, int y, CellType celltype) {
-        int index = this.getPlayerIndex(player);
-
-        boards.get(index).setCell(x, y, celltype);
-    }
-
     public ArrayList<Board> getBoards() {
         return boards;
     }
 
-    public void setBoards(ArrayList<Board> boards) {
-        this.boards = boards;
-    }
-
     public int getCurrentPlayerIndex() {
         return currentPlayerIndex;
-    }
-
-    public void setCurrentPlayerIndex(int currentPlayerIndex) {
-        this.currentPlayerIndex = currentPlayerIndex;
-    }
-
-    public Player nextPlayer() {
-        // Increment player index
-        this.currentPlayerIndex++;
-        // Reset player index if out of bounds
-        if (this.currentPlayerIndex == this.getPlayers().size()) {
-            this.currentPlayerIndex = 0;
-        }
-        // Return the current player as a player object
-        return this.getPlayers().get(this.currentPlayerIndex);
     }
 
     public boolean validateFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
@@ -207,6 +182,14 @@ public class GameState extends Session implements Runnable {
         return isvalid;
     }
 
+    private void initializeBoards(GameConfiguration config) {
+        int players = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
+
+        for (int i = 0; i < players; i++) {
+            this.boards.add(new Board(config));
+        }
+    }
+
     private void handleFire(GameMessage<List<Coordinate>> shot) {
         Player player = this.getPlayerById(shot.getId());
         Board board = this.getBoards().get((this.getPlayerIndex(player)));
@@ -222,12 +205,15 @@ public class GameState extends Session implements Runnable {
         }
     }
 
-    public GameMessage status(Player p) {
-        Phase ph = this.phase;
-        if (ph == Phase.COMBAT) {
-            ph = this.getPlayers().get(this.currentPlayerIndex).getId().equals(p.getId()) ? Phase.YOU_FIRING : Phase.OPPONENT_FIRING;
+    private Player nextPlayer() {
+        // Increment player index
+        this.currentPlayerIndex++;
+        // Reset player index if out of bounds
+        if (this.currentPlayerIndex == this.getPlayers().size()) {
+            this.currentPlayerIndex = 0;
         }
-        return new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(ph, this.secondsToNextPhase));
+        // Return the current player as a player object
+        return this.getPlayers().get(this.currentPlayerIndex);
     }
 
     private void tick() {

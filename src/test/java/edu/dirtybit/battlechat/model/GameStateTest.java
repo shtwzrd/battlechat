@@ -1,5 +1,6 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
@@ -9,8 +10,19 @@ import edu.dirtybit.battlechat.exceptions.ShipsOverlapException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import java.util.Map;
+import java.util.HashMap;
 
 public class GameStateTest {
+
+    @Test
+    public void GameState_PhaseShouldBeWaitingForOpponent_WhenPlayersLessThanPlayerCount() {
+        GameConfiguration config = new BattleShipConfiguration();
+        Player player = new Player("one");
+        GameState game = new GameState(config, player);
+
+        assertEquals(game.status(player).getBody().getGamePhase(), Phase.WAITING_FOR_OPPONENT);
+    }
 
     @Test
     public void GameState_ShouldStart_WhenPlayersEqualsPlayerCount() {
@@ -23,6 +35,59 @@ public class GameStateTest {
         }
 
         assertTrue(game.shouldStart());
+    }
+
+    @Test
+    public void GameState_PhaseShouldBePlacement_WhenGameHasStarted() {
+        GameConfiguration config = new BattleShipConfiguration();
+        Player player = new Player("one");
+        GameState game = new GameState(config, player);
+
+        int playersToHave = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString());
+        while(game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        assertEquals(game.status(player).getBody().getGamePhase(), Phase.PLACEMENT_PHASE);
+    }
+
+    @Test
+    public void GameState_PhaseShouldBeYouFiring_ForInitiator_AfterPlacementPhase() throws InterruptedException {
+        Map<String, String> custom = new HashMap<>();
+        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
+
+        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
+        Player initiator = new Player("one");
+        GameState game = new GameState(cfg, initiator);
+
+        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
+        while(game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        Thread.sleep(1000);
+
+        assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
+    }
+
+        @Test
+    public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException {
+        Map<String, String> custom = new HashMap<>();
+        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
+        custom.put(ConfigKeys.FIRING_TIMEOUT.toString(), "1");
+
+        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
+        Player initiator = new Player("one");
+        GameState game = new GameState(cfg, initiator);
+
+        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
+        while(game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        Thread.sleep(2000);
+
+        assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
     }
 
     @Test
