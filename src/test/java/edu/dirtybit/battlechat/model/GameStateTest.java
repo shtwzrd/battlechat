@@ -1,18 +1,18 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.MockSessionListener;
+import edu.dirtybit.battlechat.exceptions.*;
 import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
-import edu.dirtybit.battlechat.exceptions.InvalidFleetsizeException;
-import edu.dirtybit.battlechat.exceptions.ShipOutOfBoundsException;
-import edu.dirtybit.battlechat.exceptions.ShipsOverlapException;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GameStateTest {
 
@@ -222,6 +222,39 @@ public class GameStateTest {
 
         assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
         assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+    }
+
+    @Test(expected = FiringAtOwnBoardException.class)
+    public void GameState_ShouldNotAllowFiring_WhenAtOwnPlayersBoard() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("suicidal");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player);
+    }
+
+    @Test(expected = FiringOutOfTurnException.class)
+    public void GameState_ShouldNotAllowFiring_WhenItsNotThePlayersTurn() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player1 = new Player("one");
+        Player player2 = new Player("impatient");
+        GameState game = new GameState(new BattleShipConfiguration(), player1);
+        game.enqueuePlayer(player2);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player2);
+    }
+
+    @Test(expected = FiringTooManyShotsException.class)
+    public void GameState_ShouldNotAllowFiring_MoreShotsThanConfigured() throws FiringAtOwnBoardException, FiringOutOfTurnException, FiringTooManyShotsException {
+        Player player = new Player("one");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        List<Coordinate> coords = new ArrayList<>();
+        coords.add(new Coordinate(0, 0, 0));
+        coords.add(new Coordinate(0, 0, 0));
+
+        game.fire(coords, player);
     }
 
     private static Fleet SetupBaseFleet(Fleet fleet) {

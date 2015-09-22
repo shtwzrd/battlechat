@@ -30,6 +30,7 @@ public class BattleShipConfiguration implements GameConfiguration {
         settings.putIfAbsent(ConfigKeys.DESTROYER_COUNT.toString(), "1");
         settings.putIfAbsent(ConfigKeys.BATTLESHIP_COUNT.toString(), "1");
         settings.putIfAbsent(ConfigKeys.CARRIER_COUNT.toString(), "1");
+        settings.putIfAbsent(ConfigKeys.SHOTS_PER_ROUND.toString(), "1");
     }
 
     public String getProperty(String key) {
