@@ -2,28 +2,28 @@
 <html>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="stylesheet" type="text/css" href="style/fontStyle.css">
-<link rel="stylesheet" type="text/css" href="style/gameStyle.css">
-<link rel="shortcut icon" href="img/icon.png">
+<link rel="stylesheet" type="text/css" href="../style/fontStyle.css">
+<link rel="stylesheet" type="text/css" href="../style/gameStyle.css">
+<link rel="shortcut icon" href="../img/icon.png">
 <title>Battleship</title>
 </head>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/interact.js/1.2.5/interact.min.js"></script>
-<script type="text/javascript" src="Plugin/jquery-1.11.3.js"></script>
+<script type="text/javascript" src="../lib/jquery-1.11.3.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
 <script>
 
 //some function
-function originalWidth(clientwidth){
+function vWidth(clientwidth){
 	var windowwidth = window.innerWidth;
 	var width = (clientwidth*100)/windowwidth;
 	return width; 
 }
 
-function originalHeight(clientheight){
+function vHeight(clientheight){
 	var windowheight = window.innerHeight;
-	var width = (clientheight*100)/windowheight;
+	var height = (clientheight*100)/windowheight;
 	return height; 
 }
 
@@ -105,7 +105,7 @@ function dragMoveListener (event) {
     // translate the element
     target.style.webkitTransform =
     target.style.transform =
-      'translate(' + x + 'px, ' + y + 'px) ';
+      'translate(' + vWidth(x) + 'vw, ' + vHeight(y) + 'vh) ';
 		
 		if(target.classList.contains('horizontal')){
 			target.style.transform += 'rotate(-0deg)';
@@ -118,6 +118,7 @@ function dragMoveListener (event) {
     target.setAttribute('data-y', y);
 
 }  
+
 interact('.draggable').draggable({
     // enable inertial throwing
   		inertia: true,
@@ -153,7 +154,7 @@ interact('.draggable').draggable({
 			event.currentTarget.classList.remove('vertical');
 			event.currentTarget.style.transform += 'rotate(0deg)';
 		}
-		ondragenter(event);
+		onmove(event);
 	});
 	
 interact('.square').dropzone({
@@ -228,13 +229,114 @@ interact('.square').dropzone({
 						
 						var endingdivnum = middledivnum + divoneachsidenum;
 						console.log(endingdivnum + 'ending div num')
+						
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+row+i);
 							d.classList.add('occupied');
+							d.classList.add('by'+event.relatedTarget.id);
 							console.log('lsquare'+row+i);
 						}
 					}
+						if ($('#'+event.relatedTarget.id).hasClass('even')){
+							
+						//console.log('boat middle: ' + ((document.getElementById(event.relatedTarget.id).getBoundingClientRect().left+document.getElementById(event.relatedTarget.id).getBoundingClientRect().right)/2));
+						//console.log('cell right: ' +document.getElementById(event.target.id).getBoundingClientRect().right);
+						//console.log('cell left: ' +document.getElementById(event.target.id).getBoundingClientRect().left);
+						
+						var boatcenterx = (document.getElementById(event.relatedTarget.id).getBoundingClientRect().left+document.getElementById(event.relatedTarget.id).getBoundingClientRect().right)/2;
+						var leftcellbound = document.getElementById(event.target.id).getBoundingClientRect().left;
+						var rightcellbound = document.getElementById(event.target.id).getBoundingClientRect().right;
+						
+						if ( Math.round(boatcenterx) > (Math.round(rightcellbound)-2) && Math.round(boatcenterx) < (Math.round(rightcellbound)+2) ){
+							var divsonrightside = ((length)/2);
+							var divsonleftside = divsonrightside-1;	
+						} else if ( Math.round(boatcenterx) > (Math.round(leftcellbound)-2) && Math.round(boatcenterx) < (Math.round(leftcellbound)+2)){
+							var divsonleftside = ((length)/2);
+							var divsonrightside = divsonleftside-1;	
+						}
+						
+						var middledivnum = parseInt(event.target.id.slice(-1));
+						//console.log(divsonrightside + ' : divs on right side');
+						//console.log(divsonleftside + ' : divs on left side');
+						
+						var startingdivnum = middledivnum - divsonleftside;
+						//console.log(startingdivnum + ' : starting div num');
+						
+						var endingdivnum = middledivnum + divsonrightside;
+						//console.log(endingdivnum + 'ending div num')
+						
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+row+i);
+							d.classList.add('occupied');
+							d.classList.add('by'+event.relatedTarget.id);
+							//console.log('lsquare'+row+i);
+						}
+					}
+				}	else if ($('#'+event.relatedTarget.id).hasClass('vertical')){
+					var length = Math.round(document.getElementById(event.relatedTarget.id).offsetWidth/document.getElementById(event.target.id).offsetWidth);
+					var column= event.target.id.slice(-1);
+					
+					if ($('#'+event.relatedTarget.id).hasClass('odd')){
+						var middledivnum = parseInt(event.target.id.charAt(event.target.id.length-2));
+						var divoneachsidenum = (length-1)/2;
+						console.log(divoneachsidenum + ' : divs on each side');
+						
+						var startingdivnum = middledivnum - divoneachsidenum;
+						console.log(startingdivnum + ' : starting div num')
+						
+						var endingdivnum = middledivnum + divoneachsidenum;
+						console.log(endingdivnum + 'ending div num')
+						
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+i+column);
+							d.classList.add('occupied');
+							d.classList.add('by'+event.relatedTarget.id);
+							console.log('lsquare'+i+column);
+						}
+					}
+					
+					
+						if ($('#'+event.relatedTarget.id).hasClass('even')){
+							
+						//console.log('boat middle: ' + ((document.getElementById(event.relatedTarget.id).getBoundingClientRect().left+document.getElementById(event.relatedTarget.id).getBoundingClientRect().right)/2));
+						//console.log('cell right: ' +document.getElementById(event.target.id).getBoundingClientRect().right);
+						//console.log('cell left: ' +document.getElementById(event.target.id).getBoundingClientRect().left);
+						
+						var boatcentery = (document.getElementById(event.relatedTarget.id).getBoundingClientRect().top+document.getElementById(event.relatedTarget.id).getBoundingClientRect().bottom)/2;
+						console.log('boat center ' + boatcentery);
+						var topcellbound = document.getElementById(event.target.id).getBoundingClientRect().top;
+						console.log('top cell bound ' + topcellbound);
+						var bottomcellbound = document.getElementById(event.target.id).getBoundingClientRect().bottom;
+						console.log('bottom cell bound ' + bottomcellbound);
+						
+						if ( Math.round(boatcentery) > (Math.round(topcellbound)-2) && Math.round(boatcentery) < (Math.round(topcellbound)+2) ){
+							var divsontop = ((length)/2);
+							var divsonbottom = divsontop-1;	
+						} else if ( Math.round(boatcentery) > (Math.round(bottomcellbound)-2) && Math.round(boatcentery) < (Math.round(bottomcellbound)+2)){
+							var divsonbottom = ((length)/2);
+							var divsontop = divsonbottom-1;	
+						}
+						
+						var middledivnum = parseInt(event.target.id.charAt(event.target.id.length-2));
+						console.log('middle div : ',middledivnum)
+						//console.log(divsonrightside + ' : divs on right side');
+						//console.log(divsonleftside + ' : divs on left side');
+						
+						var startingdivnum = middledivnum - divsontop;
+						//console.log(startingdivnum + ' : starting div num');
+						
+						var endingdivnum = middledivnum + divsonbottom;
+						//console.log(endingdivnum + 'ending div num')
+						
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+i+column);
+							d.classList.add('occupied');
+							d.classList.add('by'+event.relatedTarget.id);
+							//console.log('lsquare'+row+i);
+						}
+					}
 				}
+				
 				
 			  },
 			  ondropdeactivate: function (event) {
@@ -257,13 +359,16 @@ document.write("<p id=\"phase\" > place your ships! </p>");
 
 // player 1 table
 document.write("<div id='left' class='active'>");
-document.write("<div id='shipdiv'>");
+
+/*document.write("<div id='shipdiv'>");
 document.write("<div class ='odd horizontal ship cruiser draggable' id='ship1'></div>");
 document.write("<div class ='odd rotation-trans horizontal ship carrier draggable' id='ship2'></div>");
 document.write("<div class ='even rotation-trans horizontal ship battleship draggable' id='ship3'></div>");
 document.write("<div class ='even rotation-trans horizontal ship destroyer draggable' id='ship4'></div>");
 document.write("<div class ='odd rotation-trans horizontal ship submarine draggable'id='ship5'></div>");
 document.write("</div>");
+*/
+
 
 //player 1 table
 document.write("<div id='tableleft' class='table'>");
@@ -296,6 +401,23 @@ document.write("</div></div>");
 
 document.write("<div id=\"rightarrow\">-></div>");
 document.write("<div id=\"leftarrow\"><-</div>");
+
+
+//peudo random ship placement
+var div1 = document.getElementById('lsquare13');
+div1.innerHTML = div1.innerHTML + "<div class ='odd rotation-trans horizontal ship cruiser draggable' id='ship1'></div>";
+//peudo random ship placement
+var div2 = document.getElementById('lsquare23');
+div2.innerHTML = div2.innerHTML + "<div class ='odd rotation-trans horizontal ship carrier draggable' id='ship2'></div>";
+//peudo random ship placement
+var div3 = document.getElementById('lsquare33');
+div3.innerHTML = div3.innerHTML + "<div class ='even rotation-trans horizontal ship battleship draggable' id='ship3'></div>";
+//peudo random ship placement
+var div4 = document.getElementById('lsquare43');
+div4.innerHTML = div4.innerHTML + "<div class ='odd rotation-trans horizontal ship submarine draggable' id='ship4'></div>";
+//peudo random ship placement
+var div5 = document.getElementById('lsquare63');
+div5.innerHTML = div5.innerHTML + "<div class ='even rotation-trans horizontal ship destroyer draggable' id='ship5'></div>";
 
 
 document.write("<form action=\"http://www.html.am/html-codes/forms/html-form-tag-action.cfm\" target=\"chattextarea\" method=\"get\" id=\"chat\">");

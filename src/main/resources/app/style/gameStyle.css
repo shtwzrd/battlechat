@@ -140,12 +140,14 @@ body{
 .ship{
 	data-x:'0';
 	data-y:'0';
-	transform: translate(0px,0px);
+	transform: translate(0vh,0vh);
 	left:0;
 	position:absolute;
 	border:2px;
+	margin-left:20vw;
 	background-size:100%;
 	background-repeat:no-repeat;
+	z-index:10;
 }
 #shipdiv{
 	left:11%;
@@ -161,7 +163,8 @@ body{
 	border:solid green;
 }
 .occupied{
-	border:solid red;
+	z-index:5;
+	border:2px groove red;
 }
 .draggable{
  -webkit-transition: all 0s;  /* Chrome 1-25, Safari 3.2+ */
