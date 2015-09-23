@@ -2,17 +2,25 @@
 
 <h2>{{name}}'s game!</h2>
 
-<form data-bind="submit: sendMessage">
-    <input data-bind='value: appChatViewModel.messageToAdd, valueUpdate: "afterkeydown"' />
-    <button type="submit" data-bind="enable: appChatViewModel.messageToAdd().length > 0">Send</button>
-</form>
+<div id="phase-data">
+    <h3>Phase: <span data-bind="text: appGameStateViewModel.phase"></span></h3>
+    <h3>Time left: <span data-bind="text: appGameStateViewModel.timeToPhaseChange"></span></h3>
+</div>
 
-<div data-bind="foreach: appChatViewModel.messages">
-    <p data-bind="text: $data" />
+<div id="chat">
+    <form data-bind="submit: sendMessage">
+        <input data-bind='value: appChatViewModel.messageToAdd, valueUpdate: "afterkeydown"' />
+        <button type="submit" data-bind="enable: appChatViewModel.messageToAdd().length > 0">Send</button>
+    </form>
+
+    <div data-bind="foreach: appChatViewModel.messages">
+        <p data-bind="text: $data" />
+    </div>
 </div>
 
 <script src="../lib/jquery-1.11.3.js"></script>
 <script src="../lib/knockout-3.3.0.js"></script>
-<script src="../js/app.socket.js"></script>
 <script src="../js/app.chat.viewmodel.js"></script>
+<script src="../js/app.gamestate.viewmodel.js"></script>
+<script src="../js/app.socket.js"></script>
 <script src="../js/_run.js"></script>

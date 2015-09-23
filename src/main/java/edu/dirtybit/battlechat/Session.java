@@ -1,10 +1,13 @@
 package edu.dirtybit.battlechat;
 
 import edu.dirtybit.battlechat.model.Player;
+import edu.dirtybit.battlechat.model.GameMessage;
+import edu.dirtybit.battlechat.model.GameMessageType;
 
 import java.util.*;
+import java.util.List;
 
-public abstract class Session {
+public abstract class Session implements Runnable {
     private GameConfiguration config;
     private UUID id;
     private List<Player> players;
@@ -41,7 +44,9 @@ public abstract class Session {
         this.players.add(player);
         if(shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;
-            this.notifySubscribers();
+            this.notifySubscribers(new GameMessage<>(GameMessageType.CHAT, player.getId(), "HAS JOINED"));
+            Thread t = new Thread(this);
+            t.start();
         }
 
         return player.getId();
@@ -49,6 +54,15 @@ public abstract class Session {
 
     public List<Player> getPlayers() {
         return this.players;
+    }
+
+    public int getIndexOfPlayerById(UUID id) {
+        for(int i = 0; i < this.players.size(); i++) {
+            if (this.players.get(i).getId().equals(id)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     public Player getPlayerByName(String name) {
@@ -77,9 +91,11 @@ public abstract class Session {
         return this.config;
     }
 
-    public void notifySubscribers() {
-       this.subscribers.forEach(x -> x.notifySubscriber(this));
+    public void notifySubscribers(GameMessage msg) {
+       this.subscribers.forEach(x -> x.notifySubscriber(this, msg));
     }
+
+    public abstract void handleMessage(GameMessage msg);
 
     public abstract boolean shouldStart();
 }

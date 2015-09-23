@@ -4,6 +4,11 @@ public class BattleChatStatus {
     private int secondsToPhaseChange;
     private Phase gamePhase;
 
+    public BattleChatStatus(Phase phase, int time) {
+        this.gamePhase = phase;
+        this.secondsToPhaseChange = time;
+    }
+
     public int getSecondsToPhaseChange() {
         return secondsToPhaseChange;
     }
@@ -24,8 +29,10 @@ public class BattleChatStatus {
     public enum Phase {
         WAITING_FOR_OPPONENT,
         PLACEMENT_PHASE,
+        COMBAT,
         YOU_FIRING,
         OPPONENT_FIRING,
+        COMPLETED,
         YOU_WIN,
         YOU_LOSE
     }

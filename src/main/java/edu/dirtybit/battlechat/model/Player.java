@@ -1,29 +1,21 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.GameConfiguration;
+
 import java.util.UUID;
 
 public class Player {
     private UUID uuid;
-    private Fleet fleet;
     private String givenName;
 
     public Player(String givenName)
     {
-        uuid = UUID.randomUUID();
-        fleet = new Fleet();
+        this.uuid = UUID.randomUUID();
         this.givenName = givenName;
     }
 
     public UUID getId() {
         return uuid;
-    }
-
-    public Fleet getFleet() {
-        return fleet;
-    }
-
-    public void setFleet(Fleet fleet) {
-        this.fleet = fleet;
     }
 
     public String getGivenName() {

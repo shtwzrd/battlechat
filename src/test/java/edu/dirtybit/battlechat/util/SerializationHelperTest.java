@@ -2,6 +2,7 @@ package edu.dirtybit.battlechat.util;
 
 import com.google.gson.Gson;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.model.BattleChatStatus;
 import edu.dirtybit.battlechat.model.*;
 import org.junit.Test;
 
@@ -36,7 +37,7 @@ public class SerializationHelperTest {
     @Test
     public void SerializationHelper_DeserializePlacement_BodyShouldBeFleet() {
         Gson gson = new Gson();
-        Fleet f = new Fleet();
+        Fleet f = Fleet.fromConfig(new BattleShipConfiguration());
         GameMessage<Fleet> msg = new GameMessage<>(GameMessageType.PLACEMENT, UUID.randomUUID(), f);
         String json = gson.toJson(msg, GameMessage.class);
 
@@ -57,7 +58,7 @@ public class SerializationHelperTest {
     @Test
     public void SerializationHelper_DeserializeStatus_BodyShouldBeBattleChatStatus() {
         Gson gson = new Gson();
-        BattleChatStatus s = new BattleChatStatus();
+        BattleChatStatus s = new BattleChatStatus(BattleChatStatus.Phase.YOU_WIN, 1);
         s.setGamePhase(BattleChatStatus.Phase.WAITING_FOR_OPPONENT);
         s.setSecondsToPhaseChange(30);
         GameMessage<BattleChatStatus> msg = new GameMessage<>(GameMessageType.STATUS, UUID.randomUUID(), s);
@@ -71,7 +72,7 @@ public class SerializationHelperTest {
     public void SerializationHelper_DeserializeFire_BodyShouldBeCoordinateArray() {
         Gson gson = new Gson();
         ArrayList<Coordinate> c = new ArrayList<>();
-        c.add(new Coordinate(1, 1));
+        c.add(new Coordinate(0, 1, 1));
         GameMessage<ArrayList<Coordinate>> msg = new GameMessage<>(GameMessageType.FIRE, UUID.randomUUID(), c);
         String json = gson.toJson(msg, GameMessage.class);
 
@@ -84,7 +85,7 @@ public class SerializationHelperTest {
     public void SerializationHelper_DeserializeFireLocations_BodyShouldBeCoordinateArray() {
         Gson gson = new Gson();
         ArrayList<Coordinate> c = new ArrayList<>();
-        c.add(new Coordinate(1, 1));
+        c.add(new Coordinate(0, 1, 1));
         GameMessage<ArrayList<Coordinate>> msg = new GameMessage<>(GameMessageType.FIRE_LOCATIONS, UUID.randomUUID(), c);
         String json = gson.toJson(msg, GameMessage.class);
 

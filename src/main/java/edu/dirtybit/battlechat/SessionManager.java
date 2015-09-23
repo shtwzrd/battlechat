@@ -46,7 +46,9 @@ public class SessionManager implements SessionListener, LobbyListener {
         }
     }
 
-    public void notifySubscriber(Session obj) {
+    public void notifySubscriber(Session obj, GameMessage message) {
+        Lobby.INSTANCE.message(message);
+
         switch (obj.getStatus()) {
             case COMPLETED:
                 while(this.playerToSession.values().remove(obj.getId()));
@@ -60,15 +62,15 @@ public class SessionManager implements SessionListener, LobbyListener {
 
     @Override
     public void receiveMessage(GameMessage message) {
+        Session s = this.getSessionContainingPlayer(message.getId());
         if(message.getMessageType() == GameMessageType.CHAT) {
-            Session s = this.getSessionContainingPlayer(message.getId());
             if (s != null) {
                 String sender = s.getPlayerById(message.getId()).getGivenName();
-                s.getPlayers().forEach(p -> {
-                    Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
-                            p.getId(), String.format("%s: %s \n", sender, message.getBody())));
-                });
+                s.getPlayers().forEach(p -> Lobby.INSTANCE.message(new GameMessage(GameMessageType.CHAT,
+                        p.getId(), String.format("%s: %s \n", sender, message.getBody()))));
             }
+        } else {
+            s.handleMessage(message);
         }
     }
 

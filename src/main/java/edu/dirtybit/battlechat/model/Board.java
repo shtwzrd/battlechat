@@ -1,18 +1,21 @@
 package edu.dirtybit.battlechat.model;
 
+import edu.dirtybit.battlechat.BattleShipConfiguration;
+import edu.dirtybit.battlechat.GameConfiguration;
+
 import java.util.ArrayList;
 
 public class Board extends BaseBoard
 {
     private Perspective perspective;
+    private Fleet fleet;
     private boolean cleared;
 
-    public Board(int width, int height)
+    public Board(GameConfiguration config)
     {
-        super(width, height);
-        this.perspective = new Perspective(width, height);
-        this.width = width;
-        this.height = height;
+        super(Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())), Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
+        this.fleet = Fleet.fromConfig(config);
+        this.perspective = new Perspective(this.width, this.height);
         this.clear();
         this.cleared = true;
     }
@@ -27,6 +30,14 @@ public class Board extends BaseBoard
     public Perspective getPerspective()
     {
         return this.perspective;
+    }
+
+    public Fleet getFleet() {
+        return fleet;
+    }
+
+    public void setFleet(Fleet fleet) {
+        this.fleet = fleet;
     }
 
     @Override

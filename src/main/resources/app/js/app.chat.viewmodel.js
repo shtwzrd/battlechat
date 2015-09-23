@@ -15,4 +15,4 @@
     }.bind(appChatViewModel);
 }( window.appChatViewModel = window.appChatViewModel || {}, jQuery ));
 
-ko.applyBindings(appChatViewModel);
+ko.applyBindings(appChatViewModel, $("#chat")[0]);
