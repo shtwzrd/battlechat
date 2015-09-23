@@ -41,8 +41,8 @@ public class BattleShipConfiguration implements GameConfiguration {
         return Integer.parseInt(getProperty(key));
     }
 
-     public String getProperty(ConfigKeys key) {
-        return settings.containsKey(key.toString()) ? settings.get(key) : "";
+    public String getProperty(ConfigKeys key) {
+        return settings.containsKey(key.toString()) ? settings.get(key.toString()) : "";
     }
 
     public int getPropertyAsInt(ConfigKeys key) {

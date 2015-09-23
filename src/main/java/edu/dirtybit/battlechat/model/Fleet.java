@@ -13,27 +13,26 @@ public class Fleet {
 
         int i = 0;
         for (i = 0; i < canoes; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CANOE));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CANOE));
         }
         for (i = 0; i < cruisers; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CRUISER));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CRUISER));
         }
         for (i = 0; i < submarines; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.SUBMARINE));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.SUBMARINE));
         }
         for (i = 0; i < destroyers; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.DESTROYER));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.DESTROYER));
         }
         for (i = 0; i < battleships; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.BATTLESHIP));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.BATTLESHIP));
         }
         for (i = 0; i < carriers; i++) {
-            this.ships.add(new Ship(0,0,Rotation.Horizontal,ShipType.CARRIER));
+            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CARRIER));
         }
     }
 
-    public static Fleet fromConfig(GameConfiguration config)
-    {
+    public static Fleet fromConfig(GameConfiguration config) {
         int canoes = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CANOE_COUNT.toString()));
         int cruisers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CRUISER_COUNT.toString()));
         int submarines = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.SUBMARINE_COUNT.toString()));
