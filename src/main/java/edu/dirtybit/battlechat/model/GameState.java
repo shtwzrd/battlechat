@@ -79,18 +79,18 @@ public class GameState extends Session implements Runnable {
     protected boolean fire(List<Coordinate> shots, Player player) throws FiringTooManyShotsException, FiringOutOfTurnException, FiringAtOwnBoardException {
         int shotsAllowed = cfg.getPropertyAsInt(ConfigKeys.SHOTS_PER_ROUND);
 
-        if(shots.size() > shotsAllowed) {
+        if (shots.size() > shotsAllowed) {
             throw new FiringTooManyShotsException(shots.size(), shotsAllowed);
         }
 
-        if(this.getPlayerIndex(player) != this.currentPlayerIndex) {
+        if (this.getPlayerIndex(player) != this.currentPlayerIndex) {
             throw new FiringOutOfTurnException();
         }
 
         boolean hit = false;
         for (int i = 0; i < shotsAllowed; i++) {
             Coordinate c = shots.get(i);
-            if(c.getBoardIndex() == this.getPlayerIndex(player)) {
+            if (c.getBoardIndex() == this.getPlayerIndex(player)) {
                 throw new FiringAtOwnBoardException(c.getBoardIndex());
             }
             Board board = this.boards.get(c.getBoardIndex());
@@ -171,6 +171,7 @@ public class GameState extends Session implements Runnable {
                             break;
                         case Vertical:
                             if (endy < 0 || endy > board.getWidth()) {
+                                board.clear();
                                 throw new ShipOutOfBoundsException(ship, endx, endy);
                             } else {
                                 for (int y = ship.getY(); y <= endy; y++) {
@@ -197,8 +198,6 @@ public class GameState extends Session implements Runnable {
             this.boards.add(new Board(config));
         }
     }
-
-
 
     private Player nextPlayer() {
         // Increment player index
