@@ -29,9 +29,6 @@ public class SerializationHelper {
             case FIRE:
                 type = new TypeToken<GameMessage<ArrayList<Coordinate>>>() {};
                 break;
-            case FIRE_LOCATIONS:
-                type = new TypeToken<GameMessage<ArrayList<Coordinate>>>() {};
-                break;
             case UPDATE:
                 type = new TypeToken<GameMessage<Perspective>>() {};
                 break;

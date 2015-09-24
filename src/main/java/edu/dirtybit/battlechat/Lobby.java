@@ -2,6 +2,7 @@ package edu.dirtybit.battlechat;
 
 import edu.dirtybit.battlechat.controller.SessionSocket;
 import edu.dirtybit.battlechat.model.GameMessage;
+import edu.dirtybit.battlechat.model.GameMessageType;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -18,6 +19,7 @@ public enum Lobby {
 
     public void registerConnection(UUID id, SessionSocket socket) {
         this.players.put(id, socket);
+        notifyMessage(new GameMessage<>(GameMessageType.CONFIG_REQUEST, id, ""));
     }
 
     public void message(GameMessage message) {

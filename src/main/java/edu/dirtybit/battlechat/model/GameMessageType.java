@@ -2,10 +2,10 @@ package edu.dirtybit.battlechat.model;
 
 public enum GameMessageType {
     CONFIGURATION,
+    CONFIG_REQUEST,
     STATUS,
     UPDATE,
     FIRE,
-    FIRE_LOCATIONS,
     HIT,
     MISS,
     PLACEMENT,

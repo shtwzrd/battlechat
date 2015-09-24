@@ -38,6 +38,6 @@ public class SessionController implements Controller {
 
     private String renderTemplate(Map<String, String> map) {
         MustacheTemplateEngine engine = new MustacheTemplateEngine();
-        return engine.render(new ModelAndView(map, "example.mustache"));
+        return engine.render(new ModelAndView(map, "game.mustache"));
     }
 }

@@ -1,7 +1,6 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.MockSessionListener;
-import edu.dirtybit.battlechat.SessionListener;
 import edu.dirtybit.battlechat.exceptions.*;
 import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
@@ -317,29 +316,6 @@ public class GameStateTest {
         coords.add(new Coordinate(1, 9, 9));
 
         assertFalse(game.fire(coords, player));
-    }
-
-    @Test
-    public void GameState_ShouldSendFiringLocationMessage_WhenIsPlayersTurn() throws InterruptedException {
-        Map<String, String> custom = new HashMap<>();
-        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
-
-        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
-        MockSessionListener listener = new MockSessionListener();
-
-        Player initiator = new Player("one");
-        GameState game = new GameState(cfg, initiator);
-        game.subscribe(listener);
-
-        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
-        while (game.getPlayers().size() < playersToHave) {
-            game.enqueuePlayer(new Player("next"));
-        }
-
-        Thread.sleep(1000);
-
-        assertTrue(listener.containsMessageType(GameMessageType.FIRE_LOCATIONS));
-        assertEquals(listener.getFirstMessageByType(GameMessageType.FIRE_LOCATIONS).getId(), initiator.getId());
     }
 
     @Test

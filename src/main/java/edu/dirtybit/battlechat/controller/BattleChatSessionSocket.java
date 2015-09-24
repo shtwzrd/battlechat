@@ -38,10 +38,10 @@ public class BattleChatSessionSocket implements SessionSocket {
         this.sessions.keySet().forEach(s ->
         {
             if (!this.sessions.get(s).isOpen()) {
-                this.sessions.remove(s);
                 Lobby.INSTANCE.clearConnection(s);
             }
         });
+        this.sessions.keySet().removeIf(s -> !this.sessions.get(s).isOpen());
     }
 
     @OnWebSocketMessage
