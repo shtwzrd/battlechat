@@ -1,26 +1,326 @@
-<h1>You have entered...</h1>
-
-<h2>{{name}}'s game!</h2>
-
-<div id="phase-data">
-    <h3>Phase: <span data-bind="text: appGameStateViewModel.phase"></span></h3>
-    <h3>Time left: <span data-bind="text: appGameStateViewModel.timeToPhaseChange"></span></h3>
-</div>
-
-<div id="chat">
-    <form data-bind="submit: sendMessage">
-        <input data-bind='value: appChatViewModel.messageToAdd, valueUpdate: "afterkeydown"' />
-        <button type="submit" data-bind="enable: appChatViewModel.messageToAdd().length > 0">Send</button>
-    </form>
-
-    <div data-bind="foreach: appChatViewModel.messages">
-        <p data-bind="text: $data" />
-    </div>
-</div>
-
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="../style/fontStyle.css">
+<link rel="stylesheet" type="text/css" href="../style/gameStyle.css">
+<link rel="shortcut icon" href="../img/icon.png">
+<title>Battleship</title>
 <script src="../lib/jquery-1.11.3.js"></script>
 <script src="../lib/knockout-3.3.0.js"></script>
 <script src="../js/app.chat.viewmodel.js"></script>
 <script src="../js/app.gamestate.viewmodel.js"></script>
 <script src="../js/app.socket.js"></script>
 <script src="../js/_run.js"></script>
+
+
+
+<body><div id="animated-background"></div>
+<p id="phase"> <span data-bind="text: appGameStateViewModel.timeToPhaseChange"></span> : <span data-bind="text: appGameStateViewModel.phase"></span> </p>
+<div id="left" class="active">
+<div id="tableleft" class="table">
+<div id="lrow0" class="row">
+<div id="lsquare00" class="square">
+</div>
+<div id="lsquare01" class="square">
+</div>
+<div id="lsquare02" class="square">
+</div>
+<div id="lsquare03" class="square">
+</div>
+<div id="lsquare04" class="square">
+</div>
+<div id="lsquare05" class="square">
+</div>
+<div id="lsquare06" class="square">
+</div>
+<div id="lsquare07" class="square">
+</div>
+</div>
+<div id="lrow1" class="row">
+<div id="lsquare10" class="square">
+</div>
+<div id="lsquare11" class="square">
+</div>
+<div id="lsquare12" class="square">
+</div>
+<div id="lsquare13" class="square">
+<div class="odd rotation-trans horizontal ship cruiser draggable" id="ship1"></div></div>
+<div id="lsquare14" class="square">
+</div>
+<div id="lsquare15" class="square">
+</div>
+<div id="lsquare16" class="square">
+</div>
+<div id="lsquare17" class="square">
+</div>
+</div>
+<div id="lrow2" class="row">
+<div id="lsquare20" class="square">
+</div>
+<div id="lsquare21" class="square">
+</div>
+<div id="lsquare22" class="square">
+</div>
+<div id="lsquare23" class="square">
+<div class="odd rotation-trans horizontal ship carrier draggable" id="ship2"></div></div>
+<div id="lsquare24" class="square">
+</div>
+<div id="lsquare25" class="square">
+</div>
+<div id="lsquare26" class="square">
+</div>
+<div id="lsquare27" class="square">
+</div>
+</div>
+<div id="lrow3" class="row">
+<div id="lsquare30" class="square">
+</div>
+<div id="lsquare31" class="square">
+</div>
+<div id="lsquare32" class="square">
+</div>
+<div id="lsquare33" class="square">
+<div class="even rotation-trans horizontal ship battleship draggable" id="ship3"></div></div>
+<div id="lsquare34" class="square">
+</div>
+<div id="lsquare35" class="square">
+</div>
+<div id="lsquare36" class="square">
+</div>
+<div id="lsquare37" class="square">
+</div>
+</div>
+<div id="lrow4" class="row">
+<div id="lsquare40" class="square">
+</div>
+<div id="lsquare41" class="square">
+</div>
+<div id="lsquare42" class="square">
+</div>
+<div id="lsquare43" class="square">
+<div class="odd rotation-trans horizontal ship submarine draggable" id="ship4"></div></div>
+<div id="lsquare44" class="square">
+</div>
+<div id="lsquare45" class="square">
+</div>
+<div id="lsquare46" class="square">
+</div>
+<div id="lsquare47" class="square">
+</div>
+</div>
+<div id="lrow5" class="row">
+<div id="lsquare50" class="square">
+</div>
+<div id="lsquare51" class="square">
+</div>
+<div id="lsquare52" class="square">
+</div>
+<div id="lsquare53" class="square">
+</div>
+<div id="lsquare54" class="square">
+</div>
+<div id="lsquare55" class="square">
+</div>
+<div id="lsquare56" class="square">
+</div>
+<div id="lsquare57" class="square">
+</div>
+</div>
+<div id="lrow6" class="row">
+<div id="lsquare60" class="square">
+</div>
+<div id="lsquare61" class="square">
+</div>
+<div id="lsquare62" class="square">
+</div>
+<div id="lsquare63" class="square">
+<div class="even rotation-trans horizontal ship destroyer draggable" id="ship5"></div></div>
+<div id="lsquare64" class="square">
+</div>
+<div id="lsquare65" class="square">
+</div>
+<div id="lsquare66" class="square">
+</div>
+<div id="lsquare67" class="square">
+</div>
+</div>
+<div id="lrow7" class="row">
+<div id="lsquare70" class="square">
+</div>
+<div id="lsquare71" class="square">
+</div>
+<div id="lsquare72" class="square">
+</div>
+<div id="lsquare73" class="square">
+</div>
+<div id="lsquare74" class="square">
+</div>
+<div id="lsquare75" class="square">
+</div>
+<div id="lsquare76" class="square">
+</div>
+<div id="lsquare77" class="square">
+</div>
+</div>
+</div></div>
+<div id="right" style="right:-30%;">
+<div id="tableright" class="table">
+<div id="rrow0" class="row">
+<div id="rsquare00" class="square">
+</div>
+<div id="rsquare01" class="square">
+</div>
+<div id="rsquare02" class="square">
+</div>
+<div id="rsquare03" class="square">
+</div>
+<div id="rsquare04" class="square">
+</div>
+<div id="rsquare05" class="square">
+</div>
+<div id="rsquare06" class="square">
+</div>
+<div id="rsquare07" class="square">
+</div>
+</div>
+<div id="rrow1" class="row">
+<div id="rsquare10" class="square">
+</div>
+<div id="rsquare11" class="square">
+</div>
+<div id="rsquare12" class="square">
+</div>
+<div id="rsquare13" class="square">
+</div>
+<div id="rsquare14" class="square">
+</div>
+<div id="rsquare15" class="square">
+</div>
+<div id="rsquare16" class="square">
+</div>
+<div id="rsquare17" class="square">
+</div>
+</div>
+<div id="rrow2" class="row">
+<div id="rsquare20" class="square">
+</div>
+<div id="rsquare21" class="square">
+</div>
+<div id="rsquare22" class="square">
+</div>
+<div id="rsquare23" class="square">
+</div>
+<div id="rsquare24" class="square">
+</div>
+<div id="rsquare25" class="square">
+</div>
+<div id="rsquare26" class="square">
+</div>
+<div id="rsquare27" class="square">
+</div>
+</div>
+<div id="rrow3" class="row">
+<div id="rsquare30" class="square">
+</div>
+<div id="rsquare31" class="square">
+</div>
+<div id="rsquare32" class="square">
+</div>
+<div id="rsquare33" class="square">
+</div>
+<div id="rsquare34" class="square">
+</div>
+<div id="rsquare35" class="square">
+</div>
+<div id="rsquare36" class="square">
+</div>
+<div id="rsquare37" class="square">
+</div>
+</div>
+<div id="rrow4" class="row">
+<div id="rsquare40" class="square">
+</div>
+<div id="rsquare41" class="square">
+</div>
+<div id="rsquare42" class="square">
+</div>
+<div id="rsquare43" class="square">
+</div>
+<div id="rsquare44" class="square">
+</div>
+<div id="rsquare45" class="square">
+</div>
+<div id="rsquare46" class="square">
+</div>
+<div id="rsquare47" class="square">
+</div>
+</div>
+<div id="rrow5" class="row">
+<div id="rsquare50" class="square">
+</div>
+<div id="rsquare51" class="square">
+</div>
+<div id="rsquare52" class="square">
+</div>
+<div id="rsquare53" class="square">
+</div>
+<div id="rsquare54" class="square">
+</div>
+<div id="rsquare55" class="square">
+</div>
+<div id="rsquare56" class="square">
+</div>
+<div id="rsquare57" class="square">
+</div>
+</div>
+<div id="rrow6" class="row">
+<div id="rsquare60" class="square">
+</div>
+<div id="rsquare61" class="square">
+</div>
+<div id="rsquare62" class="square">
+</div>
+<div id="rsquare63" class="square">
+</div>
+<div id="rsquare64" class="square">
+</div>
+<div id="rsquare65" class="square">
+</div>
+<div id="rsquare66" class="square">
+</div>
+<div id="rsquare67" class="square">
+</div>
+</div>
+<div id="rrow7" class="row">
+<div id="rsquare70" class="square">
+</div>
+<div id="rsquare71" class="square">
+</div>
+<div id="rsquare72" class="square">
+</div>
+<div id="rsquare73" class="square">
+</div>
+<div id="rsquare74" class="square">
+</div>
+<div id="rsquare75" class="square">
+</div>
+<div id="rsquare76" class="square">
+</div>
+<div id="rsquare77" class="square">
+</div>
+</div>
+</div></div>
+<div id="rightarrow">-&gt;</div>
+<div id="leftarrow">&lt;-</div>
+<div id="chat">
+<form data-bind="submit: sendMessage">
+<input id="chatinput" name="chatinput" value="" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate: &quot;afterkeydown&quot;" type="text">
+<input disabled="" id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">
+</form>
+<div id="chattextarea" name="chattextarea" data-bind="foreach: appChatViewModel.messages"></div>
+</div>
+
+
+
+
+</body></html>
