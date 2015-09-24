@@ -317,14 +317,13 @@
 <div id="rightarrow">-&gt;</div>
 <div id="leftarrow">&lt;-</div>
 <div id="chat">
-<form data-bind="submit: sendMessage">
-<input id="chatinput" name="chatinput" value="" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate: 'afterkeydown' " type="text">
-<input id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">
-</form>
-<div id="chattextarea" name="chattextarea" data-bind="foreach: appChatViewModel.messages"></div>
+	<form data-bind="submit: sendMessage">
+		<input id="chatinput" name="chatinput" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate:'afterkeydown'>
+		<button id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">Send</button>
+	</form>
+	<div id="chattextarea" name="chattextarea" data-bind="foreach: appChatViewModel.messages">
+		<p data-bind="text:$data" />
+	</div>
 </div>
-
-
-
-
-</body></html>
+</body>
+</html>
