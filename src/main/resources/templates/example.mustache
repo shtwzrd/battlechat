@@ -318,7 +318,7 @@
 <div id="leftarrow">&lt;-</div>
 <div id="chat">
 	<form data-bind="submit: sendMessage">
-		<input id="chatinput" name="chatinput" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate:'afterkeydown'>
+		<input id="chatinput" name="chatinput" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate:'afterkeydown'">
 		<button id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">Send</button>
 	</form>
 	<div id="chattextarea" name="chattextarea" data-bind="foreach: appChatViewModel.messages">
