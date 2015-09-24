@@ -2,9 +2,8 @@ package edu.dirtybit.battlechat;
 
 import edu.dirtybit.battlechat.controller.SessionSocket;
 import edu.dirtybit.battlechat.model.GameMessage;
-import edu.dirtybit.battlechat.model.GameMessageType;
 
-import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.Map;
 import java.util.HashSet;
 import java.util.Set;
@@ -14,12 +13,11 @@ import java.io.IOException;
 public enum Lobby {
     INSTANCE;
 
-    private Map<UUID, SessionSocket> players = new HashMap<>();
+    private Map<UUID, SessionSocket> players = new ConcurrentHashMap<>();
     private Set<LobbyListener> listeners = new HashSet<>();
 
     public void registerConnection(UUID id, SessionSocket socket) {
         this.players.put(id, socket);
-        notifyMessage(new GameMessage<>(GameMessageType.CONFIG_REQUEST, id, ""));
     }
 
     public void message(GameMessage message) {
