@@ -65,7 +65,7 @@ div5.innerHTML = div5.innerHTML + "<div class ='even rotation-trans horizontal s
 
 document.writeln("<div id='chat'>");
 document.writeln("<form data-bind='submit: sendMessage'>");
-document.writeln("<input id='chatinput' name='chatinput' type='text' value='' form='chat' data-bind='value: appChatViewModel.messageToAdd, valueUpdate: \"afterkeydown\"'>");
+document.writeln("<input id='chatinput' name='chatinput' type='text' value='' form='chat' data-bind='value: appChatViewModel.messageToAdd, valueUpdate: 'afterkeydown''>");
 document.writeln("<input type='submit' id='chatbutton' data-bind='enable: appChatViewModel.messageToAdd().length > 0'>");
 document.writeln("</form>");
 document.writeln("<div id='chattextarea' name='chattextarea' data-bind='foreach: appChatViewModel.messages'></div>");

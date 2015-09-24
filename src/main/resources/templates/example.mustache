@@ -10,7 +10,6 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/jquery-ui.min.js" type="text/javascript"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
-<script src="../lib/jquery-1.11.3.js"></script>
 <script src="../lib/knockout-3.3.0.js"></script>
 <script src="../js/app.chat.viewmodel.js"></script>
 <script src="../js/app.gamestate.viewmodel.js"></script>
@@ -319,8 +318,8 @@
 <div id="leftarrow">&lt;-</div>
 <div id="chat">
 <form data-bind="submit: sendMessage">
-<input id="chatinput" name="chatinput" value="" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate: &quot;afterkeydown&quot;" type="text">
-<input disabled="" id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">
+<input id="chatinput" name="chatinput" value="" form="chat" data-bind="value: appChatViewModel.messageToAdd, valueUpdate: 'afterkeydown' " type="text">
+<input id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">
 </form>
 <div id="chattextarea" name="chattextarea" data-bind="foreach: appChatViewModel.messages"></div>
 </div>
