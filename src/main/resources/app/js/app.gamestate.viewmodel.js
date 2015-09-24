@@ -5,4 +5,4 @@
 
 }( window.appGameStateViewModel = window.appGameStateViewModel || {}, jQuery ));
 
-ko.applyBindings(appGameStateViewModel, $("#phase-data")[0]);
+ko.applyBindings(appGameStateViewModel, $("#phase")[0]);
