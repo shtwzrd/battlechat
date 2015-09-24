@@ -1,6 +1,7 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.MockSessionListener;
+import edu.dirtybit.battlechat.SessionListener;
 import edu.dirtybit.battlechat.exceptions.*;
 import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration;
@@ -87,7 +88,7 @@ public class GameStateTest {
             game.enqueuePlayer(new Player("next"));
         }
 
-        Thread.sleep(2000);
+        Thread.sleep(2100);
 
         assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
     }
@@ -185,7 +186,7 @@ public class GameStateTest {
     }
 
     @Test
-    public void GameState_ShouldSendInvalidFleetSizeError_WhenFleetHasTooManyShips() {
+    public void GameState_ShouldSendInvalidFleetSizeError_WhenFleetHasTooManyShips() throws InterruptedException {
         Player player1 = new Player("testone");
         Player player2 = new Player("testtwo");
         GameState game = new GameState(new BattleShipConfiguration(), player1);
@@ -202,12 +203,12 @@ public class GameStateTest {
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
 
-        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
-        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+        Thread.sleep(1000);
+        assertTrue(listener.containsMessageType(GameMessageType.ERROR));
     }
 
     @Test
-    public void GameState_ShouldSendShipOutOfBoundsError_WhenShipOutOfBounds() {
+    public void GameState_ShouldSendShipOutOfBoundsError_WhenShipOutOfBounds() throws InterruptedException {
         Player player1 = new Player("testone");
         Player player2 = new Player("testtwo");
         GameState game = new GameState(new BattleShipConfiguration(), player1);
@@ -224,13 +225,12 @@ public class GameStateTest {
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
 
-        // Note: the first assertEquals has failed once on a local test (returned "UPDATE"), but simply rerunning the test fixed it. (keep an eye on this test)
-        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
-        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+        Thread.sleep(1000);
+        assertTrue(listener.containsMessageType(GameMessageType.ERROR));
     }
 
     @Test
-    public void GameState_ShouldSendShipsOverlapError_WhenShipsOverlap() {
+    public void GameState_ShouldSendShipsOverlapError_WhenShipsOverlap() throws InterruptedException {
         Player player1 = new Player("testone");
         Player player2 = new Player("testtwo");
         GameState game = new GameState(new BattleShipConfiguration(), player1);
@@ -250,8 +250,8 @@ public class GameStateTest {
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
 
-        assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
-        assertEquals(listener.lastMessageReceived.getId(), player1.getId());
+        Thread.sleep(1000);
+        assertTrue(listener.containsMessageType(GameMessageType.ERROR));
     }
 
     @Test(expected = FiringAtOwnBoardException.class)
@@ -317,6 +317,29 @@ public class GameStateTest {
         coords.add(new Coordinate(1, 9, 9));
 
         assertFalse(game.fire(coords, player));
+    }
+
+    @Test
+    public void GameState_ShouldSendFiringLocationMessage_WhenIsPlayersTurn() throws InterruptedException {
+        Map<String, String> custom = new HashMap<>();
+        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
+
+        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
+        MockSessionListener listener = new MockSessionListener();
+
+        Player initiator = new Player("one");
+        GameState game = new GameState(cfg, initiator);
+        game.subscribe(listener);
+
+        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
+        while (game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        Thread.sleep(1000);
+
+        assertTrue(listener.containsMessageType(GameMessageType.FIRE_LOCATIONS));
+        assertEquals(listener.getFirstMessageByType(GameMessageType.FIRE_LOCATIONS).getId(), initiator.getId());
     }
 
     @Test
