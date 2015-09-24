@@ -2,7 +2,11 @@
 body{
 	background-size: 30px 30px; 
 	background-repeat: repeat;
-	overflow:hidden;
+}
+
+html, body{
+    max-width: 100% !important;
+    overflow-x: hidden !important
 }
 #animated-background{
     position: fixed;
@@ -116,25 +120,25 @@ body{
 .carrier{
 	height:6vh;
 	width:30vh;
-	top:20%;
+	top:17%;
 	background-image:url(../img/carrier.png);
 }
 .battleship{
 	height:6vh;
 	width:24vh;
-	top:40%;
+	top:35%;
 	background-image:url(../img/battleship.png);
 }
 .submarine{
 	height:6vh;
 	width:18vh;
-	top:60%;
+	top:54%;
 	background-image:url(../img/submarine.png);
 }
 .destroyer{
 	height:6vh;
 	width:12vh;
-	top:80%;
+	top:70%;
 	background-image:url(../img/destroyer.png);
 }
 .ship{
