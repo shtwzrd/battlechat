@@ -9,6 +9,7 @@ import edu.dirtybit.battlechat.GameConfiguration;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class GameStateTest {
         GameState game = new GameState(config, new Player("first"));
 
         int playersToHave = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString());
-        while(game.getPlayers().size() < playersToHave) {
+        while (game.getPlayers().size() < playersToHave) {
             game.enqueuePlayer(new Player("next"));
         }
 
@@ -45,7 +46,7 @@ public class GameStateTest {
         GameState game = new GameState(config, player);
 
         int playersToHave = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString());
-        while(game.getPlayers().size() < playersToHave) {
+        while (game.getPlayers().size() < playersToHave) {
             game.enqueuePlayer(new Player("next"));
         }
 
@@ -62,7 +63,7 @@ public class GameStateTest {
         GameState game = new GameState(cfg, initiator);
 
         int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
-        while(game.getPlayers().size() < playersToHave) {
+        while (game.getPlayers().size() < playersToHave) {
             game.enqueuePlayer(new Player("next"));
         }
 
@@ -71,7 +72,7 @@ public class GameStateTest {
         assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
     }
 
-        @Test
+    @Test
     public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException {
         Map<String, String> custom = new HashMap<>();
         custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
@@ -82,7 +83,7 @@ public class GameStateTest {
         GameState game = new GameState(cfg, initiator);
 
         int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
-        while(game.getPlayers().size() < playersToHave) {
+        while (game.getPlayers().size() < playersToHave) {
             game.enqueuePlayer(new Player("next"));
         }
 
@@ -129,13 +130,41 @@ public class GameStateTest {
     }
 
     @Test(expected = ShipOutOfBoundsException.class)
-    public void GameState_ShouldNotValidateFleet_WhenShipOutOfBounds() throws ShipsOverlapException, ShipOutOfBoundsException, InvalidFleetsizeException {
+    public void GameState_ShouldNotValidateFleet_WhenShipPlacedOutsideGrid() throws ShipsOverlapException, ShipOutOfBoundsException, InvalidFleetsizeException {
         GameState game = new GameState(new BattleShipConfiguration(), new Player("test"));
         Board board = game.getBoards().get(0);
         Fleet fleet = board.getFleet();
 
         GameStateTest.SetupBaseFleet(fleet);
         fleet.getShips().get(0).setLocation(-1, board.getHeight() + 1);
+
+        game.placeFleet(fleet, board);
+    }
+
+    @Test (expected = ShipOutOfBoundsException.class)
+    public void GameState_ShouldNotValidateFleet_WhenShipExtendsHorizontallyOutsideGrid() throws ShipsOverlapException, ShipOutOfBoundsException, InvalidFleetsizeException {
+        GameState game = new GameState(new BattleShipConfiguration(), new Player("test"));
+        Board board = game.getBoards().get(0);
+        Fleet fleet = board.getFleet();
+
+        GameStateTest.SetupBaseFleet(fleet);
+        Ship ship = fleet.getShips().get(0);
+        ship.setLocation(board.getWidth() - 1, board.getHeight() - 1);
+        ship.setRotation(Rotation.Horizontal);
+
+        game.placeFleet(fleet, board);
+    }
+
+    @Test (expected = ShipOutOfBoundsException.class)
+    public void GameState_ShouldNotValidateFleet_WhenShipExtendsVerticallyOutsideGrid() throws ShipsOverlapException, ShipOutOfBoundsException, InvalidFleetsizeException {
+        GameState game = new GameState(new BattleShipConfiguration(), new Player("test"));
+        Board board = game.getBoards().get(0);
+        Fleet fleet = board.getFleet();
+
+        GameStateTest.SetupBaseFleet(fleet);
+        Ship ship = fleet.getShips().get(0);
+        ship.setLocation(board.getWidth() - 1, board.getHeight() - 1);
+        ship.setRotation(Rotation.Vertical);
 
         game.placeFleet(fleet, board);
     }
@@ -195,6 +224,7 @@ public class GameStateTest {
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
 
+        // Note: the first assertEquals has failed once on a local test (returned "UPDATE"), but simply rerunning the test fixed it. (keep an eye on this test)
         assertEquals(listener.lastMessageReceived.getMessageType(), GameMessageType.ERROR);
         assertEquals(listener.lastMessageReceived.getId(), player1.getId());
     }
@@ -287,6 +317,16 @@ public class GameStateTest {
         coords.add(new Coordinate(1, 9, 9));
 
         assertFalse(game.fire(coords, player));
+    }
+
+    @Test
+    public void GameState_ShouldGetCurrentPlayerIndex() {
+        Player player = new Player("one");
+        Player player2 = new Player("two");
+        GameState game = new GameState(new BattleShipConfiguration(), player);
+        game.enqueuePlayer(player2);
+
+        assertNotNull(game.getCurrentPlayerIndex());
     }
 
     private static Fleet SetupBaseFleet(Fleet fleet) {
