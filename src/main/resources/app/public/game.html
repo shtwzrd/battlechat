@@ -96,6 +96,17 @@ $(document).ready(function() {
 
 
 
+//resize management
+window.onresize = function(event) {
+    var ships = document.getElementsByClassName('ship');
+	for (var i=0;i<ships.length;i++){
+	ships[i].style.display='none';
+	ships[i].offsetHeight; // no need to store this anywhere, the reference is enough
+	ships[i].style.display='block';
+	}
+};
+
+
 //Drag and drop stuff
 function dragMoveListener (event) {
     var target = event.target,
@@ -258,6 +269,9 @@ interact('.square').dropzone({
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+row+i);
 							if(d.classList.contains('occupied')) return false;
+						}	
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+row+i);
 							d.classList.add('occupied');
 							d.classList.add('by'+ship.id);
 							//console.log('lsquare'+row+i);
@@ -294,6 +308,9 @@ interact('.square').dropzone({
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+row+i);
 							if(d.classList.contains('occupied')) return false;
+						}
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+row+i);
 							d.classList.add('occupied');
 							d.classList.add('by'+ship.id);
 							//console.log('lsquare'+row+i);
@@ -317,6 +334,9 @@ interact('.square').dropzone({
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+i+column);
 							if(d.classList.contains('occupied')) return false;
+						}
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+i+column);
 							d.classList.add('occupied');
 							d.classList.add('by'+ship.id);
 							//console.log('lsquare'+i+column);
@@ -359,6 +379,9 @@ interact('.square').dropzone({
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+i+column);
 							if(d.classList.contains('occupied')) return false;
+						}
+						for(i=startingdivnum; i<endingdivnum+1; i++){
+							var d = document.getElementById('lsquare'+i+column);
 							d.classList.add('occupied');
 							d.classList.add('by'+ship.id);
 							//console.log('lsquare'+row+i);
