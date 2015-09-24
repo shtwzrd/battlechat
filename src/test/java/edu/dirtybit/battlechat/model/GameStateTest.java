@@ -225,7 +225,7 @@ public class GameStateTest {
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         assertTrue(listener.containsMessageType(GameMessageType.ERROR));
     }
 
