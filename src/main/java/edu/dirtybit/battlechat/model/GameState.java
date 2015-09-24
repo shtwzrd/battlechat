@@ -228,13 +228,25 @@ public class GameState extends Session implements Runnable {
             case PLACEMENT_PHASE:
                 this.phase = Phase.COMBAT;
                 this.secondsToNextPhase = this.firingTimeout;
+                sendFiringCoordinates(this.getPlayerById(this.getInitiator()));
                 break;
             case COMBAT:
-                this.currentPlayerIndex++;
                 this.nextPlayer();
+                sendFiringCoordinates(this.getPlayers().get(this.currentPlayerIndex));
                 this.secondsToNextPhase = this.firingTimeout;
                 break;
         }
+    }
+
+    private void sendFiringCoordinates(Player p) {
+        List<Coordinate> coords = new ArrayList<>();
+        this.getPlayers().forEach(b -> {
+            int i = getPlayerIndex(b);
+            if(i != currentPlayerIndex) {
+                coords.addAll(this.boards.get(i).getEmptyCoordinates(i));
+            }
+        });
+        this.notifySubscribers(new GameMessage(GameMessageType.FIRE_LOCATIONS, p.getId(), coords));
     }
 
     private int getPlayerIndex(Player player) {

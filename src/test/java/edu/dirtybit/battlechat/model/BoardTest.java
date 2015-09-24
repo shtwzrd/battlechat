@@ -17,7 +17,6 @@ public class BoardTest {
     public void Board_ShouldOverWriteFleet() {
         BattleShipConfiguration config = new BattleShipConfiguration();
         Board board = new Board(config);
-        Fleet oldfleet = board.getFleet();
         Fleet newfleet = Fleet.fromConfig(config);
         newfleet.getShips().get(0).setLocation(config.getPropertyAsInt(ConfigKeys.GRID_WIDTH)/2, config.getPropertyAsInt(ConfigKeys.GRID_HEIGHT)/2);
         board.setFleet(newfleet);
