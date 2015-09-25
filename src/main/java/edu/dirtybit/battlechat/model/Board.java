@@ -78,8 +78,7 @@ public class Board extends BaseBoard {
             for (int x = 0; x < this.width; x++) {
                 for (int y = 0; y < this.width; y++) {
                     if (this.cells[x][y] == CellType.Hit) {
-                        // getShipAt automatically removes the given cell from the ships remaining lives
-                        this.getFleet().getShipAt(x, y);
+                        this.getFleet().getShipAt(x, y).removeCell(x, y);
                     }
                 }
             }

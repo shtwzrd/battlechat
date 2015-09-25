@@ -65,11 +65,21 @@ public class Ship {
             Point c = this.cells.get(i);
             if (c.getX() == x && c.getY() == y) {
                 value = true;
-                this.cells.remove(i);
                 i = this.cells.size();
             }
         }
         return value;
+    }
+
+    public void removeCell(int x, int y)
+    {
+        for (int i = 0; i < this.cells.size(); i++) {
+            Point c = this.cells.get(i);
+            if (c.getX() == x && c.getY() == y) {
+                this.cells.remove(i);
+                i = this.cells.size();
+            }
+        }
     }
 
     public int getHealth() {
