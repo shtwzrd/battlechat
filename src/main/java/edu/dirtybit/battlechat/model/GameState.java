@@ -97,12 +97,16 @@ public class GameState extends Session implements Runnable {
                 throw new FiringAtOwnBoardException(c.getBoardIndex());
             }
             Board board = this.boards.get(c.getBoardIndex());
+            String message = player.getGivenName() + " shot at " + c.getX() + "," + c.getY();
             if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
-                board.getCells()[c.getX()][c.getY()] = CellType.Hit;
+                board.setCell(c.getX(), c.getY(), CellType.Hit);
+                message += " ...and HIT!";
                 hit = true;
             } else {
-                board.getCells()[c.getX()][c.getY()] = CellType.Miss;
+                board.setCell(c.getX(), c.getY(), CellType.Miss);
+                message += " ...and missed...";
             }
+            this.handleMessage(new GameMessage(GameMessageType.CHAT, null, message));
         }
         return hit;
     }
@@ -164,7 +168,7 @@ public class GameState extends Session implements Runnable {
                             } else {
                                 for (int x = ship.getX(); x <= endx; x++) {
                                     if (board.getCells()[x][ship.getY()] == CellType.Empty) {
-                                        board.getCells()[x][ship.getY()] = CellType.Ship;
+                                        board.setCell(x, ship.getY(), CellType.Ship);
                                     } else {
                                         board.clear();
                                         throw new ShipsOverlapException(x, ship.getY());
@@ -179,7 +183,7 @@ public class GameState extends Session implements Runnable {
                             } else {
                                 for (int y = ship.getY(); y <= endy; y++) {
                                     if (board.getCells()[ship.getX()][y] == CellType.Empty) {
-                                        board.getCells()[ship.getX()][y] = CellType.Ship;
+                                        board.setCell(ship.getX(), y, CellType.Ship);
                                     } else {
                                         board.clear();
                                         throw new ShipsOverlapException(ship.getX(), y);
@@ -234,6 +238,9 @@ public class GameState extends Session implements Runnable {
                 break;
             case COMBAT:
                 this.nextPlayer();
+                if (this.boards.get(this.currentPlayerIndex).getLivesRemaining() == 0) {
+                    this.phase = Phase.COMPLETED;
+                }
                 this.secondsToNextPhase = this.firingTimeout;
                 break;
         }
