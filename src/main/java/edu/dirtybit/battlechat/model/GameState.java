@@ -101,12 +101,16 @@ public class GameState extends Session implements Runnable {
             if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
                 board.setCell(c.getX(), c.getY(), CellType.Hit);
                 message += " ...and HIT!";
+                Ship s = board.getFleet().getShipAt(c.getX(),c.getY());
+                if (s.getHealth() == 0) {
+                    message += " ...and sunk " + this.getPlayers().get(c.getBoardIndex()).getGivenName() + "'s " + s.getShiptype().toString() + ".";
+                }
                 hit = true;
             } else {
                 board.setCell(c.getX(), c.getY(), CellType.Miss);
                 message += " ...and missed...";
             }
-            this.handleMessage(new GameMessage(GameMessageType.CHAT, null, message));
+            this.handleMessage(new GameMessage(GameMessageType.CHAT, player.getId(), message));
         }
         return hit;
     }

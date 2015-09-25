@@ -43,6 +43,18 @@ public class Fleet {
         return new Fleet(canoes, cruisers, submarines, destroyers, battleships, carriers);
     }
 
+    public Ship getShipAt(int x, int y) {
+        Ship value = null;
+        for (int i = 0; i < this.ships.size(); i++) {
+            Ship s = this.ships.get(i);
+            if (s.isAt(x, y)) {
+                value = s;
+                i = this.ships.size();
+            }
+        }
+        return value;
+    }
+
     public ArrayList<Ship> getShips() {
         return ships;
     }
