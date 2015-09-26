@@ -28,7 +28,7 @@ public class GameState extends Session implements Runnable {
         this.boards = new ArrayList<>();
         this.hasPlaced = new ArrayList<>();
 
-        this.initializeBoards(config);
+        this.initializeBoards(this.cfg);
         this.phase = Phase.NOT_STARTED;
         this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.INITIALIZATION_TIME);
         this.firingTimeout = cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
@@ -207,8 +207,8 @@ public class GameState extends Session implements Runnable {
         }
     }
 
-    private void initializeBoards(GameConfiguration config) {
-        int players = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
+    private void initializeBoards(BattleShipConfiguration config) {
+        int players = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
 
         for (int i = 0; i < players; i++) {
             this.boards.add(new Board(config));

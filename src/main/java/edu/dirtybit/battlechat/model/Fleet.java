@@ -1,7 +1,7 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.BattleShipConfiguration;
-import edu.dirtybit.battlechat.GameConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 
 import java.util.ArrayList;
 
@@ -32,13 +32,13 @@ public class Fleet {
         }
     }
 
-    public static Fleet fromConfig(GameConfiguration config) {
-        int canoes = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CANOE_COUNT.toString()));
-        int cruisers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CRUISER_COUNT.toString()));
-        int submarines = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.SUBMARINE_COUNT.toString()));
-        int destroyers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.DESTROYER_COUNT.toString()));
-        int battleships = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.BATTLESHIP_COUNT.toString()));
-        int carriers = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.CARRIER_COUNT.toString()));
+    public static Fleet fromConfig(BattleShipConfiguration config) {
+        int canoes = config.getPropertyAsInt(ConfigKeys.CANOE_COUNT);
+        int cruisers = config.getPropertyAsInt(ConfigKeys.CRUISER_COUNT);
+        int submarines = config.getPropertyAsInt(ConfigKeys.SUBMARINE_COUNT);
+        int destroyers = config.getPropertyAsInt(ConfigKeys.DESTROYER_COUNT);
+        int battleships = config.getPropertyAsInt(ConfigKeys.BATTLESHIP_COUNT);
+        int carriers = config.getPropertyAsInt(ConfigKeys.CARRIER_COUNT);
 
         return new Fleet(canoes, cruisers, submarines, destroyers, battleships, carriers);
     }

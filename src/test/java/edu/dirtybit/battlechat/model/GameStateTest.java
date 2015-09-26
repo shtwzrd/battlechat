@@ -40,7 +40,7 @@ public class GameStateTest {
     }
 
     @Test
-    public void GameState_PhaseShouldBePlacement_WhenGameHasStarted() {
+    public void GameState_PhaseShouldBeNotStarted_WhenPlayersFirstGetMatched() throws InterruptedException {
         GameConfiguration config = new BattleShipConfiguration();
         Player player = new Player("one");
         GameState game = new GameState(config, player);
@@ -50,33 +50,32 @@ public class GameStateTest {
             game.enqueuePlayer(new Player("next"));
         }
 
+        assertEquals(game.status(player).getBody().getGamePhase(), Phase.NOT_STARTED);
+    }
+
+    @Test
+    public void GameState_PhaseShouldBePlacement_AfterInitialization() throws InterruptedException {
+        Map<String, String> settings = new HashMap<>();
+        settings.put(ConfigKeys.INITIALIZATION_TIME.toString(), "0");
+
+        GameConfiguration config = new BattleShipConfiguration(settings);
+        Player player = new Player("one");
+        GameState game = new GameState(config, player);
+
+        int playersToHave = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT.toString());
+        while (game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        Thread.sleep(1000);
         assertEquals(game.status(player).getBody().getGamePhase(), Phase.PLACEMENT_PHASE);
     }
 
     @Test
     public void GameState_PhaseShouldBeYouFiring_ForInitiator_AfterPlacementPhase() throws InterruptedException {
         Map<String, String> custom = new HashMap<>();
+        custom.put(ConfigKeys.INITIALIZATION_TIME.toString(), "0");
         custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
-
-        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
-        Player initiator = new Player("one");
-        GameState game = new GameState(cfg, initiator);
-
-        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
-        while (game.getPlayers().size() < playersToHave) {
-            game.enqueuePlayer(new Player("next"));
-        }
-
-        Thread.sleep(1000);
-
-        assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
-    }
-
-    @Test
-    public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException {
-        Map<String, String> custom = new HashMap<>();
-        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
-        custom.put(ConfigKeys.FIRING_TIMEOUT.toString(), "1");
 
         BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
         Player initiator = new Player("one");
@@ -88,6 +87,27 @@ public class GameStateTest {
         }
 
         Thread.sleep(2100);
+
+        assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
+    }
+
+    @Test
+    public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException {
+        Map<String, String> custom = new HashMap<>();
+        custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
+        custom.put(ConfigKeys.FIRING_TIMEOUT.toString(), "1");
+        custom.put(ConfigKeys.INITIALIZATION_TIME.toString(), "0");
+
+        BattleShipConfiguration cfg = new BattleShipConfiguration(custom);
+        Player initiator = new Player("one");
+        GameState game = new GameState(cfg, initiator);
+
+        int playersToHave = cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
+        while (game.getPlayers().size() < playersToHave) {
+            game.enqueuePlayer(new Player("next"));
+        }
+
+        Thread.sleep(3100);
 
         assertEquals(game.status(initiator).getBody().getGamePhase(), Phase.YOU_FIRING);
     }

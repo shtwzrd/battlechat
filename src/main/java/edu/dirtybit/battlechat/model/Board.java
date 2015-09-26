@@ -1,7 +1,7 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.BattleShipConfiguration;
-import edu.dirtybit.battlechat.GameConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 
 public class Board extends BaseBoard {
     private Perspective perspective;
@@ -9,8 +9,8 @@ public class Board extends BaseBoard {
     private boolean cleared;
     private int lives;
 
-    public Board(GameConfiguration config) {
-        super(Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())), Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
+    public Board(BattleShipConfiguration config) {
+        super(config.getPropertyAsInt(ConfigKeys.GRID_WIDTH), config.getPropertyAsInt(ConfigKeys.GRID_HEIGHT));
         this.fleet = Fleet.fromConfig(config);
         this.perspective = new Perspective(this.width, this.height);
         this.clear();
