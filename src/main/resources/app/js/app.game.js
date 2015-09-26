@@ -125,6 +125,14 @@ function removeOccupiedDivsBy (targetId) {
 		}
 }
 
+function removeDroppableFeedback () {
+		var targetdivs = document.querySelectorAll(".drop-target");
+		var l = targetdivs.length;
+		for (var i = 0; i < l; i++) {
+			targetdivs[i].classList.remove("drop-target");
+			console.log(targetdivs[i]);
+		}
+}
 
 
 
@@ -160,7 +168,7 @@ interact('.draggable').draggable({
 	})
 	.snap({
 		  mode: 'anchor',
-		  anchors: [startPos],
+		  anchors: [],
 		  range: Infinity,
 		  elementOrigin: { x: 0.5, y: 0.5 },
 		  endOnly: true
@@ -176,6 +184,7 @@ interact('.draggable').draggable({
 			event.currentTarget.classList.remove('vertical');
 			event.currentTarget.style.transform += 'rotate(0deg)';
 		}
+		removeOccupiedDivsBy(event.currentTarget.id);
 		onmove(event);
 	});
 	
@@ -192,18 +201,19 @@ interact('.square').dropzone({
 			  ondragenter: function (event) {
 				var draggableElement = event.relatedTarget,
 					dropzoneElement = event.target;
-				
-				// feedback the possibility of a drop
-				dropzoneElement.classList.add('drop-target');
-				draggableElement.classList.add('can-drop');
+				var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
+				var row= dropzoneElement.id.charAt(dropzoneElement.id.length-2);
+				var column = dropzoneElement.id.charAt(dropzoneElement.id.length-1);
 				
 				var dropRect = interact.getElementRect(dropzoneElement);
 				var dropLeft =0;
+				
 					if ($('#'+draggableElement.id).hasClass('odd')){
 						dropLeft = {
 						  x: dropRect.left + dropRect.width/2,
-						  y: dropRect.top + dropRect.height/2
+						  y:dropRect.top + dropRect.height/2
 						};
+						
 					} else 	if ($('#'+draggableElement.id).hasClass('even')){
 						if($('#'+draggableElement.id).hasClass('horizontal')){
 							dropLeft = {
@@ -218,6 +228,10 @@ interact('.square').dropzone({
 						}
 					}
 					console.log(dropLeft);
+					
+				
+				// feedback the possibility of a drop
+				draggableElement.classList.add('can-drop');
 			
 				event.draggable.snap({
 				  anchors: [ dropLeft ]
@@ -225,9 +239,9 @@ interact('.square').dropzone({
 			  },
 			  ondragleave: function (event) {
 				// remove the drop feedback style
-				event.target.classList.remove('drop-target');
+				removeDroppableFeedback();
 				event.relatedTarget.classList.remove('can-drop');
-				event.draggable.snap(false);
+				//event.draggable.snap(false);
 			  },
 			  ondrop: function (event) {
 				  var ship = event.relatedTarget;
@@ -243,13 +257,13 @@ interact('.square').dropzone({
 					if ($('#'+ship.id).hasClass('odd')){
 						var middledivnum = parseInt(dropzone.id.slice(-1));
 						var divoneachsidenum = (length-1)/2;
-						//console.log(divoneachsidenum + ' : divs on each side');
+						console.log(divoneachsidenum + ' : divs on each side');
 						
 						var startingdivnum = middledivnum - divoneachsidenum;
-						//console.log(startingdivnum + ' : starting div num')
+						console.log(startingdivnum + ' : starting div num')
 						
 						var endingdivnum = middledivnum + divoneachsidenum;
-						//console.log(endingdivnum + 'ending div num')
+						console.log(endingdivnum + ' : ending div num')
 						
 						for(i=startingdivnum; i<endingdivnum+1; i++){
 							var d = document.getElementById('lsquare'+row+i);
@@ -380,7 +394,6 @@ interact('.square').dropzone({
 			  },
 			  ondropdeactivate: function (event) {
 				// remove active dropzone feedback
-				event.target.classList.remove('drop-active');
-				event.target.classList.remove('drop-target');
+				//removeDroppableFeedback();
 			  }
 	});
