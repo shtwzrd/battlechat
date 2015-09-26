@@ -22,14 +22,14 @@ $(document).ready(function() {
 				'left': '-30%',
 				opacity:0
 			},
-			300
+			100
 		).css('right','');
 		jQuery('#right').animate({
 				width:'100%',
 				'left': '0%',
 				opacity:1.0
 			},
-			400	
+			90
 		).css('right','');
 		jQuery('#right').toggleClass('active',true);
 		jQuery('#left').toggleClass('active',false);
@@ -45,14 +45,14 @@ $(document).ready(function() {
 				'right': '-30%',
 				opacity:0
 			},
-			400
+			100
 		).css('left','');
 		jQuery('#left').animate({
 				width:'100%',
 				'right': '0%',
 				opacity:1.0
 			},
-			300	
+			90	
 		).css('left','');
 		jQuery('#left').toggleClass('active',true);
 		jQuery('#right').toggleClass('active',false);
