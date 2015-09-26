@@ -1,7 +1,7 @@
 package edu.dirtybit.battlechat.model;
 
 import edu.dirtybit.battlechat.BattleShipConfiguration;
-import edu.dirtybit.battlechat.GameConfiguration;
+import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 
 public class Board extends BaseBoard {
     private Perspective perspective;
@@ -9,12 +9,13 @@ public class Board extends BaseBoard {
     private boolean cleared;
     private int lives;
 
-    public Board(GameConfiguration config) {
-        super(Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_WIDTH.toString())), Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.GRID_HEIGHT.toString())));
+    public Board(BattleShipConfiguration config) {
+        super(config.getPropertyAsInt(ConfigKeys.GRID_WIDTH), config.getPropertyAsInt(ConfigKeys.GRID_HEIGHT));
         this.fleet = Fleet.fromConfig(config);
         this.perspective = new Perspective(this.width, this.height);
         this.clear();
         this.cleared = true;
+        this.lives = this.countLives();
     }
 
     @Override
@@ -61,14 +62,14 @@ public class Board extends BaseBoard {
     private int countLives() {
         int livesinships = 0;
         for (Ship s : this.getFleet().getShips()) {
-            lives = s.getHealth();
+            livesinships = s.getHealth();
         }
 
         int livesonboard = 0;
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.width; y++) {
                 if (this.cells[x][y] == CellType.Ship) {
-                    this.lives++;
+                    livesonboard++;
                 }
             }
         }

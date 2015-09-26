@@ -10,6 +10,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
+import java.io.Console;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -73,7 +74,7 @@ public class GameStateTest {
     }
 
     @Test
-    public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException {
+    public void GameState_PhaseShouldBeOpponentFiring_ForInitiator_AfterYouFiring() throws InterruptedException, ShipsOverlapException, ShipOutOfBoundsException, InvalidFleetsizeException {
         Map<String, String> custom = new HashMap<>();
         custom.put(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "1");
         custom.put(ConfigKeys.FIRING_TIMEOUT.toString(), "1");
@@ -335,4 +336,30 @@ public class GameStateTest {
         return fleet;
     }
 
+    private static void printFleet(Fleet fleet, int width, int height) {
+        char[][] board = new char[height][width];
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                board[x][y] = '~';
+            }
+        }
+
+        for (Ship ship : fleet.getShips()) {
+            int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
+            int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
+            for (int x = ship.getX(); x <= endx; x++) {
+                for (int y = ship.getY(); y <= endy; y++) {
+                    board[y][x] = Integer.toString(ship.getShiptype().getLength()).toCharArray()[0];
+                }
+            }
+        }
+
+        for (char[] row : board) {
+            for (char cell : row) {
+                System.out.print(cell);
+            }
+            System.out.print("\n");
+        }
+        System.out.print("\n");
+    }
 }

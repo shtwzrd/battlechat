@@ -9,6 +9,7 @@ import edu.dirtybit.battlechat.Session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class GameState extends Session implements Runnable {
 
@@ -26,10 +27,10 @@ public class GameState extends Session implements Runnable {
         this.boards = new ArrayList<>();
         this.hasPlaced = new ArrayList<>();
 
-        this.initializeBoards(config);
+        this.initializeBoards(this.cfg);
         this.phase = Phase.WAITING_FOR_OPPONENT;
-        this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT);
-        this.firingTimeout = cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
+        this.secondsToNextPhase = this.cfg.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT);
+        this.firingTimeout = this.cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
         this.currentPlayerIndex = 0;
     }
 
@@ -44,7 +45,14 @@ public class GameState extends Session implements Runnable {
             case FIRE:
                 this.handleFire(msg);
                 break;
+            case EVENT:
+                this.notifySubscribers(msg);
+                break;
         }
+    }
+
+    public void broadcastMessage(GameMessageType type, String msg) {
+        this.getPlayers().forEach(p -> notifySubscribers(new GameMessage(type, p.getId(), msg)));
     }
 
     public boolean shouldStart() {
@@ -113,15 +121,82 @@ public class GameState extends Session implements Runnable {
                 board.setCell(c.getX(), c.getY(), CellType.Miss);
                 message += " ...and missed...";
             }
-            this.handleMessage(new GameMessage(GameMessageType.CHAT, player.getId(), message));
+            this.broadcastMessage(GameMessageType.EVENT, message);
         }
         return hit;
     }
 
+    protected Fleet randomizeFleet(Fleet fleet) {
+        Random rng = new Random();
+        Board testboard = new Board(this.cfg);
+
+        do {
+            testboard.clear();
+            for (int i = 0; i < fleet.getShips().size(); i++) {
+                Ship ship = fleet.getShips().get(i);
+                // Start with a random rotation
+                ship.setRotation(rng.nextBoolean() == true ? Rotation.Horizontal : Rotation.Vertical);
+                // Get the max possible placement values given the rotation
+                int xmax = ship.getRotation() == Rotation.Horizontal ? testboard.getWidth() - (ship.getShiptype().getLength() - 1) : testboard.getWidth();
+                int ymax = ship.getRotation() == Rotation.Vertical ? testboard.getHeight() - (ship.getShiptype().getLength() - 1) : testboard.getHeight();
+
+                // If a ship fails 10 random placements, restart the fleet placement
+                int attempts = 10;
+                for (int j = 0; j < attempts; j++) {
+                    // pick a random starting location
+                    ship.setLocation(rng.nextInt(xmax), rng.nextInt(ymax));
+                    int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
+                    int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
+
+                    // Test if ship can be placed
+                    boolean canplace = true;
+                    for (int x = ship.getX(); x > 0 && x <= endx; x++) {
+                        for (int y = ship.getY(); y > 0 && y <= endy; y++) {
+                            if (testboard.getCells()[x][y] != CellType.Empty) {
+                                canplace = false;
+                            }
+                        }
+                    }
+
+                    // Then place the ship
+                    if (canplace) {
+                        for (int x = ship.getX(); x > 0 && x <= endx; x++) {
+                            for (int y = ship.getY(); y > 0 && y <= endy; y++) {
+                                testboard.setCell(x, y, CellType.Ship);
+                            }
+                        }
+                        // Exit for loop
+                        j = attempts;
+                    }
+                }
+            }
+        } while (!this.validateFleet(fleet));
+
+        return fleet;
+    }
+
+    protected boolean validateFleet(Fleet fleet) {
+        boolean valid = true;
+        Board testboard = new Board(this.cfg);
+
+        try {
+            this.placeFleet(fleet, testboard);
+        } catch (Exception e) {
+            valid = false;
+        }
+
+        return valid;
+    }
+
     protected void placeFleet(Fleet fleet, Board board) throws ShipOutOfBoundsException, ShipsOverlapException, InvalidFleetsizeException {
-        // check that the fleet contains the right ships
+        // Clear the board if not already empty
+        if (!board.isClear()) {
+            board.clear();
+        }
+        // Make variables to keep count of ships in the fleet
         int canoes, cruisers, submarines, destroyers, battleships, carriers;
         canoes = cruisers = submarines = destroyers = battleships = carriers = 0;
+
         for (Ship ship : fleet.getShips()) {
             switch (ship.getShiptype()) {
                 case CANOE:
@@ -143,7 +218,37 @@ public class GameState extends Session implements Runnable {
                     carriers++;
                     break;
             }
+
+            // Get the end coordinates of the ship
+            int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + ship.getShiptype().getLength() - 1 : ship.getX();
+            int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + ship.getShiptype().getLength() - 1 : ship.getY();
+
+            // Check if the start coordinates are on the board
+            if (ship.getX() >= 0 && ship.getX() < board.getWidth() -1 && ship.getY() >= 0 || ship.getY() < board.getHeight() -1) {
+                // Check if end coordinates are on the board
+                if (endx < board.getWidth() && endy < board.getHeight()) {
+                    // Check if the ship is being placed on top of another ship
+                    for (int x = ship.getX(); x <= endx; x++) {
+                        for (int y = ship.getY(); y <= endy; y++) {
+                            if (board.getCells()[x][y] == CellType.Empty) {
+                                board.setCell(x, y, CellType.Ship);
+                            } else {
+                                board.clear();
+                                throw new ShipsOverlapException(x, ship.getY());
+                            }
+                        }
+                    }
+                } else {
+                    board.clear();
+                    throw new ShipOutOfBoundsException(ship, endx, endy);
+                }
+            } else {
+                board.clear();
+                throw new ShipOutOfBoundsException(ship, endx, endy);
+            }
         }
+
+        // Check that the amount of ships in the fleet matched with the amount specified in the rules
         if (canoes != this.cfg.getPropertyAsInt(ConfigKeys.CANOE_COUNT) ||
                 destroyers != this.cfg.getPropertyAsInt(ConfigKeys.DESTROYER_COUNT) ||
                 cruisers != this.cfg.getPropertyAsInt(ConfigKeys.CRUISER_COUNT) ||
@@ -152,61 +257,10 @@ public class GameState extends Session implements Runnable {
                 carriers != this.cfg.getPropertyAsInt(ConfigKeys.CARRIER_COUNT)) {
             throw new InvalidFleetsizeException(InvalidFleetsizeException.MakeMessage(this.cfg, canoes, cruisers, submarines, destroyers, battleships, carriers));
         }
-
-        if (board.isClear() == true) {
-            int i = 0;
-            while (i < fleet.getShips().size()) {
-                Ship ship = fleet.getShips().get(i);
-                int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + ship.getShiptype().getLength() - 1 : ship.getX();
-                int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + ship.getShiptype().getLength() - 1 : ship.getY();
-
-                // Check if the start coordinates are on the board
-                if (ship.getX() < 0 || ship.getX() > board.getWidth() ||
-                        ship.getY() < 0 || ship.getY() > board.getHeight()) {
-                    board.clear();
-                    throw new ShipOutOfBoundsException(ship, endx, endy);
-                } else {
-                    // Check if end coordinates are on the board
-                    switch (ship.getRotation()) {
-                        case Horizontal:
-                            if (endx < 0 || endx > board.getWidth()) {
-                                board.clear();
-                                throw new ShipOutOfBoundsException(ship, endx, endy);
-                            } else {
-                                for (int x = ship.getX(); x <= endx; x++) {
-                                    if (board.getCells()[x][ship.getY()] == CellType.Empty) {
-                                        board.setCell(x, ship.getY(), CellType.Ship);
-                                    } else {
-                                        board.clear();
-                                        throw new ShipsOverlapException(x, ship.getY());
-                                    }
-                                }
-                            }
-                            break;
-                        case Vertical:
-                            if (endy < 0 || endy > board.getWidth()) {
-                                board.clear();
-                                throw new ShipOutOfBoundsException(ship, endx, endy);
-                            } else {
-                                for (int y = ship.getY(); y <= endy; y++) {
-                                    if (board.getCells()[ship.getX()][y] == CellType.Empty) {
-                                        board.setCell(ship.getX(), y, CellType.Ship);
-                                    } else {
-                                        board.clear();
-                                        throw new ShipsOverlapException(ship.getX(), y);
-                                    }
-                                }
-                            }
-                            break;
-                    }
-                }
-                i++;
-            }
-        }
     }
 
-    private void initializeBoards(GameConfiguration config) {
-        int players = Integer.parseInt(config.getProperty(BattleShipConfiguration.ConfigKeys.PLAYER_COUNT.toString()));
+    private void initializeBoards(BattleShipConfiguration config) {
+        int players = config.getPropertyAsInt(ConfigKeys.PLAYER_COUNT);
 
         for (int i = 0; i < players; i++) {
             this.boards.add(new Board(config));
@@ -240,6 +294,11 @@ public class GameState extends Session implements Runnable {
     private void phaseChange() {
         switch (this.phase) {
             case PLACEMENT_PHASE:
+                for (Board board : this.getBoards()) {
+                    if (!this.validateFleet(board.getFleet())) {
+                        this.randomizeFleet(board.getFleet());
+                    }
+                }
                 this.phase = Phase.COMBAT;
                 this.secondsToNextPhase = this.firingTimeout;
                 break;

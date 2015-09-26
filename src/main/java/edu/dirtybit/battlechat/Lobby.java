@@ -21,8 +21,12 @@ public enum Lobby {
     }
 
     public void message(GameMessage message) {
+        this.message(message, false);
+    }
+
+    public void message(GameMessage message, boolean broadcast) {
         SessionSocket s = this.players.get(message.getId());
-        if(s != null) {
+        if (s != null) {
             try {
                 s.sendMessage(message);
             } catch (IOException e) {
