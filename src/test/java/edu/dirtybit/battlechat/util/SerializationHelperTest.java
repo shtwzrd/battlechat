@@ -45,14 +45,17 @@ public class SerializationHelperTest {
         assertEquals(config.getBody().getClass(), Fleet.class);
     }
     @Test
-    public void SerializationHelper_DeserializeConfiguration_BodyShouldBePerspective() {
+    public void SerializationHelper_DeserializeUpdate_BodyShouldBeListOfBaseBoard() {
         Gson gson = new Gson();
+        ArrayList<BaseBoard> boards = new ArrayList<>();
         Perspective p = new Perspective(10,10);
-        GameMessage<Perspective> msg = new GameMessage<>(GameMessageType.UPDATE, UUID.randomUUID(), p);
+        boards.add(p);
+        GameMessage<ArrayList<BaseBoard>> msg = new GameMessage<>(GameMessageType.UPDATE, UUID.randomUUID(), boards);
         String json = gson.toJson(msg, GameMessage.class);
 
-        GameMessage config = SerializationHelper.deserializeMessage(json);
-        assertEquals(config.getBody().getClass(), Perspective.class);
+        GameMessage<ArrayList<BaseBoard>> config = SerializationHelper.deserializeMessage(json);
+        assertEquals(config.getBody().getClass(), ArrayList.class);
+        assertTrue(config.getBody().get(0).getClass() == BaseBoard.class || config.getBody().get(0).getClass() == Perspective.class);
     }
 
     @Test

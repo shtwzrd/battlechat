@@ -30,7 +30,7 @@ public class SerializationHelper {
                 type = new TypeToken<GameMessage<ArrayList<Coordinate>>>() {};
                 break;
             case UPDATE:
-                type = new TypeToken<GameMessage<Perspective>>() {};
+                type = new TypeToken<GameMessage<ArrayList<Perspective>>>() {};
                 break;
         }
 

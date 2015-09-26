@@ -6,6 +6,7 @@ import edu.dirtybit.battlechat.model.BattleChatStatus.Phase;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 import edu.dirtybit.battlechat.GameConfiguration;
 import edu.dirtybit.battlechat.Session;
+import edu.dirtybit.battlechat.SessionStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,6 +19,7 @@ public class GameState extends Session implements Runnable {
     private Phase phase;
     private int secondsToNextPhase;
     private int firingTimeout;
+    private int placementTimeout;
     private BattleShipConfiguration cfg;
 
     public GameState(GameConfiguration config, Player player) {
@@ -28,8 +30,9 @@ public class GameState extends Session implements Runnable {
 
         this.initializeBoards(config);
         this.phase = Phase.NOT_STARTED;
-        this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT);
+        this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.INITIALIZATION_TIME);
         this.firingTimeout = cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
+        this.placementTimeout = cfg.getPropertyAsInt(ConfigKeys.PLACEMENT_TIMEOUT);
         this.currentPlayerIndex = 0;
     }
 
@@ -49,8 +52,6 @@ public class GameState extends Session implements Runnable {
 
     public boolean shouldStart() {
         if (this.getPlayers().size() == this.cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT)) {
-            this.phase = Phase.PLACEMENT_PHASE;
-            this.secondsToNextPhase = this.cfg.getPropertyAsInt(ConfigKeys.PLACEMENT_TIMEOUT);
             return true;
         }
         return false;
@@ -68,6 +69,7 @@ public class GameState extends Session implements Runnable {
         do {
             tick();
         } while (this.phase != Phase.COMPLETED);
+        this.setStatus(SessionStatus.COMPLETED);
     }
 
     public ArrayList<Board> getBoards() {
@@ -226,7 +228,7 @@ public class GameState extends Session implements Runnable {
 
     private void tick() {
         this.secondsToNextPhase--;
-        if (this.secondsToNextPhase == 0) {
+        if (this.secondsToNextPhase <= 0) {
             phaseChange();
         }
         this.getPlayers().forEach(p -> this.notifySubscribers(this.status(p)));
@@ -239,6 +241,10 @@ public class GameState extends Session implements Runnable {
 
     private void phaseChange() {
         switch (this.phase) {
+            case NOT_STARTED:
+                this.phase = Phase.PLACEMENT_PHASE;
+                this.secondsToNextPhase = this.placementTimeout;
+                break;
             case PLACEMENT_PHASE:
                 this.phase = Phase.COMBAT;
                 this.secondsToNextPhase = this.firingTimeout;
@@ -251,6 +257,23 @@ public class GameState extends Session implements Runnable {
                 this.secondsToNextPhase = this.firingTimeout;
                 break;
         }
+        sendUpdate();
+    }
+
+    private void sendUpdate() {
+        this.getPlayers().forEach(p -> this.notifySubscribers(new GameMessage<>(GameMessageType.UPDATE, p.getId(), renderPerspective(p))));
+    }
+
+    private List<BaseBoard> renderPerspective(Player p) {
+        ArrayList<BaseBoard> boards = new ArrayList<>();
+        for(int i = 0; i < this.getPlayers().size(); i++) {
+            if(i == this.getPlayerIndex(p)) {
+                boards.add(this.getBoards().get(i));
+            } else {
+                boards.add(this.getBoards().get(i).getPerspective());
+            }
+        }
+        return boards;
     }
 
     private int getPlayerIndex(Player player) {
@@ -290,9 +313,8 @@ public class GameState extends Session implements Runnable {
                 start = false;
             }
         }
-
         if (start) {
-            this.phase = Phase.COMBAT;
+            phaseChange();
         }
     }
 }

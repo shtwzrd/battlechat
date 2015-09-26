@@ -14,8 +14,7 @@ public abstract class Session implements Runnable {
     private Set<SessionListener> subscribers;
     protected SessionStatus status;
 
-    public Session(GameConfiguration config, Player player)
-    {
+    public Session(GameConfiguration config, Player player) {
        this.config = config;
        this.id = UUID.randomUUID();
        this.players = new ArrayList<>();
@@ -32,6 +31,10 @@ public abstract class Session implements Runnable {
         return this.status;
     }
 
+    protected void setStatus(SessionStatus status) {
+        this.status = status;
+    }
+
     public UUID getId() {
         return this.id;
     }
@@ -45,7 +48,7 @@ public abstract class Session implements Runnable {
         if(shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;
             this.players.forEach(p ->
-                this.notifySubscribers(new GameMessage<>(GameMessageType.CHAT, p.getId(), "HAS JOINED")));
+                    this.notifySubscribers(new GameMessage<>(GameMessageType.EVENT, p.getId(), String.format("%s has joined.", p.getGivenName()))));
             Thread t = new Thread(this);
             t.start();
         }

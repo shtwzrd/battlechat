@@ -8,6 +8,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ConcurrentMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class SessionManager implements SessionListener, LobbyListener {
     private ConcurrentMap<UUID, UUID> playerToSession;
@@ -88,6 +90,7 @@ public class SessionManager implements SessionListener, LobbyListener {
     }
 
     private UUID addToNewGame(Player player) throws Exception {
+       Set<SessionListener> listeners = new HashSet<>();
        Session newGame = SessionFactory.INSTANCE.createSession(defaultConfig, player);
        newGame.subscribe(this);
        this.sessions.put(newGame.getId(), newGame);

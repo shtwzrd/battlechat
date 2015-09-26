@@ -101,7 +101,7 @@ public class SessionTest {
         assertEquals(listener.notificationCount, 0);
 
         session.enqueuePlayer(new Player("two"));
-        assertEquals(listener.notificationCount, 1);
+        assertTrue(listener.containsMessageType(GameMessageType.EVENT));
     }
 
     @Test

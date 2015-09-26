@@ -5,6 +5,7 @@ public enum GameMessageType {
     CONFIG_REQUEST,
     STATUS,
     UPDATE,
+    EVENT,
     FIRE,
     HIT,
     MISS,
