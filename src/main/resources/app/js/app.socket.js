@@ -59,6 +59,9 @@
         case "CONFIGURATION":
             appConfigurationViewModel.loadConfig(msg.body);
             break;
+        case "UPDATE":
+            appBoardViewModel.mapUpdate(msg.body);
+            break;
         }
     };
 

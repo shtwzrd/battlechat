@@ -4,9 +4,9 @@ import edu.dirtybit.battlechat.BattleShipConfiguration;
 import edu.dirtybit.battlechat.BattleShipConfiguration.ConfigKeys;
 
 public class Board extends BaseBoard {
-    private Perspective perspective;
+    private transient Perspective perspective;
     private Fleet fleet;
-    private boolean cleared;
+    private transient boolean cleared;
     private int lives;
 
     public Board(BattleShipConfiguration config) {

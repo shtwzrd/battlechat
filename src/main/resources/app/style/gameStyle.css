@@ -86,7 +86,9 @@ html, body{
 	border-top: 1px solid white;
 }
 .square {
-	width: 12.5%;
+	min-width: 5vh;
+	width: 5vh;
+	max-width: 5vh;
 	text-align:center;
 	font-family:slkscr;
 	font-size:10px;
@@ -95,12 +97,10 @@ html, body{
 }
 .row {
 	width:100%;
-	height: 12.25%;
+	height: 5vh;
 	display:table-row;
 }
 .table {
-    width:48vh;
-	height:48vh;
 	border:0.1vh solid white;
 	margin:auto;
 	z-index:-5;
@@ -119,42 +119,39 @@ html, body{
 }
 /*3 holes : width = 3*cellwidth*/
 .cruiser{
-	height:6vh;
-	width:18vh;
+	width:15vh;
 	top:0%;
 	background-image:url(../img/cruiser.png);
 }
 .carrier{
-	height:6vh;
-	width:30vh;
+	width:25vh;
 	top:17%;
 	background-image:url(../img/carrier.png);
 }
 .battleship{
-	height:6vh;
-	width:24vh;
+	width:20vh;
 	top:35%;
 	background-image:url(../img/battleship.png);
 }
 .submarine{
-	height:6vh;
-	width:18vh;
+	width:15vh;
 	top:54%;
 	background-image:url(../img/submarine.png);
 }
 .destroyer{
-	height:6vh;
-	width:12vh;
+	width:10vh;
 	top:70%;
 	background-image:url(../img/destroyer.png);
 }
 .ship{
+    height: 5vh;
+    min-height: 5vh;
+    max-height: 5vh;
 	data-x:'0';
 	data-y:'0';
 	transform: translate(0vh,0vh);
 	left:0;
 	position:absolute;
-	border:2px;
 	margin-left:11vw;
 	background-size:100%;
 	background-repeat:no-repeat;
@@ -200,7 +197,7 @@ html, body{
 
 #chatinput{
 	width:92%;
-	height:1.7vh;
+	height:2vh;
 	min-height:12px;
 	position:absolute;
 	border-bottom:none;
@@ -213,7 +210,7 @@ html, body{
 	width:8%;
 	height:2vh;
 	min-width:60px;
-	min-height:17px;
+	min-height:12px;
 	position:absolute;
 	border-top:0px solid #333;
 	border-left:0px solid #333;
@@ -236,7 +233,7 @@ html, body{
 	height:15px;
 	top: 47%;
 	right: 0;
-	border:1px solid black;
+	border:2px solid white;
 	position:absolute;
 }
 #leftarrow{
@@ -244,7 +241,7 @@ html, body{
 	height:15px;
 	top: 47%;
 	left: 0;
-	border:1px solid black;
+	border:2px solid white;
 	position:absolute;
 	display:none;
 }

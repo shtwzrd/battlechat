@@ -21,7 +21,7 @@ public class BattleShipConfiguration implements GameConfiguration {
         settings.putIfAbsent(ConfigKeys.GRID_WIDTH.toString(), "10");
         settings.putIfAbsent(ConfigKeys.GRID_HEIGHT.toString(), "10");
         settings.putIfAbsent(ConfigKeys.PLAYER_COUNT.toString(), "2");
-        settings.putIfAbsent(ConfigKeys.INITIALIZATION_TIME.toString(), "120");
+        settings.putIfAbsent(ConfigKeys.INITIALIZATION_TIME.toString(), "5");
         settings.putIfAbsent(ConfigKeys.PLACEMENT_TIMEOUT.toString(), "60");
         settings.putIfAbsent(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
         settings.putIfAbsent(ConfigKeys.CANOE_COUNT.toString(), "0");

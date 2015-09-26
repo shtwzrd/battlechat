@@ -261,10 +261,11 @@ public class GameState extends Session implements Runnable {
     }
 
     private void sendUpdate() {
-        this.getPlayers().forEach(p -> this.notifySubscribers(new GameMessage<>(GameMessageType.UPDATE, p.getId(), renderPerspective(p))));
+        this.getPlayers().forEach(p ->
+            this.notifySubscribers(new GameMessage<>(GameMessageType.UPDATE, p.getId(), renderPerspective(p))));
     }
 
-    private List<BaseBoard> renderPerspective(Player p) {
+    private BoardUpdate renderPerspective(Player p) {
         ArrayList<BaseBoard> boards = new ArrayList<>();
         for(int i = 0; i < this.getPlayers().size(); i++) {
             if(i == this.getPlayerIndex(p)) {
@@ -273,7 +274,7 @@ public class GameState extends Session implements Runnable {
                 boards.add(this.getBoards().get(i).getPerspective());
             }
         }
-        return boards;
+        return new BoardUpdate(boards, this.getPlayerIndex(p));
     }
 
     private int getPlayerIndex(Player player) {
