@@ -10,5 +10,6 @@ public enum GameMessageType {
     MISS,
     PLACEMENT,
     CHAT,
-    ERROR
+    ERROR,
+    KEEPALIVE
 }

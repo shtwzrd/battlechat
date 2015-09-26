@@ -18,12 +18,12 @@ import java.util.List;
 public class GameStateTest {
 
     @Test
-    public void GameState_PhaseShouldBeWaitingForOpponent_WhenPlayersLessThanPlayerCount() {
+    public void GameState_PhaseShouldBeNotStarted_WhenPlayersLessThanPlayerCount() {
         GameConfiguration config = new BattleShipConfiguration();
         Player player = new Player("one");
         GameState game = new GameState(config, player);
 
-        assertEquals(game.status(player).getBody().getGamePhase(), Phase.WAITING_FOR_OPPONENT);
+        assertEquals(game.status(player).getBody().getGamePhase(), Phase.NOT_STARTED);
     }
 
     @Test

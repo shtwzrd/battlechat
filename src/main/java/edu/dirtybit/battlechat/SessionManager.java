@@ -1,6 +1,5 @@
 package edu.dirtybit.battlechat;
 
-import edu.dirtybit.battlechat.controller.BattleChatSessionSocket;
 import edu.dirtybit.battlechat.model.GameMessage;
 import edu.dirtybit.battlechat.model.GameMessageType;
 import edu.dirtybit.battlechat.model.Player;
@@ -13,16 +12,30 @@ import java.util.concurrent.ConcurrentMap;
 public class SessionManager implements SessionListener, LobbyListener {
     private ConcurrentMap<UUID, UUID> playerToSession;
     private ConcurrentMap<UUID, Session> sessions;
-    private ConcurrentMap<UUID, BattleChatSessionSocket> sockets;
     private ConcurrentLinkedQueue<Session> queue;
     private BattleShipConfiguration defaultConfig = new BattleShipConfiguration();
 
     public SessionManager() {
         this.sessions = new ConcurrentHashMap<>();
-        this.sockets = new ConcurrentHashMap<>();
         this.playerToSession = new ConcurrentHashMap<>();
         this.queue = new ConcurrentLinkedQueue<>();
         Lobby.INSTANCE.subscribe(this);
+
+        Runnable keepAlive = () -> {
+            while(true) {
+                sessions.values().forEach(s -> {
+                    if (s.getStatus() == SessionStatus.ENQUEUED) {
+                        s.getPlayers().forEach(p -> notifySubscriber(s, new GameMessage<>(GameMessageType.KEEPALIVE, p.getId(), "Waiting to be matched...")));
+                    }
+                });
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        new Thread(keepAlive).start();
     }
 
     public Session getSessionContainingPlayer(UUID player) {
@@ -87,6 +100,4 @@ public class SessionManager implements SessionListener, LobbyListener {
        this.playerToSession.put(player.getId(), session.getId());
        return session.enqueuePlayer(player);
     }
-
-
 }

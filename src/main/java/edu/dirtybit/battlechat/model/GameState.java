@@ -27,7 +27,7 @@ public class GameState extends Session implements Runnable {
         this.hasPlaced = new ArrayList<>();
 
         this.initializeBoards(config);
-        this.phase = Phase.WAITING_FOR_OPPONENT;
+        this.phase = Phase.NOT_STARTED;
         this.secondsToNextPhase = cfg.getPropertyAsInt(ConfigKeys.MATCHMAKING_TIMEOUT);
         this.firingTimeout = cfg.getPropertyAsInt(ConfigKeys.FIRING_TIMEOUT);
         this.currentPlayerIndex = 0;
@@ -61,7 +61,7 @@ public class GameState extends Session implements Runnable {
         if (ph == Phase.COMBAT) {
             ph = this.getPlayers().get(this.currentPlayerIndex).getId().equals(p.getId()) ? Phase.YOU_FIRING : Phase.OPPONENT_FIRING;
         }
-        return new GameMessage<>(GameMessageType.UPDATE, p.getId(), new BattleChatStatus(ph, this.secondsToNextPhase));
+        return new GameMessage<>(GameMessageType.STATUS, p.getId(), new BattleChatStatus(ph, this.secondsToNextPhase));
     }
 
     public void run() {

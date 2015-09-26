@@ -53,7 +53,7 @@
         case "CHAT":
             writeChatMessage(msg.body);
             break;
-        case "UPDATE":
+        case "STATUS":
             writePhaseData(msg.body);
             break;
         case "CONFIGURATION":

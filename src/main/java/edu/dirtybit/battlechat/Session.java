@@ -44,7 +44,8 @@ public abstract class Session implements Runnable {
         this.players.add(player);
         if(shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;
-            this.notifySubscribers(new GameMessage<>(GameMessageType.CHAT, player.getId(), "HAS JOINED"));
+            this.players.forEach(p ->
+                this.notifySubscribers(new GameMessage<>(GameMessageType.CHAT, p.getId(), "HAS JOINED")));
             Thread t = new Thread(this);
             t.start();
         }

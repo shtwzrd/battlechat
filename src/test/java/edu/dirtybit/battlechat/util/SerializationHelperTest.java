@@ -59,7 +59,7 @@ public class SerializationHelperTest {
     public void SerializationHelper_DeserializeStatus_BodyShouldBeBattleChatStatus() {
         Gson gson = new Gson();
         BattleChatStatus s = new BattleChatStatus(BattleChatStatus.Phase.YOU_WIN, 1);
-        s.setGamePhase(BattleChatStatus.Phase.WAITING_FOR_OPPONENT);
+        s.setGamePhase(BattleChatStatus.Phase.NOT_STARTED);
         s.setSecondsToPhaseChange(30);
         GameMessage<BattleChatStatus> msg = new GameMessage<>(GameMessageType.STATUS, UUID.randomUUID(), s);
         String json = gson.toJson(msg, GameMessage.class);
