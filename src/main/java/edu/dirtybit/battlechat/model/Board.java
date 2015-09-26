@@ -15,6 +15,7 @@ public class Board extends BaseBoard {
         this.perspective = new Perspective(this.width, this.height);
         this.clear();
         this.cleared = true;
+        this.lives = this.countLives();
     }
 
     @Override
@@ -61,14 +62,14 @@ public class Board extends BaseBoard {
     private int countLives() {
         int livesinships = 0;
         for (Ship s : this.getFleet().getShips()) {
-            lives = s.getHealth();
+            livesinships = s.getHealth();
         }
 
         int livesonboard = 0;
         for (int x = 0; x < this.width; x++) {
             for (int y = 0; y < this.width; y++) {
                 if (this.cells[x][y] == CellType.Ship) {
-                    this.lives++;
+                    livesonboard++;
                 }
             }
         }

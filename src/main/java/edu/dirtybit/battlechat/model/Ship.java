@@ -20,6 +20,7 @@ public class Ship {
         this.rotation = rotation;
         this.shiptype = shiptype;
         this.cells = new ArrayList<Point>();
+        this.resetCells();
     }
 
     public int getX() {
@@ -28,6 +29,7 @@ public class Ship {
 
     public void setX(int x) {
         this.x = x;
+        this.resetCells();
     }
 
     public int getY() {
@@ -36,11 +38,13 @@ public class Ship {
 
     public void setY(int y) {
         this.y = y;
+        this.resetCells();
     }
 
     public void setLocation(int x, int y) {
         this.x = x;
         this.y = y;
+        this.resetCells();
     }
 
     public Rotation getRotation() {
@@ -49,15 +53,16 @@ public class Ship {
 
     public void setRotation(Rotation rotation) {
         this.rotation = rotation;
+        this.resetCells();
     }
 
     public ShipType getShiptype() {
         return shiptype;
     }
 
-    public void setShiptype(ShipType shiptype) {
+    /*public void setShiptype(ShipType shiptype) {
         this.shiptype = shiptype;
-    }
+    }*/
 
     public boolean isAt(int x, int y) {
         boolean value = false;

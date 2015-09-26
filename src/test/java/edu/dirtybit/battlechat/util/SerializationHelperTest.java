@@ -44,19 +44,6 @@ public class SerializationHelperTest {
         GameMessage config = SerializationHelper.deserializeMessage(json);
         assertEquals(config.getBody().getClass(), Fleet.class);
     }
-    @Test
-    public void SerializationHelper_DeserializeUpdate_BodyShouldBeBoardUpdate() {
-        Gson gson = new Gson();
-        ArrayList<BaseBoard> boards = new ArrayList<>();
-        Perspective p = new Perspective(10,10);
-        boards.add(p);
-        BoardUpdate update = new BoardUpdate(boards, 1);
-        GameMessage<BoardUpdate> msg = new GameMessage<>(GameMessageType.UPDATE, UUID.randomUUID(), update);
-        String json = gson.toJson(msg, GameMessage.class);
-
-        GameMessage<ArrayList<BaseBoard>> config = SerializationHelper.deserializeMessage(json);
-        assertEquals(config.getBody().getClass(), BoardUpdate.class);
-    }
 
     @Test
     public void SerializationHelper_DeserializeStatus_BodyShouldBeBattleChatStatus() {

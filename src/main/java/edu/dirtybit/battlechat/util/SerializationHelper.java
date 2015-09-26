@@ -29,9 +29,6 @@ public class SerializationHelper {
             case FIRE:
                 type = new TypeToken<GameMessage<ArrayList<Coordinate>>>() {};
                 break;
-            case UPDATE:
-                type = new TypeToken<GameMessage<ArrayList<Perspective>>>() {};
-                break;
         }
 
         return gson.fromJson(msg, type.getType());
