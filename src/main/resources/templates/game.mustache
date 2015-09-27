@@ -34,7 +34,7 @@
                 <button id="chatbutton" data-bind="enable: appChatViewModel.messageToAdd().length > 0" type="submit">Send</button>
             </form>
             <div id="chattextarea" data-bind="foreach: appChatViewModel.messages">
-                <p data-bind="text:$data"></p>
+                <p data-bind="text:$data.message, attr:{'class' : $data.type}"></p>
             </div>
         </div>
         <div id="gameconfig"></div>

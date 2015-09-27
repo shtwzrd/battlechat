@@ -22,7 +22,8 @@
 
         // Binds functions to the listeners for the websocket.
         webSocket.onopen = function(event){
-            console.log("Connected.")
+            console.log("Connected.");
+            appChatViewModel.handleMessage("Connected.", "EVENT");
             if(event.data === undefined)
                 return;
         };
@@ -51,10 +52,13 @@
     function routeMessage(msg) {
         switch(msg.messageType) {
         case "CHAT":
-            writeChatMessage(msg.body);
+            appChatViewModel.handleMessage(msg.body, msg.messageType);
+            break;
+        case "EVENT":
+            appChatViewModel.handleMessage(msg.body, msg.messageType);
             break;
         case "STATUS":
-            writePhaseData(msg.body);
+            appGameStateViewModel.handlePhaseData(msg.body);
             break;
         case "CONFIGURATION":
             appConfigurationViewModel.loadConfig(msg.body);
@@ -63,15 +67,6 @@
             appBoardViewModel.mapUpdate(msg.body);
             break;
         }
-    };
-
-    function writeChatMessage(text) {
-        appChatViewModel.messages.push(text);
-    };
-
-    function writePhaseData(msg) {
-        appGameStateViewModel.phase(msg.gamePhase);
-        appGameStateViewModel.timeToPhaseChange(msg.secondsToPhaseChange);
     };
 
 }( window.appSocket = window.appSocket || {}, jQuery ));

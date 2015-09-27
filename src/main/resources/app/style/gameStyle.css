@@ -82,8 +82,8 @@ html, body{
 	font-weight:bold;
 	color:white;
 	font-size:5vh;
-	border-bottom: 1px solid white;
-	border-top: 1px solid white;
+	border-bottom: 2px solid white;
+	border-top: 2px solid white;
 }
 .square {
 	min-width: 5vh;
@@ -193,6 +193,14 @@ html, body{
 	left:10%;
 	border-radius:3px;
 	border:0px solid black;
+}
+
+.chatmsg{
+	color: white;
+}
+
+.eventmsg{
+	color: khaki;
 }
 
 #chatinput{

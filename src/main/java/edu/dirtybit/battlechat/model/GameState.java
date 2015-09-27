@@ -343,11 +343,7 @@ public class GameState extends Session implements Runnable {
     private void handleFire(GameMessage<List<Coordinate>> shot) {
         try {
             this.fire(shot.getBody(), this.getPlayerById(shot.getId()));
-        } catch (FiringOutOfTurnException e) {
-            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
-        } catch (FiringAtOwnBoardException e) {
-            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
-        } catch (FiringTooManyShotsException e) {
+        } catch (FiringOutOfTurnException | FiringAtOwnBoardException | FiringTooManyShotsException e) {
             this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
         }
     }
@@ -359,11 +355,7 @@ public class GameState extends Session implements Runnable {
             placeFleet(placement.getBody(), this.boards.get(pi));
             this.boards.get(pi).setFleet(placement.getBody());
             this.hasPlaced.set(pi, true);
-        } catch (ShipOutOfBoundsException e) {
-            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
-        } catch (ShipsOverlapException e) {
-            this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
-        } catch (InvalidFleetsizeException e) {
+        } catch (ShipOutOfBoundsException | ShipsOverlapException | InvalidFleetsizeException e) {
             this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         }
 
