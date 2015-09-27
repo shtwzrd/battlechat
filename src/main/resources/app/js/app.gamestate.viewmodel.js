@@ -6,9 +6,6 @@
     var lastPhase = "";
 
     function isPhaseChanged(phase) {
-        console.log(phase);
-        console.log(lastPhase);
-        console.log(lastPhase != phase);
         return lastPhase != phase;
     }
 

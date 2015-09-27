@@ -21,3 +21,4 @@
 }( window.appChatViewModel = window.appChatViewModel || {}, jQuery ));
 
 ko.applyBindings(appChatViewModel, $("#chat")[0]);
+

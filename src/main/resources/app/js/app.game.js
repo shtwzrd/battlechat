@@ -197,6 +197,8 @@ $(document).ready(function() {
             swipeLeft();
         }
     });
+
+	$('#chattextarea').scrollTop(99999);
 });
 
 
