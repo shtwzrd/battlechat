@@ -187,22 +187,24 @@ interact('.draggable').draggable({
 		var re = /-?\d+(\.\d+)?/g; 
 		var trans = event.currentTarget.style.transform;
 		
-		if(trans.indexOf('rotate') >= -1) event.currentTarget.style.transform+=' rotate(-90deg)';
-		else {
+		if(trans.indexOf('rotate') > -1){
 			
 			var tval = trans.match(re);
 			var degree = parseInt(tval[tval.length-1]);
-			//console.log(degree)
+			console.log(degree)
 			if(degree != -360){
 				degree=degree-90;
 			} else degree = 0;
+			console.log(degree);
+			console.log( 'rotate('+degree+'deg)');
 			
-			event.currentTarget.style.transform.replace(/rotate\(-?\d+(\.\d+)?deg\)/g, 'rotate('+degree+'deg)');
+			console.log(trans);
+			event.currentTarget.style.transform = trans.replace(/rotate\(-?\d+(\.\d+)?deg\)/, 'rotate('+degree+'deg)');
 			//console.log(event.currentTarget.style.transform);
 			
-		}
+		} else event.currentTarget.style.transform += 'rotate(-90deg)';
 		removeOccupiedDivsBy(event.currentTarget.id);
-		onstart;
+		onmove(event);
 
 	});
 	
@@ -219,9 +221,9 @@ interact('.square').dropzone({
 			  ondragenter: function (event) {
 				var draggableElement = event.relatedTarget,
 					dropzoneElement = event.target;
-				var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
-				var row= dropzoneElement.id.charAt(dropzoneElement.id.length-2);
-				var column = dropzoneElement.id.charAt(dropzoneElement.id.length-1);
+//				var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
+//				var row= dropzoneElement.id.charAt(dropzoneElement.id.length-2);
+//				var column = dropzoneElement.id.charAt(dropzoneElement.id.length-1);
 				
 				var dropRect = interact.getElementRect(dropzoneElement);
 				var dropLeft =0;
