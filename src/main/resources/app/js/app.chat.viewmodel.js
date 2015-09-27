@@ -13,10 +13,12 @@
             appChatViewModel.messageToAdd("");
         }
     }.bind(appChatViewModel);
+	
+	//autoscroll down
+	var textarea = document.getElementById('chattextarea');
+	textarea.scrollTop = textarea.scrollHeight;
+	
 }( window.appChatViewModel = window.appChatViewModel || {}, jQuery ));
 
 ko.applyBindings(appChatViewModel, $("#chat")[0]);
 
-//autoscroll down
-var textarea = document.getElementById('chattextarea');
-textarea.scrollTop = textarea.scrollHeight;
