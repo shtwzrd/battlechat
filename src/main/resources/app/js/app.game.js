@@ -15,7 +15,7 @@ function vHeight(clientheight){
 //swipe + arrowkeys	
 $(document).ready(function() {
 	
-	$('#chattextarea').scrollTop($('#chattextarea')[0].scrollHeight);
+	$('#chattextarea').scrollTop(99999);
 	
 	function swipeRight() 
 	{
