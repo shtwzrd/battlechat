@@ -5,6 +5,7 @@
 
     appChatViewModel.handleMessage = function(msg, type) {
         appChatViewModel.messages.push({"message": msg, "type": type.toLowerCase() + "msg"});
+        $('#chattextarea').scrollTop(99999);
     };
 
     appChatViewModel.sendMessage = function() {

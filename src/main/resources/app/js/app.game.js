@@ -18,13 +18,13 @@ function swipeRight() {
         'left': '-30%',
         opacity:0
     },
-                            100).css('right','');
+    100).css('right','');
     jQuery('#right').animate({
         width:'100%',
         'left': '0%',
         opacity:1.0
     },
-                             90).css('right','');
+    90).css('right','');
     jQuery('#right').toggleClass('active',true);
     jQuery('#left').toggleClass('active',false);
     jQuery('#rightarrow').hide();
@@ -37,13 +37,13 @@ function swipeLeft() {
         'right': '-30%',
         opacity:0
     },
-                             100).css('left','');
+    100).css('left','');
     jQuery('#left').animate({
         width:'100%',
         'right': '0%',
         opacity:1.0
     },
-                            90).css('left','');
+    90).css('left','');
     jQuery('#left').toggleClass('active',true);
     jQuery('#right').toggleClass('active',false);
     jQuery('#leftarrow').hide();
