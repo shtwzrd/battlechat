@@ -38,6 +38,35 @@
         }
         init = true;
     }
+	
+	function getShipsState(numberOfBoat) {
+		var shipState = [];
+		for(var i=0; i<numberOfBoat; i++){
+			var ship = document.getElementById('ship'+(i+1));
+			var firstOccupiedCell = document.getElementsByClassName('byship'+(i+1))[0];
+			
+			//Position
+			var x = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-1);
+			var y = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-2);
+			
+			//orientation
+			var orientation='';
+			if (ship.classList.contains('horizontal')) orientation = 'horizontal';
+			else if (ship.classList.contains('vertical')) orientation = 'vertical';
+			
+			//ShipType
+			var shipType='';
+			if (ship.classList.contains('cruiser')) shipType = 'cruiser';
+			else if (ship.classList.contains('submarine')) shipType = 'submarine';
+			else if (ship.classList.contains('battleship')) shipType = 'battleship';
+			else if (ship.classList.contains('destroyer')) shipType = 'destroyer';
+			else if (ship.classList.contains('carrier')) shipType = 'carrier';
+			
+			var array = [x,y,orientation,shipType];
+			shipState.push(array);
+		}
+		return shipState;
+	}
 
     appBoardViewModel.mapUpdate = function(msg) {
         appBoardViewModel.myBoard(applyMetaData(msg.boards[msg.yourBoardIndex].cells));
