@@ -30,7 +30,6 @@
 
         webSocket.onmessage = function(event){
             routeMessage(JSON.parse(event.data));
-            console.log(event.data);
         };
 
         webSocket.onclose = function(event){

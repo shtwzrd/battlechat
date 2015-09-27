@@ -300,11 +300,8 @@ public class GameState extends Session implements Runnable {
                 this.secondsToNextPhase = this.placementTimeout;
                 break;
             case PLACEMENT_PHASE:
-                for (Board board : this.getBoards()) {
-                    if (!this.validateFleet(board.getFleet())) {
-                        this.randomizeFleet(board.getFleet());
-                    }
-                }
+                this.getBoards().stream().filter(board -> !this.validateFleet(board.getFleet())).forEach(board ->
+                    this.randomizeFleet(board.getFleet()));
                 this.phase = Phase.COMBAT;
                 this.secondsToNextPhase = this.firingTimeout;
                 break;
