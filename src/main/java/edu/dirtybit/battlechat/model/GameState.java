@@ -28,6 +28,9 @@ public class GameState extends Session implements Runnable {
         this.cfg = (BattleShipConfiguration) config;
         this.boards = new ArrayList<>();
         this.hasPlaced = new ArrayList<>();
+        for(int i = 0; i < cfg.getPropertyAsInt(ConfigKeys.PLAYER_COUNT); i++) {
+            this.hasPlaced.add(false);
+        }
 
         this.initializeBoards(this.cfg);
         this.phase = Phase.NOT_STARTED;
@@ -137,18 +140,18 @@ public class GameState extends Session implements Runnable {
             for (int i = 0; i < fleet.getShips().size(); i++) {
                 Ship ship = fleet.getShips().get(i);
                 // Start with a random rotation
-                ship.setRotation(rng.nextBoolean() == true ? Rotation.Horizontal : Rotation.Vertical);
+                ship.setRotation(rng.nextBoolean() == true ? Rotation.HORIZONTAL : Rotation.VERTICAL);
                 // Get the max possible placement values given the rotation
-                int xmax = ship.getRotation() == Rotation.Horizontal ? testboard.getWidth() - (ship.getShiptype().getLength() - 1) : testboard.getWidth();
-                int ymax = ship.getRotation() == Rotation.Vertical ? testboard.getHeight() - (ship.getShiptype().getLength() - 1) : testboard.getHeight();
+                int xmax = ship.getRotation() == Rotation.HORIZONTAL ? testboard.getWidth() - (ship.getShiptype().getLength() - 1) : testboard.getWidth();
+                int ymax = ship.getRotation() == Rotation.VERTICAL ? testboard.getHeight() - (ship.getShiptype().getLength() - 1) : testboard.getHeight();
 
                 // If a ship fails 10 random placements, restart the fleet placement
                 int attempts = 10;
                 for (int j = 0; j < attempts; j++) {
                     // pick a random starting location
                     ship.setLocation(rng.nextInt(xmax), rng.nextInt(ymax));
-                    int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
-                    int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
+                    int endx = ship.getRotation() == Rotation.HORIZONTAL ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
+                    int endy = ship.getRotation() == Rotation.VERTICAL ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
 
                     // Test if ship can be placed
                     boolean canplace = true;
@@ -222,8 +225,8 @@ public class GameState extends Session implements Runnable {
             }
 
             // Get the end coordinates of the ship
-            int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + ship.getShiptype().getLength() - 1 : ship.getX();
-            int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + ship.getShiptype().getLength() - 1 : ship.getY();
+            int endx = ship.getRotation() == Rotation.HORIZONTAL ? ship.getX() + ship.getShiptype().getLength() - 1 : ship.getX();
+            int endy = ship.getRotation() == Rotation.VERTICAL ? ship.getY() + ship.getShiptype().getLength() - 1 : ship.getY();
 
             // Check if the start coordinates are on the board
             if (ship.getX() >= 0 && ship.getX() < board.getWidth() -1 && ship.getY() >= 0 || ship.getY() < board.getHeight() -1) {
@@ -300,8 +303,12 @@ public class GameState extends Session implements Runnable {
                 this.secondsToNextPhase = this.placementTimeout;
                 break;
             case PLACEMENT_PHASE:
-                this.getBoards().stream().filter(board -> !this.validateFleet(board.getFleet())).forEach(board ->
-                    this.randomizeFleet(board.getFleet()));
+                this.getBoards().stream().filter(board -> !this.validateFleet(board.getFleet())).forEach(board -> {
+                    this.randomizeFleet(board.getFleet());
+                    notifySubscribers(new GameMessage(GameMessageType.EVENT,
+                            this.getPlayers().get(this.boards.indexOf(board)).getId(),
+                            "You didn't arrange your fleet in time, so it was randomized for you."));
+                });
                 this.phase = Phase.COMBAT;
                 this.secondsToNextPhase = this.firingTimeout;
                 break;
@@ -349,9 +356,11 @@ public class GameState extends Session implements Runnable {
         Player p = this.getPlayerById(placement.getId());
         int pi = this.getPlayerIndex(p);
         try {
+            placement.getBody().getShips().forEach(s -> s.resetCells());
             placeFleet(placement.getBody(), this.boards.get(pi));
             this.boards.get(pi).setFleet(placement.getBody());
             this.hasPlaced.set(pi, true);
+            notifySubscribers(new GameMessage(GameMessageType.EVENT, placement.getId(), "You have successfully arranged your fleet."));
         } catch (ShipOutOfBoundsException | ShipsOverlapException | InvalidFleetsizeException e) {
             this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, placement.getId(), e.getMessage()));
         }

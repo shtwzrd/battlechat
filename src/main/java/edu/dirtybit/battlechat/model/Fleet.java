@@ -13,22 +13,22 @@ public class Fleet {
 
         int i = 0;
         for (i = 0; i < canoes; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CANOE));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.CANOE));
         }
         for (i = 0; i < cruisers; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CRUISER));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.CRUISER));
         }
         for (i = 0; i < submarines; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.SUBMARINE));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.SUBMARINE));
         }
         for (i = 0; i < destroyers; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.DESTROYER));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.DESTROYER));
         }
         for (i = 0; i < battleships; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.BATTLESHIP));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.BATTLESHIP));
         }
         for (i = 0; i < carriers; i++) {
-            this.ships.add(new Ship(0, 0, Rotation.Horizontal, ShipType.CARRIER));
+            this.ships.add(new Ship(0, 0, Rotation.HORIZONTAL, ShipType.CARRIER));
         }
     }
 

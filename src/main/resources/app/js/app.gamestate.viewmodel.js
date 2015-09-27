@@ -6,6 +6,11 @@
     var lastPhase = "";
 
     function isPhaseChanged(phase) {
+        if(phase == "PLACEMENT_PHASE" && !appBoardViewModel.canPlaceShips()) {
+            appBoardViewModel.canPlaceShips(true);
+        } else if (phase != "PLACEMENT_PHASE") {
+            appBoardViewModel.canPlaceShips(false);
+        }
         return lastPhase != phase;
     }
 

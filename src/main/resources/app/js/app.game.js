@@ -51,8 +51,6 @@ function swipeLeft() {
 };
 
 function shipDrop(ship, dropzone) {
-    console.log(ship);
-    console.log(dropzone);
     $('#'+ship.id).css('left',0).appendTo($('#'+dropzone.id));
 
     // notify user with occupied cells
@@ -62,13 +60,13 @@ function shipDrop(ship, dropzone) {
         if ($('#'+ship.id).hasClass('odd')){
             var middledivnum = parseInt(dropzone.id.slice(-1));
             var divoneachsidenum = (length-1)/2;
-            console.log(divoneachsidenum + ' : divs on each side');
+            //console.log(divoneachsidenum + ' : divs on each side');
 
             var startingdivnum = middledivnum - divoneachsidenum;
-            console.log(startingdivnum + ' : starting div num');
+            //console.log(startingdivnum + ' : starting div num');
 
             var endingdivnum = middledivnum + divoneachsidenum;
-            console.log(endingdivnum + ' : ending div num');
+            //console.log(endingdivnum + ' : ending div num');
             var d;
             for(i=startingdivnum; i<endingdivnum+1; i++){
                 d = document.getElementById('lsquare'+row+i);
@@ -177,6 +175,7 @@ function shipDrop(ship, dropzone) {
         }
     }
     ship.classList.add('dropped');
+    appBoardViewModel.shipPlacedCount($(".dropped").length);
 };
 
 //swipe + arrowkeys
@@ -247,7 +246,7 @@ function removeOccupiedDivsBy (targetId) {
     for (var i = 0; i < l; i++) {
         occupieddivs[i].classList.remove("occupied");
         occupieddivs[i].classList.remove("by"+targetId);
-        console.log(occupieddivs[i]);
+        //console.log(occupieddivs[i]);
     }
 }
 
@@ -256,7 +255,7 @@ function removeDroppableFeedback () {
     var l = targetdivs.length;
     for (var i = 0; i < l; i++) {
         targetdivs[i].classList.remove("drop-target");
-        console.log(targetdivs[i]);
+        //console.log(targetdivs[i]);
     }
 }
 
@@ -283,7 +282,7 @@ interact('.draggable').draggable({
     },
     // call this function on every dragend event
     onend: function (event) {
-        console.log(event.target.dropped);
+        //console.log(event.target.dropped);
         if (event.target.classList.contains('dropped')) {
             // snap to the start position
             //event.target.snap();
@@ -363,7 +362,7 @@ interact('.square').dropzone({
                 };
             }
         }
-        console.log(dropLeft);
+        //console.log(dropLeft);
         // feedback the possibility of a drop
         draggableElement.classList.add('can-drop');
 

@@ -25,6 +25,11 @@
                     </div>
                 </div>
             </div>
+            <div id="lockship" data-bind="visible: appBoardViewModel.canPlaceShips()">
+                <button id="sendShipPlacement" data-bind="enable: appBoardViewModel.enablePlacementButton()" onclick="appBoardViewModel.sendFleetPlacement()">
+                   Ready
+                </button>
+            </div>
         </div>
         <div id="rightarrow">-&gt;</div>
         <div id="leftarrow">&lt;-</div>

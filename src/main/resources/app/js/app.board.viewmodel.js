@@ -4,6 +4,17 @@
     appBoardViewModel.myBoard = ko.observableArray();
     appBoardViewModel.theirBoard = ko.observableArray();
     appBoardViewModel.ships = ko.observableArray();
+    appBoardViewModel.shipPlacedCount = ko.observable();
+    appBoardViewModel.canPlaceShips = ko.observable(false);
+    appBoardViewModel.placementSent = ko.observable(false);
+
+    appBoardViewModel.shipsPlaced = ko.computed(function() {
+        return appBoardViewModel.ships().length == appBoardViewModel.shipPlacedCount();
+    });
+
+    appBoardViewModel.enablePlacementButton = ko.computed(function() {
+        return !appBoardViewModel.placementSent() && appBoardViewModel.shipsPlaced();
+    });
 
     function applyMetaData(board) {
         for(var i = 0; i < board.length; i++) {
@@ -31,35 +42,48 @@
         }
         init = true;
     }
-	
-	function getShipsState(numberOfBoat) {
-		var shipState = [];
-		for(var i=0; i<numberOfBoat; i++){
-			var ship = document.getElementById('ship'+(i+1));
-			var firstOccupiedCell = document.getElementsByClassName('byship'+(i+1))[0];
-			
-			//Position
-			var x = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-1);
-			var y = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-2);
-			
-			//orientation
-			var orientation='';
-			if (ship.classList.contains('horizontal')) orientation = 'horizontal';
-			else if (ship.classList.contains('vertical')) orientation = 'vertical';
-			
-			//ShipType
-			var shipType='';
-			if (ship.classList.contains('cruiser')) shipType = 'cruiser';
-			else if (ship.classList.contains('submarine')) shipType = 'submarine';
-			else if (ship.classList.contains('battleship')) shipType = 'battleship';
-			else if (ship.classList.contains('destroyer')) shipType = 'destroyer';
-			else if (ship.classList.contains('carrier')) shipType = 'carrier';
-			
-			var array = [x,y,orientation,shipType];
-			shipState.push(array);
-		}
-		return shipState;
-	}
+
+    appBoardViewModel.sendFleetPlacement = function() {
+        var numberOfBoat = appBoardViewModel.ships().length;
+        var shipState = [];
+        for(var i=0; i<numberOfBoat; i++){
+            var ship = document.getElementById('ship' + i);
+            var firstOccupiedCell = document.getElementsByClassName('byship'+ i)[0];
+
+            //Position
+            var x = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-1);
+            var y = firstOccupiedCell.id.charAt(firstOccupiedCell.id.length-2);
+
+            //orientation
+            var orientation='';
+            if (ship.classList.contains('horizontal')) orientation = 'horizontal';
+            else if (ship.classList.contains('vertical')) orientation = 'vertical';
+
+            //ShipType
+            var shipType='';
+            if (ship.classList.contains('cruiser')) shipType = 'cruiser';
+            else if (ship.classList.contains('submarine')) shipType = 'submarine';
+            else if (ship.classList.contains('battleship')) shipType = 'battleship';
+            else if (ship.classList.contains('destroyer')) shipType = 'destroyer';
+            else if (ship.classList.contains('carrier')) shipType = 'carrier';
+
+            var s = {
+                "x": x,
+                "y": y,
+                "rotation": orientation.toUpperCase(),
+                "shiptype": shipType.toUpperCase()
+            };
+            shipState.push(s);
+        }
+        var msg = {
+            messageType: "PLACEMENT",
+            id: appSocket.id,
+            body: { "ships": shipState }
+        };
+        appSocket.send(msg);
+        appBoardViewModel.placementSent(true);
+        return shipState;
+    };
 
     function clearPlacement() {
         $(".ship").remove();

@@ -11,7 +11,7 @@ public class Ship {
     private ArrayList<Point> cells;
 
     public Ship(ShipType shiptype) {
-        this(0, 0, Rotation.Horizontal, shiptype);
+        this(0, 0, Rotation.HORIZONTAL, shiptype);
     }
 
     public Ship(int x, int y, Rotation rotation, ShipType shiptype) {
@@ -19,7 +19,7 @@ public class Ship {
         this.y = y;
         this.rotation = rotation;
         this.shiptype = shiptype;
-        this.cells = new ArrayList<Point>();
+        this.cells = new ArrayList<>();
         this.resetCells();
     }
 
@@ -92,13 +92,13 @@ public class Ship {
     }
 
     public void resetCells() {
-        this.cells.clear();
+        this.cells = new ArrayList<>();
 
         int x = this.x;
         int y = this.y;
         for (int i = 0; i < this.shiptype.getLength(); i++) {
             this.cells.add(new Point(x, y));
-            if (this.rotation == Rotation.Horizontal) {
+            if (this.rotation == Rotation.HORIZONTAL) {
                 x++;
             } else {
                 y++;

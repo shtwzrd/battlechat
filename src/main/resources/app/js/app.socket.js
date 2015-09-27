@@ -56,6 +56,9 @@
         case "EVENT":
             appChatViewModel.handleMessage(msg.body, msg.messageType);
             break;
+        case "ERROR":
+            appChatViewModel.handleMessage(msg.body, msg.messageType);
+            break;
         case "STATUS":
             appGameStateViewModel.handlePhaseData(msg.body);
             break;

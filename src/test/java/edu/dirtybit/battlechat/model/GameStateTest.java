@@ -10,7 +10,6 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-import java.io.Console;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -145,7 +144,7 @@ public class GameStateTest {
         Fleet fleet = board.getFleet();
 
         GameStateTest.SetupBaseFleet(fleet);
-        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.Horizontal, ShipType.CANOE));
+        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.HORIZONTAL, ShipType.CANOE));
 
         game.placeFleet(fleet, board);
     }
@@ -171,7 +170,7 @@ public class GameStateTest {
         GameStateTest.SetupBaseFleet(fleet);
         Ship ship = fleet.getShips().get(0);
         ship.setLocation(board.getWidth() - 1, board.getHeight() - 1);
-        ship.setRotation(Rotation.Horizontal);
+        ship.setRotation(Rotation.HORIZONTAL);
 
         game.placeFleet(fleet, board);
     }
@@ -185,7 +184,7 @@ public class GameStateTest {
         GameStateTest.SetupBaseFleet(fleet);
         Ship ship = fleet.getShips().get(0);
         ship.setLocation(board.getWidth() - 1, board.getHeight() - 1);
-        ship.setRotation(Rotation.Vertical);
+        ship.setRotation(Rotation.VERTICAL);
 
         game.placeFleet(fleet, board);
     }
@@ -200,7 +199,7 @@ public class GameStateTest {
         Ship ship1 = fleet.getShips().get(0);
         Ship ship2 = fleet.getShips().get(1);
         ship1.setLocation(ship2.getX() + 1, ship2.getY() - 1);
-        ship1.setRotation(Rotation.Vertical);
+        ship1.setRotation(Rotation.VERTICAL);
 
         game.placeFleet(fleet, board);
     }
@@ -218,7 +217,7 @@ public class GameStateTest {
         game.subscribe(listener);
 
         GameStateTest.SetupBaseFleet(fleet);
-        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.Horizontal, ShipType.CANOE));
+        fleet.getShips().add(new Ship(board.getWidth() / 2, board.getHeight() / 2, Rotation.HORIZONTAL, ShipType.CANOE));
 
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
@@ -265,7 +264,7 @@ public class GameStateTest {
         Ship ship1 = fleet.getShips().get(0);
         Ship ship2 = fleet.getShips().get(1);
         ship1.setLocation(ship2.getX() + 1, ship2.getY() - 1);
-        ship1.setRotation(Rotation.Vertical);
+        ship1.setRotation(Rotation.VERTICAL);
 
         GameMessage<Fleet> message = new GameMessage<>(GameMessageType.PLACEMENT, player1.getId(), fleet);
         game.handleMessage(message);
@@ -365,8 +364,8 @@ public class GameStateTest {
         }
 
         for (Ship ship : fleet.getShips()) {
-            int endx = ship.getRotation() == Rotation.Horizontal ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
-            int endy = ship.getRotation() == Rotation.Vertical ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
+            int endx = ship.getRotation() == Rotation.HORIZONTAL ? ship.getX() + (ship.getShiptype().getLength() - 1) : ship.getX();
+            int endy = ship.getRotation() == Rotation.VERTICAL ? ship.getY() + (ship.getShiptype().getLength() - 1) : ship.getY();
             for (int x = ship.getX(); x <= endx; x++) {
                 for (int y = ship.getY(); y <= endy; y++) {
                     board[y][x] = Integer.toString(ship.getShiptype().getLength()).toCharArray()[0];
