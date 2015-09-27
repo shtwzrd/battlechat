@@ -19,7 +19,7 @@ $(document).ready(function() {
 	{
 		jQuery('#left').animate({
 				width:0,
-				'left': '-30%',
+				'left': '0%',
 				opacity:0
 			},
 			100
@@ -29,7 +29,7 @@ $(document).ready(function() {
 				'left': '0%',
 				opacity:1.0
 			},
-			90
+			100
 		).css('right','');
 		jQuery('#right').toggleClass('active',true);
 		jQuery('#left').toggleClass('active',false);
@@ -42,7 +42,7 @@ $(document).ready(function() {
 
 		jQuery('#right').animate({
 				width:0,
-				'right': '-30%',
+				'right': '0%',
 				opacity:0
 			},
 			100
@@ -52,7 +52,7 @@ $(document).ready(function() {
 				'right': '0%',
 				opacity:1.0
 			},
-			90	
+			100	
 		).css('left','');
 		jQuery('#left').toggleClass('active',true);
 		jQuery('#right').toggleClass('active',false);
