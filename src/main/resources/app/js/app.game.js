@@ -178,14 +178,30 @@ interact('.draggable').draggable({
 		if(event.currentTarget.classList.contains('horizontal')){
 			event.currentTarget.classList.add('vertical');
 			event.currentTarget.classList.remove('horizontal');
-			event.currentTarget.style.transform += 'rotate(-90deg)';
 		} else 	if(event.currentTarget.classList.contains('vertical')){
 			event.currentTarget.classList.add('horizontal');
 			event.currentTarget.classList.remove('vertical');
-			event.currentTarget.style.transform += 'rotate(0deg)';
+		}
+		var re = /-?\d+(\.\d+)?/g; 
+		var trans = event.currentTarget.style.transform;
+		
+		if(trans.indexOf('rotate') >= -1) event.currentTarget.style.transform+=' rotate(-90deg)';
+		else {
+			
+			var tval = trans.match(re);
+			var degree = parseInt(tval[tval.length-1]);
+			//console.log(degree)
+			if(degree != -360){
+				degree=degree-90;
+			} else degree = 0;
+			
+			event.currentTarget.style.transform.replace(/rotate\(-?\d+(\.\d+)?deg\)/g, 'rotate('+degree+'deg)');
+			//console.log(event.currentTarget.style.transform);
+			
 		}
 		removeOccupiedDivsBy(event.currentTarget.id);
-		onmove(event);
+		onstart;
+
 	});
 	
 interact('.square').dropzone({
