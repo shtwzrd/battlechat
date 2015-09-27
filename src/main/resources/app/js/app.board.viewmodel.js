@@ -14,27 +14,23 @@
         return board;
     }
 
+    function placeShip(x, y, orientation, shiptype, index) {
+        var ele = $("#lsquare" + y + x);
+        var occupied = $("#lsquare" + y + x).children().length > 0;
+        if(!occupied) {
+            var shipType = shiptype.toLowerCase();
+            var oddEven = "odd";
+            if(shipType == "battleship" || shipType == "destroyer") {
+                oddEven = "even";
+            }
+            var html = "<div class='" + oddEven + " rotation-trans " + orientation + " ship " + shipType + " draggable' id='ship" + index + "' </div>";
+            ele.append(html);
+        }
+    }
+
     function scrambleShips() {
         for(var i = 0; i < appBoardViewModel.ships().length; i++) {
-            var id = "#lsquare" + i + "0";
-            var ele = $(id);
-            switch(appBoardViewModel.ships()[i].shiptype) {
-            case "BATTLESHIP":
-                ele.append("<div class='even rotation-trans horizontal ship battleship draggable' id='ship" + i +"'</div>");
-                break;
-            case "CRUISER":
-                ele.append("<div class='odd rotation-trans horizontal ship cruiser draggable' id='ship" + i +"'</div>");
-                break;
-            case "CARRIER":
-                ele.append("<div class='odd rotation-trans horizontal ship carrier draggable' id='ship" + i +"'</div>");
-                break;
-            case "DESTROYER":
-                ele.append("<div class='even rotation-trans horizontal ship destroyer draggable' id='ship" + i +"'</div>");
-                break;
-            case "SUBMARINE":
-                ele.append("<div class='odd rotation-trans horizontal ship submarine draggable' id='ship" + i +"'</div>");
-                break;
-            }
+                placeShip(0, i, "horizontal", appBoardViewModel.ships()[i].shiptype, i);
         }
         init = true;
     }

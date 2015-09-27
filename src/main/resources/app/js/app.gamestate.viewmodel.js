@@ -25,7 +25,6 @@
             break;
         }
     }.bind(appGameStateViewModel);
-
 }( window.appGameStateViewModel = window.appGameStateViewModel || {}, jQuery ));
 
 ko.applyBindings(appGameStateViewModel, $("#phase")[0]);
