@@ -50,133 +50,6 @@ function swipeLeft() {
     jQuery('#rightarrow').show();
 };
 
-function shipDrop(ship, dropzone) {
-    $('#'+ship.id).css('left',0).appendTo($('#'+dropzone.id));
-
-    // notify user with occupied cells
-    if ($('#'+ship.id).hasClass('horizontal')){
-        var length = Math.round(document.getElementById(ship.id).offsetWidth/document.getElementById(dropzone.id).offsetWidth);
-        var row= dropzone.id.charAt(dropzone.id.length-2);
-        if ($('#'+ship.id).hasClass('odd')){
-            var middledivnum = parseInt(dropzone.id.slice(-1));
-            var divoneachsidenum = (length-1)/2;
-            //console.log(divoneachsidenum + ' : divs on each side');
-
-            var startingdivnum = middledivnum - divoneachsidenum;
-            //console.log(startingdivnum + ' : starting div num');
-
-            var endingdivnum = middledivnum + divoneachsidenum;
-            //console.log(endingdivnum + ' : ending div num');
-            var d;
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                d = document.getElementById('lsquare'+row+i);
-                if(d.classList.contains('occupied')) return false;
-            }
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                d = document.getElementById('lsquare'+row+i);
-                d.classList.add('occupied');
-                d.classList.add('by'+ship.id);
-                //console.log('lsquare'+row+i);
-            }
-        }
-        if ($('#'+ship.id).hasClass('even')){
-            //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
-            //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
-            //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
-
-            var boatcenterx = (document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2;
-
-            var leftcellbound = document.getElementById(dropzone.id).getBoundingClientRect().left;
-
-            var rightcellbound = document.getElementById(dropzone.id).getBoundingClientRect().right;
-
-            if ( Math.round(boatcenterx) > (Math.round(rightcellbound)-2) && Math.round(boatcenterx) < (Math.round(rightcellbound)+2) ){
-                var divsonrightside = ((length)/2);
-                var divsonleftside = divsonrightside-1;	
-            } else if ( Math.round(boatcenterx) > (Math.round(leftcellbound)-2) && Math.round(boatcenterx) < (Math.round(leftcellbound)+2)){
-                var divsonleftside = ((length)/2);
-                var divsonrightside = divsonleftside-1;	
-            }
-            var middledivnum = parseInt(dropzone.id.slice(-1));
-            //console.log(divsonrightside + ' : divs on right side');
-            //console.log(divsonleftside + ' : divs on left side');
-            var startingdivnum = middledivnum - divsonleftside;
-            //console.log(startingdivnum + ' : starting div num');
-            var endingdivnum = middledivnum + divsonrightside;
-            //console.log(endingdivnum + 'ending div num')
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+row+i);
-                if(d.classList.contains('occupied')) return false;
-            }
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+row+i);
-                d.classList.add('occupied');
-                d.classList.add('by'+ship.id);
-                //console.log('lsquare'+row+i);
-            }
-        }
-    }	else if ($('#'+ship.id).hasClass('vertical')){
-        var length = Math.round(document.getElementById(ship.id).offsetWidth/document.getElementById(dropzone.id).offsetWidth);
-        var column= dropzone.id.slice(-1);
-        if ($('#'+ship.id).hasClass('odd')){
-            var middledivnum = parseInt(dropzone.id.charAt(dropzone.id.length-2));
-            var divoneachsidenum = (length-1)/2;
-            //console.log(divoneachsidenum + ' : divs on each side');
-            var startingdivnum = middledivnum - divoneachsidenum;
-            //console.log(startingdivnum + ' : starting div num')
-            var endingdivnum = middledivnum + divoneachsidenum;
-            //console.log(endingdivnum + 'ending div num')
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+i+column);
-                if(d.classList.contains('occupied')) return false;
-            }
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+i+column);
-                d.classList.add('occupied');
-                d.classList.add('by'+ship.id);
-                //console.log('lsquare'+i+column);
-            }
-        }
-        if ($('#'+ship.id).hasClass('even')){
-            //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
-            //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
-            //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
-            var boatcentery = (document.getElementById(ship.id).getBoundingClientRect().top+document.getElementById(ship.id).getBoundingClientRect().bottom)/2;
-            //console.log('boat center ' + boatcentery);
-            var topcellbound = document.getElementById(dropzone.id).getBoundingClientRect().top;
-            //console.log('top cell bound ' + topcellbound);
-            var bottomcellbound = document.getElementById(dropzone.id).getBoundingClientRect().bottom;
-            //console.log('bottom cell bound ' + bottomcellbound);
-            if ( Math.round(boatcentery) > (Math.round(topcellbound)-2) && Math.round(boatcentery) < (Math.round(topcellbound)+2) ){
-                var divsontop = ((length)/2);
-                var divsonbottom = divsontop-1;	
-            } else if ( Math.round(boatcentery) > (Math.round(bottomcellbound)-2) && Math.round(boatcentery) < (Math.round(bottomcellbound)+2)){
-                var divsonbottom = ((length)/2);
-                var divsontop = divsonbottom-1;	
-            }
-            var middledivnum = parseInt(dropzone.id.charAt(dropzone.id.length-2));
-            //console.log('middle div : ',middledivnum)
-            //console.log(divsonrightside + ' : divs on right side');
-            //console.log(divsonleftside + ' : divs on left side');
-            var startingdivnum = middledivnum - divsontop;
-            //console.log(startingdivnum + ' : starting div num');
-            var endingdivnum = middledivnum + divsonbottom;
-            //console.log(endingdivnum + 'ending div num')
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+i+column);
-                if(d.classList.contains('occupied')) return false;
-            }
-            for(i=startingdivnum; i<endingdivnum+1; i++){
-                var d = document.getElementById('lsquare'+i+column);
-                d.classList.add('occupied');
-                d.classList.add('by'+ship.id);
-                //console.log('lsquare'+row+i);
-            }
-        }
-    }
-    ship.classList.add('dropped');
-    appBoardViewModel.shipPlacedCount($(".dropped").length);
-};
 
 //swipe + arrowkeys
 $(document).ready(function() {
@@ -197,7 +70,7 @@ $(document).ready(function() {
         }
     });
 
-	$('#chattextarea').scrollTop(99999);
+    $('#chattextarea').scrollTop(99999);
 });
 
 
@@ -308,26 +181,31 @@ interact('.draggable').draggable({
         var re = /-?\d+(\.\d+)?/g; 
         var trans = event.currentTarget.style.transform;
 
-        if(trans.indexOf('rotate') >= -1) event.currentTarget.style.transform+=' rotate(-90deg)';
-        else {
+        if(trans.indexOf('rotate') > -1){
+
             var tval = trans.match(re);
             var degree = parseInt(tval[tval.length-1]);
-            //console.log(degree)
+            //console.log(degree);
             if(degree != -360){
                 degree=degree-90;
             } else degree = 0;
+            //console.log(degree);
+            //console.log( 'rotate('+degree+'deg)');
 
-            event.currentTarget.style.transform.replace(/rotate\(-?\d+(\.\d+)?deg\)/g, 'rotate('+degree+'deg)');
+            //console.log(trans);
+            event.currentTarget.style.transform = trans.replace(/rotate\(-?\d+(\.\d+)?deg\)/, 'rotate('+degree+'deg)');
             //console.log(event.currentTarget.style.transform);
-        }
+
+        } else event.currentTarget.style.transform += 'rotate(-90deg)';
         removeOccupiedDivsBy(event.currentTarget.id);
-        onstart;
+        onmove(event);
 
     });
 
 interact('.square').dropzone({
     accept : ".draggable",
     overlap: 'center',
+
     // listen for drop related events:
 
     ondropactivate: function (event) {
@@ -337,9 +215,9 @@ interact('.square').dropzone({
     ondragenter: function (event) {
         var draggableElement = event.relatedTarget,
             dropzoneElement = event.target;
-        var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
-        var row= dropzoneElement.id.charAt(dropzoneElement.id.length-2);
-        var column = dropzoneElement.id.charAt(dropzoneElement.id.length-1);
+        //				var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
+        //				var row= dropzoneElement.id.charAt(dropzoneElement.id.length-2);
+        //				var column = dropzoneElement.id.charAt(dropzoneElement.id.length-1);
 
         var dropRect = interact.getElementRect(dropzoneElement);
         var dropLeft =0;
@@ -349,6 +227,7 @@ interact('.square').dropzone({
                 x: dropRect.left + dropRect.width/2,
                 y:dropRect.top + dropRect.height/2
             };
+
         } else 	if ($('#'+draggableElement.id).hasClass('even')){
             if($('#'+draggableElement.id).hasClass('horizontal')){
                 dropLeft = {
@@ -377,10 +256,144 @@ interact('.square').dropzone({
         //event.draggable.snap(false);
     },
     ondrop: function (event) {
-        shipDrop(event.relatedTarget, event.target);
-    },
-    ondropdeactivate: function (event) {
-        // remove active dropzone feedback
-        //removeDroppableFeedback();
-    }
+        var ship = event.relatedTarget;
+        var dropzone = event.target;
+        $('#'+ship.id).css('left',0).appendTo($('#'+dropzone.id));
+
+        // notify user with occupied cells
+        if ($('#'+ship.id).hasClass('horizontal')){
+            var length = Math.round(document.getElementById(ship.id).offsetWidth/document.getElementById(dropzone.id).offsetWidth);
+            var row= dropzone.id.charAt(dropzone.id.length-2);
+            if ($('#'+ship.id).hasClass('odd')){
+                var middledivnum = parseInt(dropzone.id.slice(-1));
+                var divoneachsidenum = (length-1)/2;
+                //console.log(divoneachsidenum + ' : divs on each side');
+                var startingdivnum = middledivnum - divoneachsidenum;
+                //console.log(startingdivnum + ' : starting div num');
+                var endingdivnum = middledivnum + divoneachsidenum;
+                //console.log(endingdivnum + ' : ending div num');
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+row+i);
+                    if(d.classList.contains('occupied')) return false;
+                }
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+row+i);
+                    d.classList.add('occupied');
+                    d.classList.add('by'+ship.id);
+                    //console.log('lsquare'+row+i);
+                }
+            }
+            if ($('#'+ship.id).hasClass('even')){
+                //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
+                //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
+                //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
+
+                var boatcenterx = (document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2;
+                var leftcellbound = document.getElementById(dropzone.id).getBoundingClientRect().left;
+                var rightcellbound = document.getElementById(dropzone.id).getBoundingClientRect().right;
+
+                if ( Math.round(boatcenterx) > (Math.round(rightcellbound)-2) && Math.round(boatcenterx) < (Math.round(rightcellbound)+2) ){
+                    var divsonrightside = ((length)/2);
+                    var divsonleftside = divsonrightside-1;	
+                } else if ( Math.round(boatcenterx) > (Math.round(leftcellbound)-2) && Math.round(boatcenterx) < (Math.round(leftcellbound)+2)){
+                    var divsonleftside = ((length)/2);
+                    var divsonrightside = divsonleftside-1;	
+                }
+
+                var middledivnum = parseInt(dropzone.id.slice(-1));
+                //console.log(divsonrightside + ' : divs on right side');
+                //console.log(divsonleftside + ' : divs on left side');
+
+                var startingdivnum = middledivnum - divsonleftside;
+                //console.log(startingdivnum + ' : starting div num');
+
+                var endingdivnum = middledivnum + divsonrightside;
+                //console.log(endingdivnum + 'ending div num')
+
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+row+i);
+                    if(d.classList.contains('occupied')) return false;
+                }
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+row+i);
+                    d.classList.add('occupied');
+                    d.classList.add('by'+ship.id);
+                    //console.log('lsquare'+row+i);
+                }
+            }
+        }	else if ($('#'+ship.id).hasClass('vertical')){
+            var length = Math.round(document.getElementById(ship.id).offsetWidth/document.getElementById(dropzone.id).offsetWidth);
+            var column= dropzone.id.slice(-1);
+
+            if ($('#'+ship.id).hasClass('odd')){
+                var middledivnum = parseInt(dropzone.id.charAt(dropzone.id.length-2));
+                var divoneachsidenum = (length-1)/2;
+                //console.log(divoneachsidenum + ' : divs on each side');
+
+                var startingdivnum = middledivnum - divoneachsidenum;
+                //console.log(startingdivnum + ' : starting div num')
+
+                var endingdivnum = middledivnum + divoneachsidenum;
+                //console.log(endingdivnum + 'ending div num')
+
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+i+column);
+                    if(d.classList.contains('occupied')) return false;
+                }
+                for(i=startingdivnum; i<endingdivnum+1; i++){
+                    var d = document.getElementById('lsquare'+i+column);
+                    d.classList.add('occupied');
+                    d.classList.add('by'+ship.id);
+                    //console.log('lsquare'+i+column);
+                }
+            }
+            if ($('#'+ship.id).hasClass('even')){
+                //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
+                //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
+                //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
+
+                var boatcentery = (document.getElementById(ship.id).getBoundingClientRect().top+document.getElementById(ship.id).getBoundingClientRect().bottom)/2;
+                //console.log('boat center ' + boatcentery);
+                var topcellbound = document.getElementById(dropzone.id).getBoundingClientRect().top;
+                //console.log('top cell bound ' + topcellbound);
+                var bottomcellbound = document.getElementById(dropzone.id).getBoundingClientRect().bottom;
+                //console.log('bottom cell bound ' + bottomcellbound);
+                if ( Math.round(boatcentery) > (Math.round(topcellbound)-2) && Math.round(boatcentery) < (Math.round(topcellbound)+2) ){
+                    var divsontop = ((length)/2);
+                    var divsonbottom = divsontop-1;	
+                } else if ( Math.round(boatcentery) > (Math.round(bottomcellbound)-2) && Math.round(boatcentery) < (Math.round(bottomcellbound)+2)){
+                    var divsonbottom = ((length)/2);
+                    var divsontop = divsonbottom-1;	
+                }
+
+                var middledivnum = parseInt(dropzone.id.charAt(dropzone.id.length-2));
+                //console.log('middle div : ',middledivnum)
+                //console.log(divsonrightside + ' : divs on right side');
+                //console.log(divsonleftside + ' : divs on left side');
+
+                var startingdivnum = middledivnum - divsontop;
+                //console.log(startingdivnum + ' : starting div num');
+
+                var endingdivnum = middledivnum + divsonbottom;
+						    //console.log(endingdivnum + 'ending div num')
+
+						    for(i=startingdivnum; i<endingdivnum+1; i++){
+							      var d = document.getElementById('lsquare'+i+column);
+							      if(d.classList.contains('occupied')) return false;
+						    }
+						    for(i=startingdivnum; i<endingdivnum+1; i++){
+							      var d = document.getElementById('lsquare'+i+column);
+							      d.classList.add('occupied');
+							      d.classList.add('by'+ship.id);
+							      //console.log('lsquare'+row+i);
+						    }
+					  }
+				}
+				ship.classList.add('dropped');
+        appBoardViewModel.shipPlacedCount($(".dropped").length);
+		},
+		ondropdeactivate: function (event) {
+				// remove active dropzone feedback
+				//removeDroppableFeedback();
+		}
 });
