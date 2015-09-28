@@ -15,7 +15,7 @@ function vHeight(clientheight){
 function swipeRight() {
     jQuery('#left').animate({
         width:0,
-        'left': '-30%',
+        'left': '0%',
         opacity:0
     },
     100).css('right','');
@@ -34,7 +34,7 @@ function swipeRight() {
 function swipeLeft() {
     jQuery('#right').animate({
         width:0,
-        'right': '-30%',
+        'right': '0%',
         opacity:0
     },
     100).css('left','');
@@ -282,8 +282,7 @@ interact('.square').dropzone({
                     d.classList.add('by'+ship.id);
                     //console.log('lsquare'+row+i);
                 }
-            }
-            if ($('#'+ship.id).hasClass('even')){
+            } else if ($('#'+ship.id).hasClass('even')){
                 //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
                 //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
                 //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
@@ -305,10 +304,10 @@ interact('.square').dropzone({
                 //console.log(divsonleftside + ' : divs on left side');
 
                 var startingdivnum = middledivnum - divsonleftside;
-                //console.log(startingdivnum + ' : starting div num');
+                console.log(startingdivnum + ' : starting div num');
 
                 var endingdivnum = middledivnum + divsonrightside;
-                //console.log(endingdivnum + 'ending div num')
+                console.log(endingdivnum + ' : ending div num')
 
                 for(i=startingdivnum; i<endingdivnum+1; i++){
                     var d = document.getElementById('lsquare'+row+i);
@@ -346,8 +345,7 @@ interact('.square').dropzone({
                     d.classList.add('by'+ship.id);
                     //console.log('lsquare'+i+column);
                 }
-            }
-            if ($('#'+ship.id).hasClass('even')){
+            } else if ($('#'+ship.id).hasClass('even')){
                 //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
                 //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
                 //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
@@ -377,19 +375,19 @@ interact('.square').dropzone({
                 var endingdivnum = middledivnum + divsonbottom;
 						    //console.log(endingdivnum + 'ending div num')
 
-						    for(i=startingdivnum; i<endingdivnum+1; i++){
-							      var d = document.getElementById('lsquare'+i+column);
-							      if(d.classList.contains('occupied')) return false;
-						    }
-						    for(i=startingdivnum; i<endingdivnum+1; i++){
-							      var d = document.getElementById('lsquare'+i+column);
-							      d.classList.add('occupied');
-							      d.classList.add('by'+ship.id);
-							      //console.log('lsquare'+row+i);
-						    }
-					  }
+				for(i=startingdivnum; i<endingdivnum+1; i++){
+					  var d = document.getElementById('lsquare'+i+column);
+					  if(d.classList.contains('occupied')) return false;
 				}
-				ship.classList.add('dropped');
+				for(i=startingdivnum; i<endingdivnum+1; i++){
+					  var d = document.getElementById('lsquare'+i+column);
+					  d.classList.add('occupied');
+					  d.classList.add('by'+ship.id);
+					  //console.log('lsquare'+row+i);
+				}
+			}
+		}
+		ship.classList.add('dropped');
         appBoardViewModel.shipPlacedCount($(".dropped").length);
 		},
 		ondropdeactivate: function (event) {
