@@ -26,7 +26,7 @@ public class BattleShipConfiguration implements GameConfiguration {
         settings.putIfAbsent(ConfigKeys.FIRING_TIMEOUT.toString(), "30");
         settings.putIfAbsent(ConfigKeys.CANOE_COUNT.toString(), "0");
         settings.putIfAbsent(ConfigKeys.CRUISER_COUNT.toString(), "1");
-        settings.putIfAbsent(ConfigKeys.SUBMARINE_COUNT.toString(), "0");
+        settings.putIfAbsent(ConfigKeys.SUBMARINE_COUNT.toString(), "1");
         settings.putIfAbsent(ConfigKeys.DESTROYER_COUNT.toString(), "1");
         settings.putIfAbsent(ConfigKeys.BATTLESHIP_COUNT.toString(), "1");
         settings.putIfAbsent(ConfigKeys.CARRIER_COUNT.toString(), "1");
