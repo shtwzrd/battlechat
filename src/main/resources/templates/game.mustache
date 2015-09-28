@@ -14,7 +14,7 @@
             <div id="left" class="active">
                 <div id="tableleft" class="table" data-bind="foreach: appBoardViewModel.myBoard">
                     <div class="row" data-bind="attr: {'id': 'lrow' + $index()}, foreach: $data">
-                        <div class="square" data-bind="attr: {'id' : 'lsquare' + $data.r + $data.c}">
+                        <div class="square" data-bind="attr: {'id' : 'lsquare' + $data.r + $data.c}, style: { position: appBoardViewModel.canPlaceShips() ? 'static' : 'relative' }">
                             <div class="wrapper">
                                 <div data-bind="css: { firesquare: $data.state == 'HIT', splashsquare: $data.state  == 'MISS' }"></div>
                             </div>
@@ -25,7 +25,7 @@
             <div id="right" class="inactive">
                 <div id="tableright" class="table" data-bind="foreach: appBoardViewModel.theirBoard">
                     <div class="row" data-bind="attr: {'id': 'rrow' + $index()}, foreach: $data">
-                            <div class="square" data-bind="attr: {'id' : 'rsquare' + $data.r + $data.c}, css: { activesquare: $root.canFire() }, click: appBoardViewModel.shootMe">
+                            <div class="square" data-bind="attr: {'id' : 'rsquare' + $data.r + $data.c}, css: { activesquare: $root.canFire() }, style: { position: appBoardViewModel.canPlaceShips() ? 'static' : 'relative' }, click: appBoardViewModel.shootMe">
                                 <div class="wrapper">
                                 <div data-bind="css: { firesquare: $data.state == 'HIT', splashsquare: $data.state  == 'MISS' }"></div>
                                 </div>
