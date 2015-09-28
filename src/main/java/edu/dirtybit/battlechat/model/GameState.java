@@ -345,6 +345,18 @@ public class GameState extends Session implements Runnable {
         return getPlayers().indexOf(player);
     }
 
+    private void checkForVictory() {
+        this.getBoards().stream().filter(b -> b.getLivesRemaining() == 0).forEach(l -> {
+            int loserIndex = this.getBoards().indexOf(l);
+            this.notifySubscribers(new GameMessage(GameMessageType.STATUS, this.getPlayers().get(loserIndex).getId(), new BattleChatStatus(Phase.YOU_LOSE, 0)));
+            this.getPlayers().remove(loserIndex);
+        });
+        if(this.getPlayers().size() == 1) {
+            this.notifySubscribers(new GameMessage(GameMessageType.STATUS, this.getPlayers().get(0).getId(), new BattleChatStatus(Phase.YOU_WIN, 0)));
+            this.phase = Phase.COMPLETED;
+        }
+    }
+
     private void handleFire(GameMessage<List<Coordinate>> shot) {
         try {
             boolean hit = this.fire(shot.getBody(), this.getPlayerById(shot.getId()));
@@ -360,6 +372,7 @@ public class GameState extends Session implements Runnable {
         } catch (FiringOutOfTurnException | FiringAtOwnBoardException | FiringTooManyShotsException e) {
             this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
         }
+        checkForVictory();
     }
 
     private void handlePlacement(GameMessage<Fleet> placement) {

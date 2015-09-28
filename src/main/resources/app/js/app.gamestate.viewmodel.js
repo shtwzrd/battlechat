@@ -18,6 +18,9 @@
     appGameStateViewModel.handlePhaseData = function (msg) {
         appGameStateViewModel.phaseEnum(msg.gamePhase);
         appGameStateViewModel.timeToPhaseChange(msg.secondsToPhaseChange);
+        if(msg.gamePhase == "YOU_WIN" || msg.gamePhae == "YOU_LOSE") {
+            console.log("It's OVER!");
+        }
 
         switch(msg.gamePhase) {
         case "NOT_STARTED":
@@ -42,6 +45,12 @@
                 appBoardViewModel.canFire(false);
             }
             appGameStateViewModel.phase("Brace for impact!");
+            break;
+        case "YOU_LOSE":
+            appGameStateViewModel.phase("You've been defeated.");
+            break;
+        case "YOU_WIN":
+            appGameStateViewModel.phase("You are victorious!");
             break;
         }
         lastPhase = msg.gamePhase;

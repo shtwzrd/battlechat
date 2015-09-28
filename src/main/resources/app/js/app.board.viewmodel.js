@@ -28,7 +28,6 @@
         }
         var style = status == "HIT" ? "firesquare" : "splashsquare";
 
-        console.log($(prefix + msg.X + msg.Y));
         $(prefix + msg.Y + msg.X).append("<div class='wrapper'><div class='" + style + "' </div></div>");
     };
 

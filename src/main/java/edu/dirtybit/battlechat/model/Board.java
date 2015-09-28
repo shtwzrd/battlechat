@@ -52,17 +52,13 @@ public class Board extends BaseBoard {
     }
 
     public int getLivesRemaining() {
-        // if no remaining lives, double check that all the ships have been destroyed.
-        if (this.lives == 0) {
-            this.lives = this.countLives();
-        }
-        return lives;
+           return this.countLives();
     }
 
     private int countLives() {
         int livesinships = 0;
         for (Ship s : this.getFleet().getShips()) {
-            livesinships = s.getHealth();
+            livesinships += s.getHealth();
         }
 
         int livesonboard = 0;
@@ -79,7 +75,10 @@ public class Board extends BaseBoard {
             for (int x = 0; x < this.width; x++) {
                 for (int y = 0; y < this.height; y++) {
                     if (this.cells[x][y] == CellType.HIT) {
-                        this.getFleet().getShipAt(x, y).removeCell(x, y);
+                        Ship s = this.getFleet().getShipAt(x,y);
+                        if (s != null) {
+                            s.removeCell(x,y);
+                        }
                     }
                 }
             }
