@@ -6,11 +6,13 @@
     appBoardViewModel.ships = ko.observableArray();
     appBoardViewModel.shipPlacedCount = ko.observable();
     appBoardViewModel.canPlaceShips = ko.observable(false);
+    appBoardViewModel.canFire = ko.observable(false);
     appBoardViewModel.placementSent = ko.observable(false);
 
     appBoardViewModel.shipsPlaced = ko.computed(function() {
         return appBoardViewModel.ships().length == appBoardViewModel.shipPlacedCount();
     });
+
 
     appBoardViewModel.enablePlacementButton = ko.computed(function() {
         return !appBoardViewModel.placementSent() && appBoardViewModel.shipsPlaced();
