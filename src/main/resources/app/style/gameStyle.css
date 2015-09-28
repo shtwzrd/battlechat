@@ -217,7 +217,7 @@ html, body{
 .vertical {
 }
 .drop-target {
-	border:solid green;
+	border:0.1vh solid green;
 }
 .occupied{
 	border:0.1vh groove red;

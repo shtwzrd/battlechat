@@ -88,7 +88,7 @@ window.onresize = function(event) {
 
 //Drag and drop stuff
 function dragMoveListener (event) {
-	console.log('we movin');
+	//console.log('we movin');
     var target = event.target,
         // keep the dragged position in the data-x/data-y attributes
         x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
@@ -137,7 +137,10 @@ var startPos = {x: 0, y: 0};
 
 interact('.draggable').draggable({
     // enable inertial throwing
-    inertia: true,
+    inertia: {
+		smoothEndDuration: 1,
+		endspeed:100
+	  },
     // keep the element within the area of it's parent
     restrict: {
         restriction: ('#tableleft'),
@@ -161,7 +164,7 @@ interact('.draggable').draggable({
             // snap to the start position
             //event.target.snap();
         }
-		console.log('drag ended, supposed to drop right?');
+		//console.log('drag ended, supposed to drop right?');
     }
 })
     .snap({
@@ -210,12 +213,12 @@ interact('.square').dropzone({
     // listen for drop related events:
 
     ondropactivate: function (event) {
-		console.log('drop activate');
+		//console.log('drop activate');
         // add active dropzone feedback
         event.target.classList.add('drop-active');
     },
     ondragenter: function (event) {
-		console.log('entered a square');
+		//console.log('entered a square');
         var draggableElement = event.relatedTarget,
             dropzoneElement = event.target;
         //				var length = Math.round(document.getElementById(draggableElement.id).offsetWidth/document.getElementById(dropzoneElement.id).offsetWidth);
@@ -244,10 +247,11 @@ interact('.square').dropzone({
                 };
             }
         }
-        //console.log(dropLeft);
+        console.log(dropLeft);
         // feedback the possibility of a drop
         draggableElement.classList.add('can-drop');
-
+		dropzoneElement.classList.add('drop-target');
+		
         event.draggable.snap({
             anchors: [ dropLeft ]
         });
@@ -263,7 +267,7 @@ interact('.square').dropzone({
         var ship = event.relatedTarget;
         var dropzone = event.target;
         $('#'+ship.id).css('left',0).appendTo($('#'+dropzone.id));
-		var tolerance=4;
+		var tolerance=5;
         // notify user with occupied cells
         if ($('#'+ship.id).hasClass('horizontal')){
             var length = Math.round(document.getElementById(ship.id).offsetWidth/document.getElementById(dropzone.id).offsetWidth);
@@ -287,19 +291,19 @@ interact('.square').dropzone({
                     //console.log('lsquare'+row+i);
                 }
             } else if ($('#'+ship.id).hasClass('even')){
-                console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
-                console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
-                console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
+                //console.log('boat middle: ' + ((document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2));
+                //console.log('cell right: ' +document.getElementById(dropzone.id).getBoundingClientRect().right);
+                //console.log('cell left: ' +document.getElementById(dropzone.id).getBoundingClientRect().left);
 
                 var boatcenterx = (document.getElementById(ship.id).getBoundingClientRect().left+document.getElementById(ship.id).getBoundingClientRect().right)/2;
                 var leftcellbound = document.getElementById(dropzone.id).getBoundingClientRect().left;
                 var rightcellbound = document.getElementById(dropzone.id).getBoundingClientRect().right;
 				
 				
-                if ( Math.round(boatcenterx) > (Math.round(rightcellbound)-tolerance) && Math.round(boatcenterx) < (Math.round(rightcellbound)+tolerance) ){
+                if ( Math.round(boatcenterx) >= (Math.round(rightcellbound)-tolerance) && Math.round(boatcenterx) <= (Math.round(rightcellbound)+tolerance) ){
                     var divsonrightside = ((length)/2);
                     var divsonleftside = divsonrightside-1;	
-                } else if ( Math.round(boatcenterx) > (Math.round(leftcellbound)-tolerance) && Math.round(boatcenterx) < (Math.round(leftcellbound)+tolerance)){
+                } else if ( Math.round(boatcenterx) >= (Math.round(leftcellbound)-tolerance) && Math.round(boatcenterx) <= (Math.round(leftcellbound)+tolerance)){
                     var divsonleftside = ((length)/2);
                     var divsonrightside = divsonleftside-1;	
                 }
@@ -361,10 +365,10 @@ interact('.square').dropzone({
                 //console.log('top cell bound ' + topcellbound);
                 var bottomcellbound = document.getElementById(dropzone.id).getBoundingClientRect().bottom;
                 //console.log('bottom cell bound ' + bottomcellbound);
-                if ( Math.round(boatcentery) > (Math.round(topcellbound)-tolerance) && Math.round(boatcentery) < (Math.round(topcellbound)+tolerance) ){
+                if ( Math.round(boatcentery) >= (Math.round(topcellbound)-tolerance) && Math.round(boatcentery) <= (Math.round(topcellbound)+tolerance) ){
                     var divsontop = ((length)/2);
                     var divsonbottom = divsontop-1;	
-                } else if ( Math.round(boatcentery) > (Math.round(bottomcellbound)-tolerance) && Math.round(boatcentery) < (Math.round(bottomcellbound)+tolerance)){
+                } else if ( Math.round(boatcentery) >= (Math.round(bottomcellbound)-tolerance) && Math.round(boatcentery) <= (Math.round(bottomcellbound)+tolerance)){
                     var divsonbottom = ((length)/2);
                     var divsontop = divsonbottom-1;	
                 }
@@ -396,9 +400,10 @@ interact('.square').dropzone({
         appBoardViewModel.shipPlacedCount($(".dropped").length);
 		},
 		ondropdeactivate: function (event) {
-			console.log('deactivateddrop');
+			//console.log('deactivateddrop');
 				// remove active dropzone feedback
-				//removeDroppableFeedback();
+				//
+				removeDroppableFeedback();
 				
 		}
 });
