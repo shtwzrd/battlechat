@@ -21,9 +21,9 @@ public class Board extends BaseBoard {
     @Override
     public void setCell(int x, int y, CellType celltype) {
         super.setCell(x, y, celltype);
-        // it is technically possible to decrement the remaining lives by setting the same cell to Hit over and over, consider revising.
-        // an "inelegant" solution has been implemented, it checks for any remaining Ship cells on the board when the lives are supposedly zero.
-        //if (celltype == CellType.Hit) { this.lives--; }
+        // it is technically possible to decrement the remaining lives by setting the same cell to HIT over and over, consider revising.
+        // an "inelegant" solution has been implemented, it checks for any remaining SHIP cells on the board when the lives are supposedly zero.
+        //if (celltype == CellType.HIT) { this.lives--; }
 
         this.perspective.setCell(x, y, celltype);
     }
@@ -67,8 +67,8 @@ public class Board extends BaseBoard {
 
         int livesonboard = 0;
         for (int x = 0; x < this.width; x++) {
-            for (int y = 0; y < this.width; y++) {
-                if (this.cells[x][y] == CellType.Ship) {
+            for (int y = 0; y < this.height; y++) {
+                if (this.cells[x][y] == CellType.SHIP) {
                     livesonboard++;
                 }
             }
@@ -77,8 +77,8 @@ public class Board extends BaseBoard {
         if (livesinships != livesonboard) {
             // try to resync, if ever fleet and board lives should go out of sync
             for (int x = 0; x < this.width; x++) {
-                for (int y = 0; y < this.width; y++) {
-                    if (this.cells[x][y] == CellType.Hit) {
+                for (int y = 0; y < this.height; y++) {
+                    if (this.cells[x][y] == CellType.HIT) {
                         this.getFleet().getShipAt(x, y).removeCell(x, y);
                     }
                 }

@@ -29,6 +29,12 @@ public class SerializationHelper {
             case FIRE:
                 type = new TypeToken<GameMessage<ArrayList<Coordinate>>>() {};
                 break;
+            case HIT:
+                type = new TypeToken<GameMessage<Coordinate>>() {};
+                break;
+            case MISS:
+                type = new TypeToken<GameMessage<Coordinate>>() {};
+                break;
         }
 
         return gson.fromJson(msg, type.getType());

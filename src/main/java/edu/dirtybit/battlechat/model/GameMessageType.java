@@ -1,6 +1,7 @@
 package edu.dirtybit.battlechat.model;
 
 public enum GameMessageType {
+    REGISTRATION,
     CONFIGURATION,
     CONFIG_REQUEST,
     STATUS,

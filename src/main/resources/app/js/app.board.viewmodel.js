@@ -1,28 +1,55 @@
 (function( appBoardViewModel, $, undefined ) {
     var init = false;
+    var boardIndex = 0;
 
     appBoardViewModel.myBoard = ko.observableArray();
     appBoardViewModel.theirBoard = ko.observableArray();
     appBoardViewModel.ships = ko.observableArray();
     appBoardViewModel.shipPlacedCount = ko.observable();
     appBoardViewModel.canPlaceShips = ko.observable(false);
+    appBoardViewModel.canFire = ko.observable(false);
     appBoardViewModel.placementSent = ko.observable(false);
 
     appBoardViewModel.shipsPlaced = ko.computed(function() {
         return appBoardViewModel.ships().length == appBoardViewModel.shipPlacedCount();
     });
 
+
     appBoardViewModel.enablePlacementButton = ko.computed(function() {
         return !appBoardViewModel.placementSent() && appBoardViewModel.shipsPlaced();
     });
 
-    function applyMetaData(board) {
-        for(var i = 0; i < board.length; i++) {
-            for(var j = 0; j <board[0].length; j++) {
-                board[i][j] = {"r": i, "c": j, "state": board[i][j]};
+    appBoardViewModel.handleShotNotification = function(msg, status) {
+        var prefix;
+        if(msg.boardIndex == boardIndex) {
+            prefix = "#lsquare";
+        }  else {
+            prefix = "#rsquare";
+        }
+        var style = status == "HIT" ? "firesquare" : "splashsquare";
+
+        console.log($(prefix + msg.X + msg.Y));
+        $(prefix + msg.Y + msg.X).append("<div class='wrapper'><div class='" + style + "' </div></div>");
+    };
+
+    function transposeBoard(board, boardLength) {
+        var boardOut = [];
+        for(var i = 0; i < board.length; i++){
+            boardOut.push([]);
+        };
+
+        for(var i = 0; i < board.length; i++){
+            for(var j = 0; j < boardLength; j++){
+                boardOut[j].push({c: i, r: j, state:board[i][j]});
+            };
+        };
+
+        for(var i = 0; i < boardOut.length; i++) {
+            if (boardOut.length == 0) {
+                boardOut.splice(i, 1);
             }
         }
-        return board;
+        return (boardOut);
     }
 
     function buildShipElement(orientation, shiptype, index) {
@@ -89,11 +116,27 @@
         $(".ship").remove();
     }
 
+    appBoardViewModel.shootMe = function(me) {
+        var b = boardIndex == 0 ? 1 : 0;
+
+        var msg = {
+            messageType: "FIRE",
+            id: appSocket.id,
+            body: [{
+                boardIndex: b,
+                X: me.c,
+                Y: me.r
+            }]};
+        appBoardViewModel.canFire(false);
+        appSocket.send(msg);
+    };
+
     appBoardViewModel.mapUpdate = function(msg) {
-        appBoardViewModel.myBoard(applyMetaData(msg.boards[msg.yourBoardIndex].cells));
-        appBoardViewModel.ships(msg.boards[msg.yourBoardIndex].fleet.ships);
-        msg.boards.splice(msg.yourBoardIndex, 1);
-        appBoardViewModel.theirBoard(applyMetaData(msg.boards[0].cells));
+        boardIndex = msg.yourBoardIndex;
+        appBoardViewModel.myBoard(transposeBoard(msg.boards[boardIndex].cells, msg.boards[boardIndex].cells[0].length));
+        appBoardViewModel.ships(msg.boards[boardIndex].fleet.ships);
+        msg.boards.splice(boardIndex, 1);
+        appBoardViewModel.theirBoard(transposeBoard(msg.boards[0].cells, msg.boards[0].cells[0].length));
 
         if(!init) {
             scrambleShips();

@@ -111,8 +111,8 @@ public class GameState extends Session implements Runnable {
             }
             Board board = this.boards.get(c.getBoardIndex());
             String message = player.getGivenName() + " shot at " + c.getX() + "," + c.getY();
-            if (board.getCells()[c.getX()][c.getY()] == CellType.Ship) {
-                board.setCell(c.getX(), c.getY(), CellType.Hit);
+            if (board.getCells()[c.getX()][c.getY()] == CellType.SHIP) {
+                board.setCell(c.getX(), c.getY(), CellType.HIT);
                 message += " ...and HIT!";
                 Ship s = board.getFleet().getShipAt(c.getX(), c.getY());
                 if (s != null) {
@@ -123,10 +123,11 @@ public class GameState extends Session implements Runnable {
                 }
                 hit = true;
             } else {
-                board.setCell(c.getX(), c.getY(), CellType.Miss);
+                board.setCell(c.getX(), c.getY(), CellType.MISS);
                 message += " ...and missed...";
             }
             this.broadcastMessage(GameMessageType.EVENT, message);
+            this.secondsToNextPhase = 3;
         }
         return hit;
     }
@@ -157,7 +158,7 @@ public class GameState extends Session implements Runnable {
                     boolean canplace = true;
                     for (int x = ship.getX(); x > 0 && x <= endx; x++) {
                         for (int y = ship.getY(); y > 0 && y <= endy; y++) {
-                            if (testboard.getCells()[x][y] != CellType.Empty) {
+                            if (testboard.getCells()[x][y] != CellType.EMPTY) {
                                 canplace = false;
                             }
                         }
@@ -167,7 +168,7 @@ public class GameState extends Session implements Runnable {
                     if (canplace) {
                         for (int x = ship.getX(); x > 0 && x <= endx; x++) {
                             for (int y = ship.getY(); y > 0 && y <= endy; y++) {
-                                testboard.setCell(x, y, CellType.Ship);
+                                testboard.setCell(x, y, CellType.SHIP);
                             }
                         }
                         // Exit for loop
@@ -235,8 +236,8 @@ public class GameState extends Session implements Runnable {
                     // Check if the ship is being placed on top of another ship
                     for (int x = ship.getX(); x <= endx; x++) {
                         for (int y = ship.getY(); y <= endy; y++) {
-                            if (board.getCells()[x][y] == CellType.Empty) {
-                                board.setCell(x, y, CellType.Ship);
+                            if (board.getCells()[x][y] == CellType.EMPTY) {
+                                board.setCell(x, y, CellType.SHIP);
                             } else {
                                 board.clear();
                                 throw new ShipsOverlapException(x, ship.getY());
@@ -346,7 +347,16 @@ public class GameState extends Session implements Runnable {
 
     private void handleFire(GameMessage<List<Coordinate>> shot) {
         try {
-            this.fire(shot.getBody(), this.getPlayerById(shot.getId()));
+            boolean hit = this.fire(shot.getBody(), this.getPlayerById(shot.getId()));
+            if(hit) {
+                shot.getBody().forEach(s -> {
+                    this.notifySubscribers(new GameMessage(GameMessageType.HIT, shot.getId(), s));
+                });
+            } else {
+                 shot.getBody().forEach(s -> {
+                    this.notifySubscribers(new GameMessage(GameMessageType.MISS, shot.getId(), s));
+                });
+            }
         } catch (FiringOutOfTurnException | FiringAtOwnBoardException | FiringTooManyShotsException e) {
             this.notifySubscribers(new GameMessage<>(GameMessageType.ERROR, shot.getId(), e.getMessage()));
         }
@@ -372,7 +382,7 @@ public class GameState extends Session implements Runnable {
             }
         }
         if (start) {
-            phaseChange();
+            this.secondsToNextPhase = 3;
         }
     }
 }

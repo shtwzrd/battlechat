@@ -11,7 +11,7 @@ public class Perspective extends BaseBoard {
     @Override
     public void setCell(int x, int y, CellType celltype)
     {
-        if (celltype == CellType.Ship) { celltype = CellType.Empty; }
+        if (celltype == CellType.SHIP) { celltype = CellType.EMPTY; }
         super.setCell(x, y, celltype);
     }
 }

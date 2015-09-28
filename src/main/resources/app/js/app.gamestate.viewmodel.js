@@ -2,6 +2,7 @@
 
     appGameStateViewModel.timeToPhaseChange = ko.observable("∞");
     appGameStateViewModel.phase = ko.observable("Waiting for a Challenger");
+    appGameStateViewModel.phaseEnum = ko.observable("NOT_STARTED");
 
     var lastPhase = "";
 
@@ -15,7 +16,7 @@
     }
 
     appGameStateViewModel.handlePhaseData = function (msg) {
-        appGameStateViewModel.phase(msg.gamePhase);
+        appGameStateViewModel.phaseEnum(msg.gamePhase);
         appGameStateViewModel.timeToPhaseChange(msg.secondsToPhaseChange);
 
         switch(msg.gamePhase) {
@@ -31,12 +32,14 @@
         case "YOU_FIRING":
             if(isPhaseChanged(msg.gamePhase)) {
                 swipeRight();
+                appBoardViewModel.canFire(true);
             }
             appGameStateViewModel.phase("Fire!");
             break;
         case "OPPONENT_FIRING":
             if(isPhaseChanged(msg.gamePhase)) {
                 swipeLeft();
+                appBoardViewModel.canFire(false);
             }
             appGameStateViewModel.phase("Brace for impact!");
             break;

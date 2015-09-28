@@ -120,7 +120,7 @@ public class GameStateTest {
         game.getBoards().forEach(b -> {
             for (int i = 0; i < b.getCells().length; i++) {
                 for (int j = 0; j < b.getCells()[0].length; j++) {
-                    assertEquals(b.getCells()[i][j], CellType.Empty);
+                    assertEquals(b.getCells()[i][j], CellType.EMPTY);
                 }
             }
         });
@@ -314,7 +314,7 @@ public class GameStateTest {
         game.enqueuePlayer(player2);
 
         Board board = game.getBoards().get(1);
-        board.setCell(0, 0, CellType.Ship);
+        board.setCell(0, 0, CellType.SHIP);
 
         List<Coordinate> coords = new ArrayList<>();
         coords.add(new Coordinate(1, 0, 0));
@@ -330,7 +330,7 @@ public class GameStateTest {
         game.enqueuePlayer(player2);
 
         Board board = game.getBoards().get(1);
-        board.setCell(0, 0, CellType.Ship);
+        board.setCell(0, 0, CellType.SHIP);
 
         List<Coordinate> coords = new ArrayList<>();
         coords.add(new Coordinate(1, 9, 9));
