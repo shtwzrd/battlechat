@@ -45,14 +45,17 @@ public abstract class Session implements Runnable {
 
     public UUID enqueuePlayer(Player player) {
         this.players.add(player);
-        if(shouldStart()) {
+        if (shouldStart()) {
             this.status = SessionStatus.IN_PROGRESS;
-            this.players.forEach(p ->
-                    this.notifySubscribers(new GameMessage<>(GameMessageType.EVENT, p.getId(), String.format("%s has joined.", p.getGivenName()))));
+            this.players.forEach(p -> {
+                int pi = this.players.indexOf(p);
+                this.players.stream().filter(o -> this.players.indexOf(o) != pi).forEach(r ->
+                        this.notifySubscribers(new GameMessage<>(GameMessageType.EVENT, p.getId(), String.format("%s has joined.", r.getGivenName()))));
+            });
             Thread t = new Thread(this);
             t.start();
-        }
 
+        }
         return player.getId();
     }
 
