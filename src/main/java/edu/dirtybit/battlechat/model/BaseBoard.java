@@ -30,7 +30,7 @@ public abstract class BaseBoard {
     public void clear() {
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
-                this.cells[x][y] = CellType.Empty;
+                this.cells[x][y] = CellType.EMPTY;
             }
         }
     }

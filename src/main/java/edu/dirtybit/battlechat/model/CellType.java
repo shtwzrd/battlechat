@@ -1,5 +1,5 @@
 package edu.dirtybit.battlechat.model;
 
 public enum CellType {
-    Empty, Ship, Hit, Miss
+    EMPTY, SHIP, HIT, MISS
 }

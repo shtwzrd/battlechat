@@ -18,7 +18,7 @@
             return;
         }
         // Create a new instance of the websocket
-        webSocket = new WebSocket(protocol + domain + "/session", ["v1", appSocket.id]);
+        webSocket = new WebSocket(protocol + domain + "/session");
 
         // Binds functions to the listeners for the websocket.
         webSocket.onopen = function(event){
@@ -47,9 +47,11 @@
     };
 
     // Private function
-
     function routeMessage(msg) {
         switch(msg.messageType) {
+        case "REGISTRATION":
+            handshake(msg.body);
+            break;
         case "CHAT":
             appChatViewModel.handleMessage(msg.body, msg.messageType);
             break;
@@ -68,7 +70,17 @@
         case "UPDATE":
             appBoardViewModel.mapUpdate(msg.body);
             break;
+        case "HIT":
+            appBoardViewModel.handleShotNotification(msg.body, msg.messageType);
+            break;
+        case "MISS":
+            appBoardViewModel.handleShotNotification(msg.body, msg.messageType);
+            break;
         }
     };
+
+    function handshake(msg) {
+        appSocket.send({ id: appSocket.id, messageType: "REGISTRATION", body: msg });
+    }
 
 }( window.appSocket = window.appSocket || {}, jQuery ));
