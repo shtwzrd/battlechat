@@ -115,6 +115,22 @@
         $(".ship").remove();
     }
 
+    function shipLength(type) {
+        switch (type) {
+        case "battleship":
+            return 4;
+        case "carrier":
+            return 5;
+        case "submarine":
+            return 3;
+        case "destroyer":
+            return 2;
+        case "cruiser":
+            return 3;
+        }
+        return 3;
+    };
+
     appBoardViewModel.shootMe = function(me) {
         var b = boardIndex == 0 ? 1 : 0;
 
@@ -147,7 +163,7 @@
                 $("#lsquare" + ship.y + ship.x).append(element);
                 var shipEle = $("#ship" + i)[0];
                 if(ship.rotation.toLowerCase() == "vertical") {
-                    var translation = (ship.cells.length - 3) * 2.5 + 5;
+                    var translation = (shipLength(ship.shiptype.toLowerCase()) - 3) * 2.5 + 5;
                     shipEle.style.transform += "rotate(90deg) translate(" + translation + "vh, " + translation + "vh)";
                 }
                 shipEle.style.position = "relative";
