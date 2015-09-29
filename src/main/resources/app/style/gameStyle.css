@@ -113,7 +113,6 @@ html, body{
 }
 
 .splashsquare {
-    margin-left: -4vh;
     position: absolute;
     content: '';
     background-image: url("../img/splash.gif");
