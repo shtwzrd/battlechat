@@ -38,6 +38,7 @@ public class Board extends BaseBoard {
 
     public void setFleet(Fleet fleet) {
         this.fleet = fleet;
+        this.clear();
     }
 
     @Override

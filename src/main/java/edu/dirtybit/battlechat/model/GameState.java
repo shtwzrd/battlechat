@@ -305,7 +305,13 @@ public class GameState extends Session implements Runnable {
                 break;
             case PLACEMENT_PHASE:
                 this.getBoards().stream().filter(board -> !this.validateFleet(board.getFleet())).forEach(board -> {
-                    this.randomizeFleet(board.getFleet());
+                    board.setFleet(randomizeFleet(board.getFleet()));
+                    try {
+                        this.placeFleet(board.getFleet(), board);
+                    } catch (Exception e) {
+                        System.err.println("Fleet randomization method generated an invalid placement");
+                        e.printStackTrace();
+                    }
                     notifySubscribers(new GameMessage(GameMessageType.EVENT,
                             this.getPlayers().get(this.boards.indexOf(board)).getId(),
                             "You didn't arrange your fleet in time, so it was randomized for you."));
